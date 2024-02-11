@@ -1,14 +1,13 @@
-import 'package:epilepto_guard/Screens/User/verifCodeScreen.dart';
 import 'package:flutter/material.dart';
 
-class VerifEmailScreen extends StatefulWidget {
-  const VerifEmailScreen({Key? key}) : super(key: key);
+class VerifCodeScreen extends StatefulWidget {
+  const VerifCodeScreen({Key? key}) : super(key: key);
 
   @override
-  State<VerifEmailScreen> createState() => _VerifEmailScreenState();
+  State<VerifCodeScreen> createState() => _VerifCodeScreenState();
 }
 
-class _VerifEmailScreenState extends State<VerifEmailScreen> {
+class _VerifCodeScreenState extends State<VerifCodeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,20 +34,20 @@ class _VerifEmailScreenState extends State<VerifEmailScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/images/icons/email.png',
+                        'assets/images/icons/verify_code.png',
                         width: MediaQuery.of(context).size.width * 0.6,
                         height: MediaQuery.of(context).size.width * 0.6,
                       ),
                       SizedBox(height: 10),
-                      Text(
-                        "Please enter your email address below to receive a verification code and reset your password.",
+                      const Text(
+                        "Please check your email and enter the verification code below.",
                         style: TextStyle(fontSize: 12.0, color: Colors.black),
                       ),
                       SizedBox(height: 15),
-                      // Email text field
+                      //  text field
                       TextField(
                         decoration: InputDecoration(
-                          hintText: 'Email',
+                          hintText: 'Enter Code',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(50.0),
                           ),
@@ -61,16 +60,14 @@ class _VerifEmailScreenState extends State<VerifEmailScreen> {
                         width: double.infinity, // Extends to both sides
                         child: ElevatedButton(
                           onPressed: () {
-                            // Add verif functionality
-                             Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => VerifCodeScreen()));
+                            // Add login functionality
                           },
                           style: ElevatedButton.styleFrom(
                             primary: Color(0xFF8A4FE9),
                           ),
                           child: const Padding(
                             padding: EdgeInsets.symmetric(vertical: 16.0),
-                            child: Text('Send Code',
+                            child: Text('Verify Code',
                                 style: TextStyle(
                                     fontSize: 18.0, color: Colors.white)),
                           ),
