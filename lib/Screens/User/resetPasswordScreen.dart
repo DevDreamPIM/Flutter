@@ -1,14 +1,16 @@
-import 'package:epilepto_guard/Screens/User/resetPasswordScreen.dart';
 import 'package:flutter/material.dart';
 
-class VerifCodeScreen extends StatefulWidget {
-  const VerifCodeScreen({Key? key}) : super(key: key);
+class ResetPasswordScreen extends StatefulWidget {
+  const ResetPasswordScreen({Key? key}) : super(key: key);
 
   @override
-  State<VerifCodeScreen> createState() => _VerifCodeScreenState();
+  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
-class _VerifCodeScreenState extends State<VerifCodeScreen> {
+class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+  bool _passwordVisible = false;
+  bool _confirmpasswordVisible = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,25 +37,59 @@ class _VerifCodeScreenState extends State<VerifCodeScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/images/icons/verify_code.png',
+                        'assets/images/icons/reset_password.png',
                         width: MediaQuery.of(context).size.width * 0.6,
                         height: MediaQuery.of(context).size.width * 0.6,
                       ),
                       SizedBox(height: 10),
                       const Text(
-                        "Please check your email and enter the verification code below.",
+                        "Please enter your new password below.",
                         style: TextStyle(fontSize: 12.0, color: Colors.black),
                       ),
                       SizedBox(height: 15),
-                      //  text field
+                       // Password text field
                       TextField(
+                        obscureText: !_passwordVisible,
                         decoration: InputDecoration(
-                          hintText: 'Enter Code',
+                          hintText: 'Password',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(50.0),
                           ),
                           filled: true,
                           fillColor: Colors.white.withOpacity(0.7),
+                          suffixIcon: IconButton(
+                            icon: Icon(_passwordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off),
+                            onPressed: () {
+                              setState(() {
+                                _passwordVisible = !_passwordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      // Password text field
+                      TextField(
+                        obscureText: !_confirmpasswordVisible,
+                        decoration: InputDecoration(
+                          hintText: 'Confirm Password',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(50.0),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white.withOpacity(0.7),
+                          suffixIcon: IconButton(
+                            icon: Icon(_confirmpasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off),
+                            onPressed: () {
+                              setState(() {
+                                _confirmpasswordVisible = !_confirmpasswordVisible;
+                              });
+                            },
+                          ),
                         ),
                       ),
                       SizedBox(height: 20),
@@ -62,15 +98,15 @@ class _VerifCodeScreenState extends State<VerifCodeScreen> {
                         child: ElevatedButton(
                           onPressed: () {
                             // Add login functionality
-                             Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => ResetPasswordScreen()));
+                              Navigator.of(context).popUntil((route) => route.isFirst);
+
                           },
                           style: ElevatedButton.styleFrom(
                             primary: Color(0xFF8A4FE9),
                           ),
                           child: const Padding(
                             padding: EdgeInsets.symmetric(vertical: 16.0),
-                            child: Text('Verify Code',
+                            child: Text('Reset Password',
                                 style: TextStyle(
                                     fontSize: 18.0, color: Colors.white)),
                           ),
