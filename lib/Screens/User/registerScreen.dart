@@ -1,4 +1,3 @@
-import 'package:epilepto_guard/Screens/User/loginScreen.dart';
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -10,6 +9,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   bool _passwordVisible = false;
+  bool _confirmpasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +104,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 20),
                       // Password text field
                       TextField(
-                        obscureText: !_passwordVisible,
+                        obscureText: !_confirmpasswordVisible,
                         decoration: InputDecoration(
                           hintText: 'Confirm Password',
                           border: OutlineInputBorder(
@@ -113,12 +113,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           filled: true,
                           fillColor: Colors.white.withOpacity(0.7),
                           suffixIcon: IconButton(
-                            icon: Icon(_passwordVisible
+                            icon: Icon(_confirmpasswordVisible
                                 ? Icons.visibility
                                 : Icons.visibility_off),
                             onPressed: () {
                               setState(() {
-                                _passwordVisible = !_passwordVisible;
+                                _confirmpasswordVisible = !_confirmpasswordVisible;
                               });
                             },
                           ),
