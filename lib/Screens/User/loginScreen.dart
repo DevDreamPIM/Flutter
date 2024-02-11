@@ -1,3 +1,4 @@
+import 'package:epilepto_guard/Screens/User/registerScreen.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -147,6 +148,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             TextButton(
                               onPressed: () {
                                 // Add sign up functionality
+                                Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => RegisterScreen()));
                               },
                               child: Text('Sign up', style: TextStyle(fontSize: 13.0,color:  const Color(0xFF8A4FE9),)),
                             ),
