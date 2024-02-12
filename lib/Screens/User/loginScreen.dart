@@ -1,3 +1,5 @@
+import 'package:epilepto_guard/Screens/User/registerScreen.dart';
+import 'package:epilepto_guard/Screens/User/verifEmailScreen.dart';
 import 'package:flutter/material.dart';
 
 import '../Calendar/CalendarScreen.dart';
@@ -109,6 +111,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextButton(
                         onPressed: () {
                           // Add forgot password functionality
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => VerifEmailScreen()));
                         },
                         child: Text('Forgot password?',
                             style: TextStyle(
@@ -184,6 +188,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           TextButton(
                             onPressed: () {
                               // Add sign up functionality
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => RegisterScreen()));
                             },
                             child: Text('Sign up',
                                 style: TextStyle(
