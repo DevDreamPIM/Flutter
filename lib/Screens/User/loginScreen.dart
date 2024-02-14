@@ -1,5 +1,6 @@
 import 'package:epilepto_guard/Screens/User/registerScreen.dart';
 import 'package:epilepto_guard/Screens/User/verifEmailScreen.dart';
+import 'package:epilepto_guard/Screens/UserProfil/profileScreen.dart';
 import 'package:flutter/material.dart';
 
 import '../Calendar/CalendarScreen.dart';
@@ -105,6 +106,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                     fontSize: 18.0, color: Colors.white)),
                           ),
                         ),
+                      ),
+                      SizedBox(height: 10),
+                      // Forgot password text link
+                      TextButton(
+                        onPressed: () {
+                          // Add forgot password functionality
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ProfileScreen()));
+                        },
+                        child: Text('Profile Page',
+                            style: TextStyle(
+                              color: const Color(0xFF8A4FE9),
+                            )),
                       ),
                       SizedBox(height: 10),
                       // Forgot password text link
