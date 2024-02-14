@@ -42,6 +42,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Calendar',
+          style: TextStyle(
+          color: Colors.white,
+        ),
+      ),
+      backgroundColor: const Color(0xFFC987E1),
+      ),
       body: Stack(
         children: [
           Container(

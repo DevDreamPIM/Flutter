@@ -24,8 +24,8 @@ class SplashScreenState extends State<SplashScreen>{
     Future.delayed(Duration(seconds: 2),(){
       Navigator.of(context).pushReplacement(MaterialPageRoute(
        // builder: (context) => PostCriseFormulaire(),
-     // builder: (context) => LoginScreen(),
-      builder: (context)=> CrisisHistoryScreen(),
+     builder: (context) => LoginScreen(),
+     // builder: (context)=> CrisisHistoryScreen(),
       ));
     });
   }
