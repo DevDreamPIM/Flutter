@@ -1,3 +1,4 @@
+import 'package:epilepto_guard/Screens/Calendar/CalendarScreen.dart';
 import 'package:epilepto_guard/Screens/UserProfil/updateProfileScreen.dart';
 import 'package:epilepto_guard/colors.dart';
 import 'package:flutter/material.dart';
@@ -109,7 +110,10 @@ class ProfileScreen extends StatelessWidget {
                         ProfileMenuWidget(
                             title: "Calendar",
                             icon: LineAwesomeIcons.calendar,
-                            onPress: () {}),
+                            onPress: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => CalendarScreen()));
+                            }),
                         const Divider(color: Colors.grey),
                         const SizedBox(height: 10),
                         ProfileMenuWidget(
@@ -125,7 +129,9 @@ class ProfileScreen extends StatelessWidget {
                           icon: LineAwesomeIcons.alternate_sign_out,
                           textColor: Colors.red,
                           endIcon: false,
-                          onPress: () {},
+                          onPress: () {
+                            Navigator.pop(context);
+                          },
                         ),
                       ],
                     ),

@@ -107,19 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 10),
-                      // Forgot password text link
-                      TextButton(
-                        onPressed: () {
-                          // Add forgot password functionality
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ProfileScreen()));
-                        },
-                        child: Text('Profile Page',
-                            style: TextStyle(
-                              color: const Color(0xFF8A4FE9),
-                            )),
-                      ),
+
                       SizedBox(height: 10),
                       // Forgot password text link
                       TextButton(
