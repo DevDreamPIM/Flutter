@@ -2,7 +2,7 @@ import 'package:epilepto_guard/Screens/User/registerScreen.dart';
 import 'package:epilepto_guard/Screens/User/verifEmailScreen.dart';
 import 'package:flutter/material.dart';
 
-import '../Calendar/CalendarScreen.dart';
+import '../HomeScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CalendarScreen()),
+                                  builder: (context) => HomeScreen()),
                             );
                           },
                           style: ElevatedButton.styleFrom(
@@ -106,6 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
+
                       SizedBox(height: 10),
                       // Forgot password text link
                       TextButton(
