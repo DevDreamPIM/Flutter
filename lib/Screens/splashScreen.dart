@@ -1,8 +1,12 @@
+import 'package:epilepto_guard/Screens/Crise/historiqueCrise.dart';
+import 'package:epilepto_guard/Screens/Crise/postCriseFormulaire.dart';
+import 'package:epilepto_guard/Screens/User/loginScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'User/loginScreen.dart';
+
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,7 +23,9 @@ class SplashScreenState extends State<SplashScreen>{
 
     Future.delayed(Duration(seconds: 2),(){
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => LoginScreen(),
+       // builder: (context) => PostCriseFormulaire(),
+     // builder: (context) => LoginScreen(),
+      builder: (context)=> CrisisHistoryScreen(),
       ));
     });
   }
