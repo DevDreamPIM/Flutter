@@ -1,4 +1,5 @@
 import 'package:epilepto_guard/Screens/Calendar/CalendarScreen.dart';
+import 'package:epilepto_guard/Screens/Crise/historiqueCrise.dart';
 import 'package:epilepto_guard/Screens/MedicalSheet/medicalSheetScreen.dart';
 import 'package:epilepto_guard/Screens/UserProfil/updateProfileScreen.dart';
 import 'package:epilepto_guard/colors.dart';
@@ -127,7 +128,9 @@ class ProfileScreen extends StatelessWidget {
                         ProfileMenuWidget(
                             title: "Crisi History",
                             icon: LineAwesomeIcons.history,
-                            onPress: () {}),
+                            onPress: () { Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => CrisisHistoryScreen()));
+                            }),
                         ProfileMenuWidget(
                           title: "Logout",
                           icon: LineAwesomeIcons.alternate_sign_out,
