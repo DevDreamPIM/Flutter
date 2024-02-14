@@ -1,8 +1,10 @@
 import 'package:epilepto_guard/Screens/PreSeizure/detectedSigns.dart';
 import 'package:epilepto_guard/Screens/PreSeizure/healthData.dart';
 import 'package:epilepto_guard/Screens/PreSeizure/seizureStatistics.dart';
+import 'package:epilepto_guard/Screens/UserProfil/profileScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 import 'Calendar/CalendarScreen.dart';
 
@@ -82,6 +84,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => SeizureStatistics()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(LineAwesomeIcons.user),
+              title: const Text('Profile'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ProfileScreen()),
                 );
               },
             ),

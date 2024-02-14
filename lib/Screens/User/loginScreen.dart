@@ -106,6 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
+
                       SizedBox(height: 10),
                       // Forgot password text link
                       TextButton(
