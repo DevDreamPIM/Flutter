@@ -1,6 +1,5 @@
 import 'package:epilepto_guard/Screens/User/registerScreen.dart';
 import 'package:epilepto_guard/Screens/User/verifEmailScreen.dart';
-import 'package:epilepto_guard/Screens/UserProfil/profileScreen.dart';
 import 'package:flutter/material.dart';
 
 import '../HomeScreen.dart';

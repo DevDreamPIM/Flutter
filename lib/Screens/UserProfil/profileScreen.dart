@@ -1,4 +1,5 @@
 import 'package:epilepto_guard/Screens/Calendar/CalendarScreen.dart';
+import 'package:epilepto_guard/Screens/MedicalSheet/medicalSheetScreen.dart';
 import 'package:epilepto_guard/Screens/UserProfil/updateProfileScreen.dart';
 import 'package:epilepto_guard/colors.dart';
 import 'package:flutter/material.dart';
@@ -119,7 +120,10 @@ class ProfileScreen extends StatelessWidget {
                         ProfileMenuWidget(
                             title: "Medical File",
                             icon: LineAwesomeIcons.medical_notes,
-                            onPress: () {}),
+                            onPress: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => MedicalSheetScreen()));
+                            }),
                         ProfileMenuWidget(
                             title: "Crisi History",
                             icon: LineAwesomeIcons.history,
