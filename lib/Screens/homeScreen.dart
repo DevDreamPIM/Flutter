@@ -1,3 +1,4 @@
+import 'package:epilepto_guard/Screens/Bluetooth/MainPageBluetooth.dart';
 import 'package:epilepto_guard/Screens/Crise/formulaireQuotidien.dart';
 import 'package:flutter/material.dart';
 import 'package:epilepto_guard/Screens/PreSeizure/detectedSigns.dart';
@@ -120,9 +121,14 @@ class HomeScreen extends StatelessWidget {
                   child: _buildClickableCard(
                     context,
                     Colors.transparent,
-                    'Widget 2',
+                    'Pair to device',
                     () {
-                      // Action à effectuer lorsque le widget est cliqué
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MainPageBluetooth(),
+                        ),
+                      );
                     },
                   ),
                 ),
