@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 import './BluetoothDeviceListEntry.dart';
 
 class DiscoveryPage extends StatefulWidget {
@@ -12,10 +12,10 @@ class DiscoveryPage extends StatefulWidget {
   const DiscoveryPage({this.start = true});
 
   @override
-  _DiscoveryPage createState() => new _DiscoveryPage();
+  _DiscoveryPageState createState() => _DiscoveryPageState();
 }
 
-class _DiscoveryPage extends State<DiscoveryPage> {
+class _DiscoveryPageState extends State<DiscoveryPage> {
   late StreamSubscription<BluetoothDiscoveryResult> _streamSubscription;
   List<BluetoothDiscoveryResult> results = [];
   late bool isDiscovering;
@@ -23,10 +23,38 @@ class _DiscoveryPage extends State<DiscoveryPage> {
   @override
   void initState() {
     super.initState();
-
     isDiscovering = widget.start;
-    if (isDiscovering) {
-      _startDiscovery();
+    _checkPermissionsAndStartDiscovery();
+  }
+
+  Future<void> _checkPermissionsAndStartDiscovery() async {
+    // Check location permissions
+    PermissionStatus status = await Permission.location.request();
+    if (status.isGranted) {
+      if (isDiscovering) {
+        _startDiscovery();
+      }
+    } else {
+      // Handle denied permissions
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Permission Required'),
+            content: Text(
+              'Please grant location permission to discover Bluetooth devices.',
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -35,7 +63,6 @@ class _DiscoveryPage extends State<DiscoveryPage> {
       results.clear();
       isDiscovering = true;
     });
-
     _startDiscovery();
   }
 
@@ -54,13 +81,10 @@ class _DiscoveryPage extends State<DiscoveryPage> {
     });
   }
 
-  // @TODO . One day there should be `_pairDevice` on long tap on something... ;)
-
   @override
   void dispose() {
     // Avoid memory leak (`setState` after dispose) and cancel discovery
     _streamSubscription?.cancel();
-
     super.dispose();
   }
 
