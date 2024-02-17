@@ -33,7 +33,7 @@ dependencies:
   flutter_rating_bar: ^4.0.0
   pie_chart: ^5.1.0
   fl_chart: ^0.66.2
-
+  weather_icons: ^3.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -75,6 +75,10 @@ flutter:
     - assets/images/logo/
     - assets/images/icons/
     - assets/images/user/
+  fonts:
+    - family: NotoSans
+      fonts:
+        - asset: assets/images/fonts/NotoSans-Regular.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

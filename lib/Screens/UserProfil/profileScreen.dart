@@ -129,7 +129,8 @@ class ProfileScreen extends StatelessWidget {
                         ProfileMenuWidget(
                             title: "Crisi History",
                             icon: LineAwesomeIcons.history,
-                            onPress: () { Navigator.of(context).push(MaterialPageRoute(
+                            onPress: () {
+                              Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => CrisisHistoryScreen()));
                             }),
                              ProfileMenuWidget(
