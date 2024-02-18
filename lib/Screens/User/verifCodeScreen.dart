@@ -79,19 +79,18 @@ class _VerifCodeScreenState extends State<VerifCodeScreen> {
                           width: double.infinity, // Extends to both sides
                           child: ElevatedButton(
                             onPressed: () async {
-                              // Add login functionality
                               if (_formKey.currentState!.saveAndValidate()) {
-                                print(_formKey.currentState!.value);
+                               
                                 // Add verif functionality
                                 const storage = FlutterSecureStorage();
                                 var email =
                                     await storage.read(key: "resetEmail");
                                 var success = await UserWebService().verifyCode(
                                     email!,
-                                   int.parse(_formKey.currentState!.value['code']),
+                                    int.parse(
+                                        _formKey.currentState!.value['code']),
                                     context);
                                 if (success) {
-
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) =>
                                           ResetPasswordScreen()));

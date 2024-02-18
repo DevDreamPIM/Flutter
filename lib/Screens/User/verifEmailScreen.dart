@@ -82,7 +82,7 @@ class _VerifEmailScreenState extends State<VerifEmailScreen> {
                             onPressed: () async {
                               // Add verif functionality
                               if (_formKey.currentState!.saveAndValidate()) {
-                                print(_formKey.currentState!.value);
+                                
                               
                                 bool success = await UserWebService().sendCode(
                                     _formKey.currentState!.value['email'],
