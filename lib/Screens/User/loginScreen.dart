@@ -112,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: () {
                               // Add login functionality
                               if (_formKey.currentState!.saveAndValidate()) {
-                                print(_formKey.currentState!.value);
+                               
                                 UserWebService()
                                     .login(
                                         context,
@@ -124,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     // Save user data to secure storage
                                     const storage = FlutterSecureStorage();
                                     var data = await storage.read(key: "token");
-                                    print(data.toString());
+                                    print(data);
 
                                     Navigator.of(context).push(
                                         MaterialPageRoute(

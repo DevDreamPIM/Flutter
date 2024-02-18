@@ -1,4 +1,9 @@
+import 'package:epilepto_guard/Services/userWebService.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({Key? key}) : super(key: key);
@@ -10,6 +15,7 @@ class ResetPasswordScreen extends StatefulWidget {
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   bool _passwordVisible = false;
   bool _confirmpasswordVisible = false;
+  final _formKey = GlobalKey<FormBuilderState>();
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +39,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 child: Padding(
                   padding:
                       EdgeInsets.all(MediaQuery.of(context).size.width * 0.1),
-                  child: Column(
+                   child: FormBuilder(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
@@ -48,7 +57,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       ),
                       SizedBox(height: 15),
                        // Password text field
-                      TextField(
+                      FormBuilderTextField(
+                        name: 'password',
                         obscureText: !_passwordVisible,
                         decoration: InputDecoration(
                           hintText: 'Password',
@@ -68,10 +78,19 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             },
                           ),
                         ),
+                        validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a new password';
+                            } else if (value.length < 5) {
+                              return 'Password must be at least 5 characters long';
+                            }
+                            return null;
+                          },
                       ),
                       const SizedBox(height: 20),
                       // Password text field
-                      TextField(
+                      FormBuilderTextField(
+                        name: 'confirmPassword',
                         obscureText: !_confirmpasswordVisible,
                         decoration: InputDecoration(
                           hintText: 'Confirm Password',
@@ -91,14 +110,52 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             },
                           ),
                         ),
+                        validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please confirm your password';
+                            } else if (value != _formKey.currentState!.value['password']) {
+                              return 'Passwords do not match';
+                            }
+                            return null;
+                          },
                       ),
                       SizedBox(height: 20),
                       Container(
                         width: double.infinity, // Extends to both sides
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             // Add login functionality
+                            if (_formKey.currentState!.saveAndValidate()) {
+                              
+                                const storage = FlutterSecureStorage();
+                                var email =
+                                    await storage.read(key: "resetEmail");
+
+                              var success = await UserWebService().resetPassword(
+                                  email!,
+                                  _formKey.currentState!.value['password'],
+                                  _formKey.currentState!.value['confirmPassword'],
+                                  context);
+                              if (success) {
                               Navigator.of(context).popUntil((route) => route.isFirst);
+                              }
+                            }else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Row(
+                                      children: [
+                                        Icon(Icons.error, color: Colors.white),
+                                        SizedBox(width: 8),
+                                        Text(
+                                            'Please correct the errors in the form.',
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
 
                           },
                           style: ElevatedButton.styleFrom(
@@ -117,6 +174,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   ),
                 ),
               ),
+            ),
             ),
             // Back arrow button
             Positioned(
