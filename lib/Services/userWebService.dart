@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:epilepto_guard/Utils/Constantes.dart';
+import 'package:epilepto_guard/Utils/rescrueStorage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+
 
 class UserWebService {
   Future<bool> registerUser(
@@ -46,23 +48,20 @@ class UserWebService {
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return true;
-
-
-    }else if(response.statusCode == 409){
+    } else if (response.statusCode == 409) {
       SnackBar snackBar = const SnackBar(
         content: Row(
           children: [
             Icon(Icons.error, color: Colors.white),
             SizedBox(width: 8),
-            Text('Email already in use',
-                style: TextStyle(color: Colors.white)),
+            Text('Email already in use', style: TextStyle(color: Colors.white)),
           ],
         ),
         backgroundColor: Colors.red,
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return false;
-    }else {
+    } else {
       SnackBar snackBar = SnackBar(
         content: Row(
           children: [
@@ -78,6 +77,58 @@ class UserWebService {
       print('Failed to register user. Status code: ${response.statusCode}');
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
+      return false;
+    }
+  }
+
+  Future<bool> login(context, email, password) async {
+    Map<String, Object> userObject = {
+      "email": email,
+      "password": password,
+    };
+
+    final url =
+        Uri.parse('${Constantes.URL_API}${Constantes.URL_API_USER}/login');
+    final response = await http.post(
+      url,
+      body: jsonEncode(userObject),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      RescureStorage.saveData(responseData);
+
+      var name = responseData['firstName']+" "+responseData['lastName'];
+      SnackBar snackBar =  SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.check, color: Colors.white),
+            SizedBox(width: 8),
+            Text('Welcome $name', style: TextStyle(color: Colors.white)),
+          ],
+        ),
+        backgroundColor: Colors.green,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return true;
+    } else {
+      SnackBar snackBar = SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.error, color: Colors.white),
+            const SizedBox(width: 8),
+            Text(response.body,
+                style: const TextStyle(color: Colors.white)),
+          ],
+        ),
+        backgroundColor: Colors.red,
+      );
+
+      print('Failed to login user. Status code: ${response.statusCode}');
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return false;
     }
   }
