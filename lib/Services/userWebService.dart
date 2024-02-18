@@ -105,9 +105,9 @@ class UserWebService {
       SnackBar snackBar =  SnackBar(
         content: Row(
           children: [
-            Icon(Icons.check, color: Colors.white),
-            SizedBox(width: 8),
-            Text('Welcome $name', style: TextStyle(color: Colors.white)),
+            const Icon(Icons.check, color: Colors.white),
+            const SizedBox(width: 8),
+            Text('Welcome $name', style: const TextStyle(color: Colors.white)),
           ],
         ),
         backgroundColor: Colors.green,
@@ -132,4 +132,73 @@ class UserWebService {
       return false;
     }
   }
+
+  Future<bool> sendCode(String email,BuildContext context) async {
+    final url = Uri.parse('${Constantes.URL_API}${Constantes.URL_API_USER}/sendActivationCode');
+    final response = await http.post(
+      url,
+      body: jsonEncode({
+        'email': email,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+  SnackBar snackBar =  const SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.check, color: Colors.white),
+            SizedBox(width: 8),
+            Text('Check your email', style: TextStyle(color: Colors.white)),
+          ],
+        ),
+        backgroundColor: Colors.green,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      print('Code sent successfully');
+      print(response.body);
+      return true;
+
+    } else if(response.statusCode == 404){ 
+      SnackBar snackBar = const SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.error, color: Colors.white),
+            SizedBox(width: 8),
+            Text('User not found',
+                style: TextStyle(color: Colors.white)),
+          ],
+        ),
+        backgroundColor: Colors.red,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      print('Failed to send code. Status code: ${response.statusCode}');
+      return false;
+    }
+    else {
+      SnackBar snackBar = const SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.error, color: Colors.white),
+            SizedBox(width: 8),
+            Text('Failed to send code.please verify your email address and try again.',
+                style: TextStyle(color: Colors.white)),
+          ],
+        ),
+        backgroundColor: Colors.red,
+      );
+
+      print('Failed to send code. Status code: ${response.statusCode}');
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return false;
+    }
+  }
+
+
 }
+
+
