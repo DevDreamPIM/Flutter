@@ -162,24 +162,7 @@ class UserWebService {
       print(response.body);
       return true;
 
-    } else if(response.statusCode == 404){ 
-      SnackBar snackBar = const SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.error, color: Colors.white),
-            SizedBox(width: 8),
-            Text('User not found',
-                style: TextStyle(color: Colors.white)),
-          ],
-        ),
-        backgroundColor: Colors.red,
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-      print('Failed to send code. Status code: ${response.statusCode}');
-      return false;
-    }
-    else {
+    }else {
       SnackBar snackBar = const SnackBar(
         content: Row(
           children: [
@@ -198,6 +181,55 @@ class UserWebService {
     }
   }
 
+  Future<bool> verifyCode(String email, int code, BuildContext context) async {
+    final url = Uri.parse('${Constantes.URL_API}${Constantes.URL_API_USER}/verifyCode');
+    print(email);
+    final response = await http.post(
+      url,
+      body: jsonEncode({
+        'email': email,
+        'resetCode': code,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      SnackBar snackBar = const SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.check, color: Colors.white),
+            SizedBox(width: 8),
+            Text('Code verified successfully!', style: TextStyle(color: Colors.white)),
+          ],
+        ),
+        backgroundColor: Colors.green,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      print('Code verified successfully!');
+      print(response.body);
+      return true;
+
+    }else {
+      SnackBar snackBar =  SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.error, color: Colors.white),
+            SizedBox(width: 8),
+            Text('Incorrect code. Please try again.',
+                style: TextStyle(color: Colors.white)),
+          ],
+        ),
+        backgroundColor: Colors.red,
+      );
+
+      print('Failed to verify code. Status code: ${response.statusCode}');
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return false;
+    }
+  }
 
 }
 
