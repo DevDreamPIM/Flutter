@@ -228,7 +228,7 @@ Row(
     }
   },
   style: ElevatedButton.styleFrom(
-    primary: const Color(0xFF8A4FE9),
+    backgroundColor: const Color(0xFF8A4FE9),
   ),
   child: Padding(
     padding: EdgeInsets.symmetric(vertical: 16.0),

@@ -59,7 +59,7 @@ class _MedicalSheetScreenState extends State<MedicalSheetScreen> {
         borderRadius: BorderRadius.circular(30.0),
       ),
       backgroundColor: const Color(0xFF8A4FE9), // Background color
-      primary: Colors.white, // Foreground color
+      disabledBackgroundColor: Colors.white, // Foreground color
     ),
   ),
 ),

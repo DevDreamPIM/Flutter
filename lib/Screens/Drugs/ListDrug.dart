@@ -73,7 +73,7 @@ Widget build(BuildContext context) {
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                primary: const Color(0xFF8A4FE9),
+                backgroundColor: const Color(0xFF8A4FE9),
               ),
             ),
           ],

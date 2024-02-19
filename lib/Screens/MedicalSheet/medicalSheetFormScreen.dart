@@ -176,7 +176,7 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                             Navigator.of(context).pop(context);
                           },
                           style: ElevatedButton.styleFrom(
-                            primary: const Color(
+                            backgroundColor: const Color(
                                 0xFF8A4FE9), // Set background color here
                           ),
                           child: const Padding(

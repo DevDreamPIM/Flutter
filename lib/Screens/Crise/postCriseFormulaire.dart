@@ -199,7 +199,7 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                 // Add logic to save responses here
               },
               style: ElevatedButton.styleFrom(
-                primary: const Color(0xFF8A4FE9), // Set background color here
+                backgroundColor: const Color(0xFF8A4FE9), // Set background color here
                 padding: EdgeInsets.symmetric(
                     vertical: 16.0), // Adjust button height here
               ),

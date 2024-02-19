@@ -127,7 +127,7 @@ class DrugDetailScreen extends StatelessWidget {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.blue,
+                          backgroundColor: Colors.blue,
                         ),
                         child: Text('Modify'),
                       ),
@@ -139,7 +139,7 @@ class DrugDetailScreen extends StatelessWidget {
                           deleteDrug(context); // Appeler la méthode de suppression
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.red,
+                          backgroundColor: Colors.red,
                         ),
                         child: Text('Delete'),
                       ),
