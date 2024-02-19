@@ -335,7 +335,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              primary: const Color(
+                              backgroundColor: const Color(
                                   0xFF8A4FE9), // Set background color here
                             ),
                             child: const Padding(

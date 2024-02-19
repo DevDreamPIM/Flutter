@@ -937,7 +937,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                     'Took medications as prescribed: $_takenMedicationsAsPrescribed');
               },
               style: ElevatedButton.styleFrom(
-                primary:
+                backgroundColor:
                     const Color(0xFF8A4FE9), // Définir la couleur de fond ici
                 padding: EdgeInsets.symmetric(
                     vertical: 16.0), // Ajuster la hauteur du bouton ici

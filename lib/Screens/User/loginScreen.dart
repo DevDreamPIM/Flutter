@@ -135,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              primary: const Color(
+                              backgroundColor: const Color(
                                   0xFF8A4FE9), // Set background color here
                             ),
                             child: Padding(

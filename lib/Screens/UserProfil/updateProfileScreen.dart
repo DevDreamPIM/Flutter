@@ -210,7 +210,7 @@ class UpdateProfileScreen extends StatelessWidget {
                                 child: ElevatedButton(
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
-                                    primary: Color(
+                                    backgroundColor: Color(
                                         0xFF8A4FE9), // Set background color here
                                   ),
                                   child: Padding(

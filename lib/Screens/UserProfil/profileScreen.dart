@@ -89,7 +89,7 @@ class ProfileScreen extends StatelessWidget {
                                   builder: (context) => UpdateProfileScreen()));
                             },
                             style: ElevatedButton.styleFrom(
-                              primary: Color(0xFF8A4FE9), // Background color
+                              backgroundColor: Color(0xFF8A4FE9), // Background color
                             ),
                             child: const Text(
                               'Edit Profile', // Make sure to replace 'Edit Profile' with a variable if it's dynamic
