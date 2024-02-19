@@ -34,12 +34,34 @@ class CrisisDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildDetailItem('Date of Crisis:', crisis.date),
-              _buildDetailItem('Start Time:', crisis.startTime),
-              _buildDetailItem('End Time:', crisis.endTime),
-              _buildDetailItem('Duration:', crisis.duration),
-              _buildDetailItem('Type of Crisis:', crisis.type),
+              _buildDetailItem(
+                  'Date of Crisis:',
+                  crisis.date
+                      .toIso8601String()), // Convertit la date en chaîne ISO 8601
+              _buildDetailItem(
+                'Start Time:',
+                '${crisis.startTime.hour}:${crisis.startTime.minute}',
+              ),
+              _buildDetailItem(
+                'End Time:',
+                '${crisis.endTime.hour}:${crisis.endTime.minute}',
+              ),
+
+              //.toIso8601String()), // Convertit la date en chaîne ISO 8601
+              _buildDetailItem(
+                  'Duration:',
+                  crisis.duration
+                      .toString()), // Convertit la durée en chaîne de caractères
+              _buildDetailItem(
+                  'Type of Crisis:', crisis.type.toString().split('.').last),
+
               _buildDetailItem('Location:', crisis.location),
+              _buildDetailItem('Emergency Services Called:',
+                  crisis.emergencyServicesCalled ? 'Yes' : 'No'),
+              _buildDetailItem('Medical Assistance:',
+                  crisis.medicalAssistance ? 'Yes' : 'No'),
+              _buildDetailItem('Severity:', crisis.severity),
+
               SizedBox(height: 20),
               Center(
                 child: TextButton(

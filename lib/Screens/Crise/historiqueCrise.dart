@@ -5,28 +5,45 @@ import 'package:epilepto_guard/Models/crise.dart';
 class CrisisHistoryScreen extends StatelessWidget {
   final List<Crisis> crises = [
     Crisis(
-        date: '2024-02-08',
-        startTime: '09:00',
-        endTime: '09:30',
-        duration: '00:30',
-        type: 'Partial Seizure',
-        location: 'Home'),
+      date: DateTime(2024, 2, 8),
+      startTime: TimeOfDay(hour: 9, minute: 0),
+      endTime: TimeOfDay(hour: 9, minute: 30),
+      duration: 30, // en minutes
+      type: CrisisType.partial,
+      location: 'Home',
+      //symptoms: ['Symptom 1', 'Symptom 2'],
+      //preSymptoms: 'Pre-symptom',
+      emergencyServicesCalled: false,
+      medicalAssistance: true,
+      severity: 'mild',
+    ),
     Crisis(
-        date: '2024-02-05',
-        startTime: '12:00',
-        endTime: '12:15',
-        duration: '00:15',
-        type: 'Generalized Seizure',
-        location: 'School'),
+      date: DateTime(2024, 2, 5),
+      startTime: TimeOfDay(hour: 12, minute: 0),
+      endTime: TimeOfDay(hour: 12, minute: 15),
+      duration: 15, // en minutes
+      type: CrisisType.generalized,
+      location: 'School',
+     // symptoms: ['Symptom 3', 'Symptom 4'],
+     // preSymptoms: 'Pre-symptom',
+      emergencyServicesCalled: true,
+      medicalAssistance: true,
+      severity: 'moderate',
+    ),
     Crisis(
-        date: '2024-02-02',
-        startTime: '18:00',
-        endTime: '18:05',
-        duration: '00:05',
-        type: 'Absence Seizure',
-        location: 'Park'),
+      date: DateTime(2024, 2, 2),
+      startTime: TimeOfDay(hour: 18, minute: 0),
+      endTime: TimeOfDay(hour: 18, minute: 5),
+      duration: 5, // en minutes
+      type: CrisisType.absence,
+      location: 'Park',
+     // symptoms: ['Symptom 5', 'Symptom 6'],
+     // preSymptoms: 'Pre-symptom',
+      emergencyServicesCalled: false,
+      medicalAssistance: false,
+      severity: 'severe',
+    ),
   ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,11 +73,12 @@ class CrisisHistoryScreen extends StatelessWidget {
               margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: ListTile(
                 title: Text(
-                  crises[index].date,
+                  crises[index].date.toString(),
                   style: TextStyle(fontSize: 18.0),
                 ),
                 subtitle: Text(
-                  crises[index].type,
+                  crises[index].type.toString().split('.')[
+                      1], // Récupérer le nom du type sans le préfixe "CrisisType."
                   style: TextStyle(fontSize: 16.0),
                 ),
                 onTap: () {

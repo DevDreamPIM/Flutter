@@ -34,162 +34,130 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
         ),
         child: ListView(
           children: [
-            Text(
+            _buildQuestionWithResponse(
               'When did you first feel the initial signs of the seizure?',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-            TextFormField(
-              decoration: InputDecoration(
-                hintText: 'Réponse...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: 'Réponse...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
               ),
             ),
-            SizedBox(height: 20.0),
-            Text(
+            _buildQuestionWithResponse(
               'How long did the seizure last?',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-            TextFormField(
-              decoration: InputDecoration(
-                hintText: 'Réponse...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: 'Réponse...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
               ),
             ),
-            SizedBox(height: 20.0),
-            Text(
+            _buildQuestionWithResponse(
               'Did you experience an aura before the seizure? If yes, can you describe it?',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-            TextFormField(
-              decoration: InputDecoration(
-                hintText: 'Réponse...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: 'Réponse...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
               ),
             ),
-            SizedBox(height: 20.0),
-            Text(
+            _buildQuestionWithResponse(
               'Are identifiable triggering factors present (stress, lack of sleep, etc.)?',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-            TextFormField(
-              decoration: InputDecoration(
-                hintText: 'Réponse...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: 'Réponse...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
               ),
             ),
-            SizedBox(height: 20.0),
-            Text(
+            _buildQuestionWithResponse(
               'Were you injured during the seizure?',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-            TextFormField(
-              decoration: InputDecoration(
-                hintText: 'Réponse...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: 'Réponse...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
               ),
             ),
-            SizedBox(height: 20.0),
-            Text(
-              'Did you experience confusion,significant fatigue or any changes in your behavior or sensations after the seizure?',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-            RatingBar.builder(
-              initialRating: 0,
-              minRating: 0,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemSize: 40.0,
-              itemBuilder: (context, _) => Icon(
-                Icons.star,
-                color: const Color(0xFF8A4FE9),
+            _buildQuestionWithResponse(
+              'Did you experience confusion, significant fatigue, or any changes in your behavior or sensations after the seizure?',
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: 'Réponse...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
               ),
-              onRatingUpdate: (rating) {
-                _rating = rating;
-                // Add logic to save rating here
-              },
             ),
-            SizedBox(height: 20.0),
-
-            Text(
+            _buildQuestionWithResponse(
               'Did you require medical assistance or emergency intervention?',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-            RatingBar.builder(
-              initialRating: 0,
-              minRating: 0,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemSize: 40.0,
-              itemBuilder: (context, _) => Icon(
-                Icons.star,
-                color: const Color(0xFF8A4FE9),
+              RatingBar.builder(
+                initialRating: 0,
+                minRating: 0,
+                direction: Axis.horizontal,
+                allowHalfRating: true,
+                itemCount: 5,
+                itemSize: 40.0,
+                itemBuilder: (context, _) => Icon(
+                  Icons.star,
+                  color: const Color(0xFF8A4FE9),
+                ),
+                onRatingUpdate: (rating) {
+                  _rating = rating;
+                  // Add logic to save rating here
+                },
               ),
-              onRatingUpdate: (rating) {
-                _rating = rating;
-                // Add logic to save rating here
-              },
             ),
-            SizedBox(height: 20.0),
-
-            Text(
-              'Did you notice any changes in your emotional state before or after the seizure?',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-            TextFormField(
-              decoration: InputDecoration(
-                hintText: 'Réponse...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+            _buildQuestionWithResponse(
+              'Did you notice any changes in your emotional state after the seizure?',
+              TextFormField(
+                decoration: InputDecoration(
+                  hintText: 'Réponse...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
               ),
             ),
-            SizedBox(height: 20.0),
-
-            Text(
+            _buildQuestionWithResponse(
               'How would you describe the post-seizure recovery in terms of fatigue and the time required to regain normal capabilities?',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-            RatingBar.builder(
-              initialRating: 0,
-              minRating: 0,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemSize: 40.0,
-              itemBuilder: (context, _) => Icon(
-                Icons.star,
-                color: const Color(0xFF8A4FE9),
+              RatingBar.builder(
+                initialRating: 0,
+                minRating: 0,
+                direction: Axis.horizontal,
+                allowHalfRating: true,
+                itemCount: 5,
+                itemSize: 40.0,
+                itemBuilder: (context, _) => Icon(
+                  Icons.star,
+                  color: const Color(0xFF8A4FE9),
+                ),
+                onRatingUpdate: (rating) {
+                  _rating = rating;
+                  // Add logic to save rating here
+                },
               ),
-              onRatingUpdate: (rating) {
-                _rating = rating;
-                // Add logic to save rating here
-              },
             ),
-            SizedBox(height: 20.0),
-
-            //*********************************************************** */
-            Text(
+            _buildQuestionWithResponse(
               'Do you have anything to add?',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-            TextFormField(
-              maxLines: null, // Allow user to input multiple lines
-              decoration: InputDecoration(
-                hintText: 'Your response...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+              TextFormField(
+                maxLines: null, // Allow user to input multiple lines
+                decoration: InputDecoration(
+                  hintText: 'Your response...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
               ),
             ),
@@ -199,7 +167,8 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                 // Add logic to save responses here
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF8A4FE9), // Set background color here
+                backgroundColor:
+                    const Color(0xFF8A4FE9), // Set background color here
                 padding: EdgeInsets.symmetric(
                     vertical: 16.0), // Adjust button height here
               ),
@@ -213,6 +182,37 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // Méthode pour construire un cadre question-réponse
+  Widget _buildQuestionWithResponse(String question, Widget responseWidget) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10.0),
+      padding: EdgeInsets.all(10.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            question,
+            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10.0),
+          responseWidget,
+        ],
       ),
     );
   }
