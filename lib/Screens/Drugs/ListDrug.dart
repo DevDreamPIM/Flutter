@@ -2,25 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:epilepto_guard/models/drug.dart'; 
 import 'package:epilepto_guard/widgets/DrugCard.dart'; 
 import 'package:epilepto_guard/Screens/Drugs/add.dart';
+import 'package:epilepto_guard/services/drugService.dart';
 
-class ListDrug extends StatelessWidget {
+class ListDrug extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    List<Drug> drugs = [
-      Drug(
-        title: 'Aspirin',
-        frequencyOfIntake: 'Twice a day',
-      ),
-      Drug(
-        title: 'Paracetamol',
-        frequencyOfIntake: 'Every 4 hours',
-      ),
-      Drug(
-        title: 'Amoxicillin',
-        frequencyOfIntake: 'Once a day',
-      ),
-    ];
+  _ListDrugState createState() => _ListDrugState();
+}
 
+class _ListDrugState extends State<ListDrug> {
+  final DrugService drugService = DrugService();
+  List<Drug> drugs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDrugs();
+  }
+
+  Future<void> fetchDrugs() async {
+    try {
+      List<Drug> fetchedDrugs = await drugService.getAllDrugs();
+      setState(() {
+        drugs = fetchedDrugs;
+      });
+    } catch (e) {
+      print('Erreur de chargement des drugs : $e');
+      // Gérer les erreurs de chargement des drugs
+    }
+  }
+
+  Future<void> _refresh() async {
+    // Mettez à jour la liste des drugs
+    await fetchDrugs();
+  }
+@override
+Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Liste de médicaments'),
@@ -38,7 +54,7 @@ class ListDrug extends StatelessWidget {
               child: ListView.builder(
                 itemCount: drugs.length,
                 itemBuilder: (context, index) {
-                  return DrugCard(drug: drugs[index]);
+                  return DrugCard(drug: drugs[index], drugService: drugService,);
                 },
               ),
             ),

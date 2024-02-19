@@ -1,5 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:epilepto_guard/Screens/Drugs/ListDrug.dart';
+import 'package:epilepto_guard/models/drug.dart';
+import 'package:epilepto_guard/services/drugService.dart';
 
 class UpdateMedicineScreen extends StatefulWidget {
   const UpdateMedicineScreen({Key? key}) : super(key: key);
@@ -9,137 +14,225 @@ class UpdateMedicineScreen extends StatefulWidget {
 }
 
 class _UpdateMedicineScreenState extends State<UpdateMedicineScreen> {
-  DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
+  DateTime? _selectedStartTakingDate;
+  DateTime? _selectedEndTakingDate;
+  XFile? _selectedImage;
+  Drug _newDrug = Drug(
+    name: '',
+    description: '',
+    startTakingDate: DateTime.now(),
+    endTakingDate: DateTime.now(),
+    dayOfWeek: '',
+    image: '',
+    numberOfTimeADay: '',
+    quantityPerTake: null,
+  );
 
-  Future<void> _selectDate() async {
+  Future<void> _pickImage() async {
+    XFile? pickedImage = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImage = pickedImage;
+        _newDrug.image = pickedImage.path;
+      });
+    }
+  }
+
+  Future<void> _selectStartTakingDate() async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
+      initialDate: _selectedStartTakingDate ?? DateTime.now(),
       firstDate: DateTime(2022),
       lastDate: DateTime(2030),
     );
 
     if (pickedDate != null) {
       setState(() {
-        _selectedDate = pickedDate;
+        _selectedStartTakingDate = pickedDate;
+        _newDrug.startTakingDate = pickedDate;
       });
     }
   }
 
-  Future<void> _selectTime() async {
-    final TimeOfDay? pickedTime = await showTimePicker(
+  Future<void> _selectEndTakingDate() async {
+    final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialTime: _selectedTime ?? TimeOfDay.now(),
+      initialDate: _selectedEndTakingDate ?? DateTime.now(),
+      firstDate: DateTime(2022),
+      lastDate: DateTime(2030),
     );
 
-    if (pickedTime != null) {
+    if (pickedDate != null) {
       setState(() {
-        _selectedTime = pickedTime;
+        _selectedEndTakingDate = pickedDate;
+        _newDrug.endTakingDate = pickedDate;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    String dateText = _selectedDate != null
-        ? DateFormat('dd/MM/yyyy').format(_selectedDate!)
-        : 'Date';
-    String timeText =
-        _selectedTime != null ? _selectedTime!.format(context) : 'Time';
+    String startDateText = _selectedStartTakingDate != null
+        ? DateFormat('dd/MM/yyyy').format(_selectedStartTakingDate!)
+        : 'Start Date';
+    String endDateText = _selectedEndTakingDate != null
+        ? DateFormat('dd/MM/yyyy').format(_selectedEndTakingDate!)
+        : 'End Date';
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Modify Drug'),
-        ),
-        body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("images/background/login.png"),
-              fit: BoxFit.cover,
-            ),
+      appBar: AppBar(
+        title: Text('Update Drug'),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("images/background/login.png"),
+            fit: BoxFit.cover,
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {
-                    // Add image upload functionality
-                  },
-                  icon: Icon(Icons.upload),
-                  label: Text('Upload Image'),
-                ),
-                SizedBox(height: 20),
-                AnimatedTextField(
-                  hintText: 'Title',
-                ),
-                SizedBox(height: 20),
-                AnimatedTextField(
-                  hintText: 'Description',
-                ),
-                SizedBox(height: 20),
-                AnimatedTextField(
-                  hintText: 'Dose',
-                ),
-                SizedBox(height: 20),
-                TextButton(
-                  onPressed: _selectTime,
-                  child: Text(
-                    timeText,
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-                SizedBox(height: 20),
-                TextButton(
-                  onPressed: _selectDate,
-                  child: Text(
-                    dateText,
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-                SizedBox(height: 20),
-                AnimatedDropdownFormField(
-                  hintText: 'Frequency of intake',
-                  items: ['Daily', 'Weekly', 'Monthly'],
-                  onChanged: (String? newValue) {
-                    // Handle frequency selection
-                  },
-                ),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Add login functionality
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: const Color(0xFF8A4FE9),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16.0),
-                          child: Text('Modify',
-                              style: TextStyle(
-                                  fontSize: 18.0, color: Colors.white)),
-                        ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ElevatedButton.icon(
+                onPressed: _pickImage,
+                icon: Icon(Icons.upload),
+                label: Text('Upload Image'),
+              ),
+              SizedBox(height: 20),
+              AnimatedTextField(
+                hintText: 'Name',
+                onChanged: (value) {
+                  setState(() {
+                    _newDrug.name = value;
+                  });
+                },
+              ),
+              SizedBox(height: 20),
+              AnimatedTextField(
+                hintText: 'Description',
+                onChanged: (value) {
+                  setState(() {
+                    _newDrug.description = value;
+                  });
+                },
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: _selectStartTakingDate,
+                      child: Text(
+                        startDateText,
+                        style: TextStyle(color: Colors.black),
                       ),
                     ),
                   ),
+                  SizedBox(width: 20),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: _selectEndTakingDate,
+                      child: Text(
+                        endDateText,
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              AnimatedTextField(
+                hintText: 'Day Of Week',
+                onChanged: (value) {
+                  setState(() {
+                    _newDrug.dayOfWeek = value;
+                  });
+                },
+              ),
+              SizedBox(height: 20),
+              AnimatedTextField(
+                hintText: 'Number Of Time A Day',
+                onChanged: (value) {
+                  setState(() {
+                    _newDrug.numberOfTimeADay = value;
+                  });
+                },
+              ),
+              SizedBox(height: 20),
+              AnimatedDropdownFormField(
+                hintText: 'Quantity Per Take',
+                items: [
+                  '1',
+                  '2',
+                  '3',
+                  '4',
+                  '5'
+                ], // Example items, change as needed
+
+                onChanged: (value) {
+                  setState(() {
+                    _newDrug.quantityPerTake = int.tryParse(value ?? '');
+                  });
+                },
+              ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    width: double.infinity,
+                    child: ElevatedButton(
+  onPressed: () async {
+    try {
+      await DrugService().updateDrug(_newDrug.name, _newDrug); // Pass _newDrug instead of _newDrug.name
+      Navigator.pop(context); // Close current screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ListDrug()),
+      );
+    } catch (e) {
+      print('Failed to update drug: $e');
+    }
+  },
+  style: ElevatedButton.styleFrom(
+    primary: const Color(0xFF8A4FE9),
+  ),
+  child: Padding(
+    padding: EdgeInsets.symmetric(vertical: 16.0),
+    child: Text(
+      'Update',
+      style: TextStyle(
+        fontSize: 18.0,
+        color: Colors.white,
+      ),
+    ),
+  ),
+),
+
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
 
 class AnimatedTextField extends StatefulWidget {
   final String hintText;
+  final ValueChanged<String>? onChanged;
 
-  const AnimatedTextField({Key? key, required this.hintText}) : super(key: key);
+  const AnimatedTextField({
+    Key? key,
+    required this.hintText,
+    this.onChanged,
+  }) : super(key: key);
 
   @override
   _AnimatedTextFieldState createState() => _AnimatedTextFieldState();
@@ -171,6 +264,9 @@ class _AnimatedTextFieldState extends State<AnimatedTextField> {
           });
         },
         onChanged: (value) {
+          if (widget.onChanged != null) {
+            widget.onChanged!(value);
+          }
           if (value.isEmpty) {
             setState(() {
               _isFocused = false;
@@ -190,13 +286,13 @@ class _AnimatedTextFieldState extends State<AnimatedTextField> {
 class AnimatedDropdownFormField extends StatefulWidget {
   final String hintText;
   final List<String> items;
-  final ValueChanged<String?> onChanged;
+  final ValueChanged<String?>? onChanged;
 
   const AnimatedDropdownFormField({
     Key? key,
     required this.hintText,
     required this.items,
-    required this.onChanged,
+    this.onChanged,
   }) : super(key: key);
 
   @override
@@ -235,7 +331,9 @@ class _AnimatedDropdownFormFieldState extends State<AnimatedDropdownFormField> {
           setState(() {
             _selectedItem = newValue;
           });
-          widget.onChanged(newValue);
+          if (widget.onChanged != null) {
+            widget.onChanged!(newValue);
+          }
         },
       ),
     );
