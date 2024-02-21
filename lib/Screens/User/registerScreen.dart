@@ -87,7 +87,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your first name';
+                              return 'Please enter your last name';
                             } else if (value.length < 2) {
                               return 'First name must be at least 2 characters long';
                             } else if (!RegExp(r'^[a-zA-Z]+$')
@@ -270,7 +270,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           onPressed: () {
                                             Navigator.of(context)
                                                 .pop(); // Close the dialog
-                                            // Proceed with registration
+                                            // Proceed with registration 
                                             UserWebService().registerUser(
                                               _formKey.currentState!
                                                   .fields['firstName']!.value
@@ -292,12 +292,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                   .split('.')
                                                   .last,
                                               context,
-                                            );
-
+                                            ).then((value) => {
+                                                  if (value)
+                                                    {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        const SnackBar(
+                                                          content: Text(
+                                                              'Account created successfully',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white)),
+                                                          backgroundColor:
+                                                              Colors.green,
+                                                        ),
+                                                      ),
+                                                      
                                             Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        const HomeScreen()));
+                                                        const HomeScreen())),
+                                                    }
+                                                  else
+                                                    {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        const SnackBar(
+                                                          content: Text(
+                                                              'Please correct the errors in the form.',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white)),
+                                                          backgroundColor:
+                                                              Colors.red,
+                                                        ),
+                                                      ),
+                                                    }
+                                                
+                                            });
+
                                           },
                                           child: const Text('Yes',
                                               style: TextStyle(
