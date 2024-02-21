@@ -1,4 +1,7 @@
+import 'package:epilepto_guard/Services/userWebService.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 class MedicalSheetFormScreen extends StatefulWidget {
   const MedicalSheetFormScreen({super.key});
@@ -9,6 +12,36 @@ class MedicalSheetFormScreen extends StatefulWidget {
 
 class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
   DateTime? selectedDate; // Define a variable to store the selected date
+  final _formKey = GlobalKey<FormBuilderState>();
+
+  String? firstName;
+  String? lastName;
+  String? birthDate;
+  String? phoneNumber;
+  String? weight;
+  String? height;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+    print(firstName);
+  }
+
+  _loadUserData() async {
+    const storage = FlutterSecureStorage();
+
+    // Use await to wait for the completion of each read operation
+    firstName = await storage.read(key: "firstName");
+    lastName = await storage.read(key: "lastName");
+    //birthDate = await storage.read(key: "birthDate");
+    phoneNumber = await storage.read(key: "phoneNumber");
+    //weight = await storage.read(key: "weight");
+    //height = await storage.read(key: "height");
+
+    // Set state to reflect the changes
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,157 +75,205 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                 child: Padding(
                   padding:
                       EdgeInsets.all(MediaQuery.of(context).size.width * 0.1),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 10),
-                      // First Name text field
-                      TextField(
-                        decoration: InputDecoration(
-                          hintText: 'First Name',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(50.0),
+                  child: FormBuilder(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 10),
+                        // First Name text field
+                        FormBuilderTextField(
+                          name: 'firstName',
+                          initialValue: firstName ?? '',
+                          decoration: InputDecoration(
+                            hintText: 'First Name',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50.0),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white.withOpacity(0.7),
                           ),
-                          filled: true,
-                          fillColor: Colors.white.withOpacity(0.7),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      // Last Name text field
-                      TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Last Name',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(50.0),
+                        const SizedBox(height: 20),
+                        // Last Name text field
+                        FormBuilderTextField(
+                          name: 'lastName',
+                          initialValue: lastName ?? '',
+                          decoration: InputDecoration(
+                            hintText: 'Last Name',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50.0),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white.withOpacity(0.7),
                           ),
-                          filled: true,
-                          fillColor: Colors.white.withOpacity(0.7),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                       TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Phone Number',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(50.0),
+                        const SizedBox(height: 20),
+                        FormBuilderTextField(
+                          name: 'phoneNumber',
+                          initialValue: phoneNumber ?? '',
+                          decoration: InputDecoration(
+                            hintText: 'Phone Number',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50.0),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white.withOpacity(0.7),
                           ),
-                          filled: true,
-                          fillColor: Colors.white.withOpacity(0.7),
-                          
                         ),
-                      ),
-                      const SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
-                      // Email text field
-                      TextFormField(
-                        onTap: () async {
-                          final DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate:
-                                DateTime.now(), // Set the initial date to today
-                            firstDate:
-                                DateTime(1900), // Set the first selectable date
-                            lastDate: DateTime
-                                .now(), // Set the last selectable date (today)
-                            builder: (BuildContext context, Widget? child) {
-                              return Theme(
-                                data: ThemeData.light().copyWith(
-                                  // Customize the calendar theme
-                                  primaryColor: const Color(
-                                      0xFF8A4FE9), // Set primary color
-                                  ///accentColor: const Color(0xFF8A4FE9), // Set accent color
-                                  colorScheme: ColorScheme.light(
-                                      primary: const Color(
-                                          0xFF8A4FE9)), // Set color scheme
-                                  buttonTheme: ButtonThemeData(
-                                    textTheme: ButtonTextTheme
-                                        .primary, // Set button text theme
+                        // Email text field
+                        TextFormField(
+                          onTap: () async {
+                            final DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: birthDate != null
+                                  ? DateTime.parse(birthDate!)
+                                  : DateTime.now(),
+
+                              firstDate: DateTime(
+                                  1900), // Set the first selectable date
+                              lastDate: DateTime
+                                  .now(), // Set the last selectable date (today)
+                              builder: (BuildContext context, Widget? child) {
+                                return Theme(
+                                  data: ThemeData.light().copyWith(
+                                    // Customize the calendar theme
+                                    primaryColor: const Color(
+                                        0xFF8A4FE9), // Set primary color
+                                    ///accentColor: const Color(0xFF8A4FE9), // Set accent color
+                                    colorScheme: ColorScheme.light(
+                                        primary: const Color(
+                                            0xFF8A4FE9)), // Set color scheme
+                                    buttonTheme: ButtonThemeData(
+                                      textTheme: ButtonTextTheme
+                                          .primary, // Set button text theme
+                                    ),
                                   ),
-                                ),
-                                child: child!,
-                              );
-                            },
-                          );
+                                  child: child!,
+                                );
+                              },
+                            );
 
-                          if (pickedDate != null &&
-                              pickedDate != selectedDate) {
-                            setState(() {
-                              selectedDate =
-                                  pickedDate; // Set the selected date to the picked date
-                            });
-                          }
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Birth Date',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(50.0),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white.withOpacity(0.7),
-                          suffixIcon: Icon(Icons
-                              .calendar_today), // Add calendar icon as suffix
-                        ),
-                        readOnly: true, // Make the text field read-only
-                        controller: TextEditingController(
-                          text: selectedDate != null
-                              ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
-                              : '', // Set the text field value to the selected date
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Weight',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(50.0),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white.withOpacity(0.7),
-                          suffixText: 'kg',
-                        ),
-                      ),
-                      // Password text field
-
-                      const SizedBox(height: 20),
-                       TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Height',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(50.0),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white.withOpacity(0.7),
-                          suffixText: 'cm',
-                        ),
-                      ),
-                       const SizedBox(height: 20),
-                      // Create Account button
-
-                      Container(
-                        width: double.infinity, // Extends to both sides
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // Add login functionality
-                            Navigator.of(context).pop(context);
+                            if (pickedDate != null) {
+                              // Check if picked date is not in the future
+                              if (pickedDate.isBefore(DateTime.now())) {
+                                setState(() {
+                                  selectedDate = pickedDate;
+                                });
+                              } else {
+                                // Show error message if picked date is in the future
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        'Selected date cannot be in the future'),
+                                  ),
+                                );
+                              }
+                            }
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(
-                                0xFF8A4FE9), // Set background color here
+                          decoration: InputDecoration(
+                            hintText: 'Birth Date',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50.0),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white.withOpacity(0.7),
+                            suffixIcon: Icon(Icons
+                                .calendar_today), // Add calendar icon as suffix
                           ),
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical:
-                                    16.0), // Adjust button height as needed
-                            child: Text('Update Sheet',
-                                style: TextStyle(
-                                    fontSize: 18.0, color: Colors.white)),
+                          readOnly: true, // Make the text field read-only
+                          controller: TextEditingController(
+                            text: selectedDate != null
+                                ? '${selectedDate!.year}-${selectedDate!.month}-${selectedDate!.day}'
+                                : '', // Set the text field value to the selected date
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 20),
+                        const SizedBox(height: 20),
+                        FormBuilderTextField(
+                          name: 'weight',
+                          initialValue: weight ?? '',
+                          decoration: InputDecoration(
+                            hintText: 'Weight',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50.0),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white.withOpacity(0.7),
+                            suffixText: 'kg',
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your weight';
+                            } else if (value.length < 3 && value.length > 1) {
+                              return 'weight must be at least 3 characters long';
+                            } else if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                              return 'weight can only contain numbers';
+                            }
+                            return null;
+                          },
+                        ),
+                        // Password text field
 
-                      // Sign In text link
-                    ],
+                        const SizedBox(height: 20),
+                        FormBuilderTextField(
+                          name: 'height',
+                          initialValue: height ?? '',
+                          decoration: InputDecoration(
+                            hintText: 'Height',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50.0),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white.withOpacity(0.7),
+                            suffixText: 'cm',
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your height';
+                            } else if (value.length < 3 && value.length > 1) {
+                              return 'height must be at least 3 characters long';
+                            } else if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                              return 'height can only contain numbers';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        // Create Account button
+
+                        Container(
+                          width: double.infinity, // Extends to both sides
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              // Add login functionality
+                              const storage = FlutterSecureStorage();
+                              var token = await storage.read(key: "token");
+                              await UserWebService()
+                                  .updateMedicalFile(token!, context);
+                              Navigator.of(context).pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(
+                                  0xFF8A4FE9), // Set background color here
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical:
+                                      16.0), // Adjust button height as needed
+                              child: Text('Update Sheet',
+                                  style: TextStyle(
+                                      fontSize: 18.0, color: Colors.white)),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Sign In text link
+                      ],
+                    ),
                   ),
                 ),
               ),
