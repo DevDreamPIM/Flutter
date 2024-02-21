@@ -130,7 +130,7 @@ class ProfileScreen extends StatelessWidget {
                                   builder: (context) => MedicalSheetScreen()));
                             }),
                         ProfileMenuWidget(
-                            title: "Crisi History",
+                            title: "Crisis History",
                             icon: LineAwesomeIcons.history,
                             onPress: () {
                               Navigator.of(context).push(MaterialPageRoute(

@@ -9,6 +9,9 @@ import 'package:epilepto_guard/Screens/UserProfil/profileScreen.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'Calendar/CalendarScreen.dart';
 import 'package:weather_icons/weather_icons.dart';
+import 'dart:convert'; // Importez pour utiliser json.decode
+import 'package:http/http.dart'
+    as http; // Importez pour effectuer des requêtes HTTP
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -37,6 +40,20 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<String> fetchWeatherData(String city) async {
+    final apiKey = '55d01bf8725c76115d1b1c6d31fecae5';
+    final response = await http.get(Uri.parse(
+        'https://api.openweathermap.org/data/2.5/weather?q=Tunis&appid=$apiKey'));
+
+    if (response.statusCode == 200) {
+      final weatherData = json.decode(response.body);
+      final weatherCondition = weatherData['weather'][0]['main'];
+      return weatherCondition;
+    } else {
+      throw Exception('Failed to load weather data');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,13 +74,25 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
-                  child: _buildClickableCardWithWeather(
-                    context,
-                    Colors.transparent,
-                    'Widget 1',
-                    'sunny', // Condition météorologique actuelle (ici, ensoleillé)
-                    () {
-                      // Action à effectuer lorsque le widget est cliqué
+                  child: FutureBuilder<String>(
+                    future: fetchWeatherData('Tunis'),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else {
+                        final weatherCondition = snapshot.data!;
+                        return _buildClickableCardWithWeather(
+                          context,
+                          Colors.transparent,
+                          'Weather',
+                          weatherCondition,
+                          () {
+                            // Action à effectuer lorsque le widget est cliqué
+                          },
+                        );
+                      }
                     },
                   ),
                 ),
@@ -132,12 +161,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildClickableCardWithWeather(
-      BuildContext context,
-      Color color,
-      String title,
-      String weatherCondition, // Ajoutez un paramètre pour la condition météo
-      Function() onTap) {
+  Widget _buildClickableCardWithWeather(BuildContext context, Color color,
+      String title, String weatherCondition, Function() onTap) {
     return InkWell(
       onTap: onTap,
       child: Card(
@@ -155,13 +180,14 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              getWeatherIcon(weatherCondition), // Afficher l'icône météo
+              getWeatherIcon(
+                  weatherCondition), // Afficher l'icône météo correspondante
               SizedBox(height: 10), // Espacement entre l'icône et le titre
               Text(
                 title,
                 style: TextStyle(
                   fontSize: 20,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
             ],
