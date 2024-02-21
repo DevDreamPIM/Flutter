@@ -1,10 +1,9 @@
 import 'dart:convert';
+import 'package:epilepto_guard/Models/user.dart';
 import 'package:epilepto_guard/Utils/Constantes.dart';
 import 'package:epilepto_guard/Utils/rescrueStorage.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-
 
 class UserWebService {
   Future<bool> registerUser(
@@ -101,9 +100,9 @@ class UserWebService {
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       RescureStorage.saveData(responseData);
-     
-      var name = responseData['firstName']+" "+responseData['lastName'];
-      SnackBar snackBar =  SnackBar(
+
+      var name = responseData['firstName'] + " " + responseData['lastName'];
+      SnackBar snackBar = SnackBar(
         content: Row(
           children: [
             const Icon(Icons.check, color: Colors.white),
@@ -121,8 +120,7 @@ class UserWebService {
           children: [
             const Icon(Icons.error, color: Colors.white),
             const SizedBox(width: 8),
-            Text(response.body,
-                style: const TextStyle(color: Colors.white)),
+            Text(response.body, style: const TextStyle(color: Colors.white)),
           ],
         ),
         backgroundColor: Colors.red,
@@ -134,8 +132,9 @@ class UserWebService {
     }
   }
 
-  Future<bool> sendCode(String email,BuildContext context) async {
-    final url = Uri.parse('${Constantes.URL_API}${Constantes.URL_API_USER}/sendActivationCode');
+  Future<bool> sendCode(String email, BuildContext context) async {
+    final url = Uri.parse(
+        '${Constantes.URL_API}${Constantes.URL_API_USER}/sendActivationCode');
     final response = await http.post(
       url,
       body: jsonEncode({
@@ -147,7 +146,7 @@ class UserWebService {
     );
 
     if (response.statusCode == 200) {
-  SnackBar snackBar =  const SnackBar(
+      SnackBar snackBar = const SnackBar(
         content: Row(
           children: [
             Icon(Icons.check, color: Colors.white),
@@ -162,14 +161,14 @@ class UserWebService {
       print('Code sent successfully');
       print(response.body);
       return true;
-
-    }else {
+    } else {
       SnackBar snackBar = const SnackBar(
         content: Row(
           children: [
             Icon(Icons.error, color: Colors.white),
             SizedBox(width: 8),
-            Text('Failed to send code.please verify your email address and try again.',
+            Text(
+                'Failed to send code.please verify your email address and try again.',
                 style: TextStyle(color: Colors.white)),
           ],
         ),
@@ -183,7 +182,8 @@ class UserWebService {
   }
 
   Future<bool> verifyCode(String email, int code, BuildContext context) async {
-    final url = Uri.parse('${Constantes.URL_API}${Constantes.URL_API_USER}/verifyCode');
+    final url =
+        Uri.parse('${Constantes.URL_API}${Constantes.URL_API_USER}/verifyCode');
     print(email);
     final response = await http.post(
       url,
@@ -202,7 +202,8 @@ class UserWebService {
           children: [
             Icon(Icons.check, color: Colors.white),
             SizedBox(width: 8),
-            Text('Code verified successfully!', style: TextStyle(color: Colors.white)),
+            Text('Code verified successfully!',
+                style: TextStyle(color: Colors.white)),
           ],
         ),
         backgroundColor: Colors.green,
@@ -212,9 +213,8 @@ class UserWebService {
       print('Code verified successfully!');
       print(response.body);
       return true;
-
-    }else {
-      SnackBar snackBar =  SnackBar(
+    } else {
+      SnackBar snackBar = SnackBar(
         content: Row(
           children: [
             Icon(Icons.error, color: Colors.white),
@@ -232,8 +232,10 @@ class UserWebService {
     }
   }
 
-  Future<bool> resetPassword(String email, String password, String confirmPassword ,BuildContext context) async {
-    final url = Uri.parse('${Constantes.URL_API}${Constantes.URL_API_USER}/resetPassword');
+  Future<bool> resetPassword(String email, String password,
+      String confirmPassword, BuildContext context) async {
+    final url = Uri.parse(
+        '${Constantes.URL_API}${Constantes.URL_API_USER}/resetPassword');
     final response = await http.post(
       url,
       body: jsonEncode({
@@ -252,7 +254,8 @@ class UserWebService {
           children: [
             Icon(Icons.check, color: Colors.white),
             SizedBox(width: 8),
-            Text('Password reset successfully!', style: TextStyle(color: Colors.white)),
+            Text('Password reset successfully!',
+                style: TextStyle(color: Colors.white)),
           ],
         ),
         backgroundColor: Colors.green,
@@ -262,14 +265,14 @@ class UserWebService {
       print('Password reset successfully!');
       print(response.body);
       return true;
-
-    }else {
-      SnackBar snackBar =  SnackBar(
+    } else {
+      SnackBar snackBar = SnackBar(
         content: Row(
           children: [
             Icon(Icons.error, color: Colors.white),
             SizedBox(width: 8),
-            Text('Failed to reset password. Status code: ${response.statusCode}',
+            Text(
+                'Failed to reset password. Status code: ${response.statusCode}',
                 style: TextStyle(color: Colors.white)),
           ],
         ),
@@ -282,6 +285,50 @@ class UserWebService {
     }
   }
 
+  Future<void> updateMedicalFile(
+       String token, BuildContext context) async {
+    final url = Uri.parse(
+        '${Constantes.URL_API}${Constantes.URL_API_USER}/updateMedicalFile');
+    final response = await http.put(
+      url,
+      body:
+          jsonEncode({"birthDate": "2000-03-14", "weight": 50, "height": 157}),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Medical file updated successfully!');
+      print(response.body);
+    } else {
+      print(
+          'Failed to update medical file. Status code: ${response.statusCode}');
+    }
+  }
+
+Future<User?> getMedicalFile(String token, String id,BuildContext context) async {
+    final url = Uri.parse(
+        '${Constantes.URL_API}${Constantes.URL_API_USER}/getMedicalFile');
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+
+      print('Medical file retrieved successfully!');
+      print(response.body);
+      return User.fromJson(json.decode(response.body));
+    } else {
+      print(
+          'Failed to retrieve medical file. Status code: ${response.statusCode}');
+      return null;
+    }
+  }
+
 }
-
-

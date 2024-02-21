@@ -2,9 +2,11 @@ import 'package:epilepto_guard/Screens/Calendar/CalendarScreen.dart';
 import 'package:epilepto_guard/Screens/Crise/historiqueCrise.dart';
 import 'package:epilepto_guard/Screens/Drugs/ListDrug.dart';
 import 'package:epilepto_guard/Screens/MedicalSheet/medicalSheetScreen.dart';
+import 'package:epilepto_guard/Screens/User/loginScreen.dart';
 import 'package:epilepto_guard/Screens/UserProfil/updateProfileScreen.dart';
 import 'package:epilepto_guard/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 const double DefaultSize = 16.0; // Placeholder for your DefaultSize value
@@ -89,7 +91,8 @@ class ProfileScreen extends StatelessWidget {
                                   builder: (context) => UpdateProfileScreen()));
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF8A4FE9), // Background color
+                              backgroundColor:
+                                  Color(0xFF8A4FE9), // Background color
                             ),
                             child: const Text(
                               'Edit Profile', // Make sure to replace 'Edit Profile' with a variable if it's dynamic
@@ -133,10 +136,11 @@ class ProfileScreen extends StatelessWidget {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => CrisisHistoryScreen()));
                             }),
-                             ProfileMenuWidget(
+                        ProfileMenuWidget(
                             title: "Drugs",
                             icon: LineAwesomeIcons.history,
-                            onPress: () { Navigator.of(context).push(MaterialPageRoute(
+                            onPress: () {
+                              Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => ListDrug()));
                             }),
                         ProfileMenuWidget(
@@ -144,8 +148,15 @@ class ProfileScreen extends StatelessWidget {
                           icon: LineAwesomeIcons.alternate_sign_out,
                           textColor: Colors.red,
                           endIcon: false,
-                          onPress: () {
-                            Navigator.pop(context);
+                          onPress: () async {
+                            const storage = FlutterSecureStorage();
+                            await storage.delete(key: "token").then((value) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const LoginScreen()),
+                              );
+                            });
                           },
                         ),
                       ],
