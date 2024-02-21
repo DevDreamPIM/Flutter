@@ -89,7 +89,8 @@ class ProfileScreen extends StatelessWidget {
                                   builder: (context) => UpdateProfileScreen()));
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF8A4FE9), // Background color
+                              backgroundColor:
+                                  Color(0xFF8A4FE9), // Background color
                             ),
                             child: const Text(
                               'Edit Profile', // Make sure to replace 'Edit Profile' with a variable if it's dynamic
@@ -127,16 +128,17 @@ class ProfileScreen extends StatelessWidget {
                                   builder: (context) => MedicalSheetScreen()));
                             }),
                         ProfileMenuWidget(
-                            title: "Crisi History",
+                            title: "Crisis History",
                             icon: LineAwesomeIcons.history,
                             onPress: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => CrisisHistoryScreen()));
                             }),
-                             ProfileMenuWidget(
+                        ProfileMenuWidget(
                             title: "Drugs",
                             icon: LineAwesomeIcons.history,
-                            onPress: () { Navigator.of(context).push(MaterialPageRoute(
+                            onPress: () {
+                              Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => ListDrug()));
                             }),
                         ProfileMenuWidget(

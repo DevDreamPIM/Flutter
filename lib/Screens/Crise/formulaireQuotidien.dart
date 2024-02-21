@@ -508,35 +508,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
               ),
             ),
 
-//******************************** 12 *************************************/
-            Container(
-              padding: EdgeInsets.all(20.0),
-              margin: EdgeInsets.symmetric(vertical: 10.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                border: Border.all(color: Colors.grey),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Have you experienced prodromal symptoms, such as headaches or an aura, before previous seizures ?',
-                    style:
-                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      hintText: 'Answer...',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-//************************13****************************** */
+//************************12****************************** */
             Container(
               padding: EdgeInsets.all(20.0),
               margin: EdgeInsets.symmetric(vertical: 10.0),

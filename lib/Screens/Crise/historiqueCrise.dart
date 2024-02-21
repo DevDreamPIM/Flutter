@@ -1,6 +1,7 @@
 import 'package:epilepto_guard/Screens/Crise/detailCrise.dart';
 import 'package:flutter/material.dart';
 import 'package:epilepto_guard/Models/crise.dart';
+import 'package:intl/intl.dart';
 
 class CrisisHistoryScreen extends StatelessWidget {
   final List<Crisis> crises = [
@@ -24,8 +25,8 @@ class CrisisHistoryScreen extends StatelessWidget {
       duration: 15, // en minutes
       type: CrisisType.generalized,
       location: 'School',
-     // symptoms: ['Symptom 3', 'Symptom 4'],
-     // preSymptoms: 'Pre-symptom',
+      // symptoms: ['Symptom 3', 'Symptom 4'],
+      // preSymptoms: 'Pre-symptom',
       emergencyServicesCalled: true,
       medicalAssistance: true,
       severity: 'moderate',
@@ -37,8 +38,8 @@ class CrisisHistoryScreen extends StatelessWidget {
       duration: 5, // en minutes
       type: CrisisType.absence,
       location: 'Park',
-     // symptoms: ['Symptom 5', 'Symptom 6'],
-     // preSymptoms: 'Pre-symptom',
+      // symptoms: ['Symptom 5', 'Symptom 6'],
+      // preSymptoms: 'Pre-symptom',
       emergencyServicesCalled: false,
       medicalAssistance: false,
       severity: 'severe',
@@ -73,12 +74,11 @@ class CrisisHistoryScreen extends StatelessWidget {
               margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: ListTile(
                 title: Text(
-                  crises[index].date.toString(),
+                  DateFormat.yMMMd().format(crises[index].date),
                   style: TextStyle(fontSize: 18.0),
                 ),
                 subtitle: Text(
-                  crises[index].type.toString().split('.')[
-                      1], // Récupérer le nom du type sans le préfixe "CrisisType."
+                  crises[index].type.toString().split('.')[1],
                   style: TextStyle(fontSize: 16.0),
                 ),
                 onTap: () {
