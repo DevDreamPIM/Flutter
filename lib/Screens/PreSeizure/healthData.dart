@@ -65,7 +65,7 @@ class _HealthDataState extends State<HealthData> {
             LineChartWidget(
               data: selectedFilter == 'Week' ? temperatureData.sublist(0, 7) :
               selectedFilter == 'Month' ? temperatureData.sublist(0, temperatureData.length >= 30 ? 30 : temperatureData.length) : [],
-              title: 'Temperature',
+              title: 'Body Temperature',
               legend: '°C',
               selectedFilter: selectedFilter,
             ),

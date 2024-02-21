@@ -1,3 +1,4 @@
+import 'package:epilepto_guard/Components/drawer.dart';
 import 'package:epilepto_guard/Screens/Bluetooth/MainPageBluetooth.dart';
 import 'package:epilepto_guard/Screens/Crise/formulaireQuotidien.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +10,16 @@ import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'Calendar/CalendarScreen.dart';
 import 'package:weather_icons/weather_icons.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
   Icon getWeatherIcon(String weatherCondition) {
     switch (weatherCondition.toLowerCase()) {
       case 'clear':
@@ -35,70 +43,12 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Home'),
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text('Home'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.calendar_month),
-              title: Text('Calendar'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CalendarScreen()),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.auto_graph),
-              title: Text('Detected Signs Visualization'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => DetectedSigns()),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.health_and_safety),
-              title: Text('Health Data'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HealthData()),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.bar_chart_sharp),
-              title: Text('Seizure Statistics'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SeizureStatistics()),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(LineAwesomeIcons.user),
-              title: Text('Profile'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfileScreen()),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+        drawer:  Drawers(
+            selectedIndex: _selectedIndex,
+            onItemTapped: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });}),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
