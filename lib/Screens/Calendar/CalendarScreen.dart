@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:weather/weather.dart';
-
+import 'package:epilepto_guard/Screens/Drugs/add.dart';
 import '../../colors.dart';
+
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -99,7 +100,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
               title: Center(child: Text('Add Drug')),
               onTap: () {
                 // Handle selection of Item 1
-                Navigator.pop(context);
+                Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AddMedicineScreen()),
+                        );
               },
             ),
             ListTile(
