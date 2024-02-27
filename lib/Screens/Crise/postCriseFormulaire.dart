@@ -689,7 +689,7 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
   }
 
 // fonction pour gérer l'action lorsque le bouton "Save" est pressé
- void _saveForm() {
+ void _saveForm() {/*
   // Récupérer les valeurs des champs texte
   String response1 = _signsresponseController.text;
   String response2 = _symptomsresponseController.text;
@@ -727,7 +727,7 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
   );
 
   // Envoyer les données au backend
-  PostFormService().sendDataToBackend(formData);
+  PostFormService().sendDataToBackend(formData);*/
 }
 
 
