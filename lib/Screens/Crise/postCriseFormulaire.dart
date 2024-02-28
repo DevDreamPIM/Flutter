@@ -6,7 +6,8 @@ import 'package:flutter_picker/flutter_picker.dart';
 import 'package:http/http.dart' as http;
 
 class PostCriseFormulaire extends StatefulWidget {
-  const PostCriseFormulaire({Key? key}) : super(key: key);
+  final int id;
+  const PostCriseFormulaire({Key? key, required this.id}) : super(key: key);
 
   @override
   _PostCriseFormulaireState createState() => _PostCriseFormulaireState();
@@ -14,6 +15,14 @@ class PostCriseFormulaire extends StatefulWidget {
 
 class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
   //** VARIABLES **//
+
+  late int _id;
+
+  @override
+  void initState() {
+    super.initState();
+    _id = widget.id;
+  }
 
   List<bool> _triggerFactorsSelection = List.generate(11, (index) => false);
 
@@ -689,47 +698,46 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
   }
 
 // fonction pour gérer l'action lorsque le bouton "Save" est pressé
- void _saveForm() {/*
-  // Récupérer les valeurs des champs texte
-  String response1 = _signsresponseController.text;
-  String response2 = _symptomsresponseController.text;
-  String response3 = _addresponseController.text;
+  void _saveForm() {
+    // Récupérer les valeurs des champs texte
+    String response1 = _signsresponseController.text;
+    String response2 = _symptomsresponseController.text;
+    String response3 = _addresponseController.text;
 
-  // Créer une instance de PostCriseFormData
-  PostCriseFormData formData = PostCriseFormData(
-    id: /* récupérer l'ID de la crise associée */,
-    selectedHours: _selectedHours,
-    selectedMinutes: _selectedMinutes,
-    visualAuraChecked: _visualAuraChecked,
-    sensoryAuraChecked: _sensoryAuraChecked,
-    auditoryAuraChecked: _auditoryAuraChecked,
-    gustatoryOrOlfactoryAuraChecked: _gustatoryOrOlfactoryAuraChecked,
-    headachesChecked: _headachesChecked,
-    excessiveFatigueChecked: _excessiveFatigueChecked,
-    abnormalMoodChecked: _abnormalMoodChecked,
-    sleepDisturbancesChecked: _sleepDisturbancesChecked,
-    concentrationDifficultiesChecked: _concentrationDifficultiesChecked,
-    increasedSensitivityChecked: _increasedSensitivityChecked,
-    triggerFactorsSelection: _triggerFactorsSelection,
-    injured: _injured,
-    conscious: _conscious,
-    episodes: _episodes,
-    memoryDisturbances: _memoryDisturbances,
-    assistance: _assistance,
-    advice: _advice,
-    emotionalStateRating: _emotionalStateRating,
-    recoveryRating: _recoveryRating,
-    stressAnxietyRating: _stressAnxietyRating,
-    medicalCareRating: _medicalCareRating,
-    response1: response1,
-    response2: response2,
-    response3: response3,
-  );
+    // Créer une instance de PostCriseFormData
+    PostCriseFormData formData = PostCriseFormData(
+      id: _id,
+      selectedHours: _selectedHours,
+      selectedMinutes: _selectedMinutes,
+      visualAuraChecked: _visualAuraChecked,
+      sensoryAuraChecked: _sensoryAuraChecked,
+      auditoryAuraChecked: _auditoryAuraChecked,
+      gustatoryOrOlfactoryAuraChecked: _gustatoryOrOlfactoryAuraChecked,
+      headachesChecked: _headachesChecked,
+      excessiveFatigueChecked: _excessiveFatigueChecked,
+      abnormalMoodChecked: _abnormalMoodChecked,
+      sleepDisturbancesChecked: _sleepDisturbancesChecked,
+      concentrationDifficultiesChecked: _concentrationDifficultiesChecked,
+      increasedSensitivityChecked: _increasedSensitivityChecked,
+      triggerFactorsSelection: _triggerFactorsSelection,
+      injured: _injured,
+      conscious: _conscious,
+      episodes: _episodes,
+      memoryDisturbances: _memoryDisturbances,
+      assistance: _assistance,
+      advice: _advice,
+      emotionalStateRating: _emotionalStateRating,
+      recoveryRating: _recoveryRating,
+      stressAnxietyRating: _stressAnxietyRating,
+      medicalCareRating: _medicalCareRating,
+      response1: response1,
+      response2: response2,
+      response3: response3,
+    );
 
-  // Envoyer les données au backend
-  PostFormService().sendDataToBackend(formData);*/
-}
-
+    // Envoyer les données au backend
+    _postFormService.sendDataToBackend(formData);
+  }
 
   // Méthode pour construire un cadre question-réponse
   Widget _buildQuestionWithResponse(String question, Widget responseWidget) {

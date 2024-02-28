@@ -1,23 +1,42 @@
+import 'dart:convert';
+
+import 'package:epilepto_guard/Models/postCriseForm.dart';
 import 'package:epilepto_guard/Screens/Crise/postCriseFormulaire.dart';
 import 'package:flutter/material.dart';
 import 'package:epilepto_guard/Models/crise.dart' as CriseModel;
-import 'package:intl/intl.dart'; // Importez intl pour formater la date
-//import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:latlong2/latlong.dart'; // Importez latlong pour utiliser LatLng
-import 'package:flutter_map/flutter_map.dart';
+import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
-class CrisisDetailScreen extends StatelessWidget {
+class CrisisDetailScreen extends StatefulWidget {
   final CriseModel.Crisis crisis;
 
   const CrisisDetailScreen(this.crisis);
-  //LatLng(latitude, longitude)
+
+  @override
+  _CrisisDetailScreenState createState() => _CrisisDetailScreenState();
+}
+
+class _CrisisDetailScreenState extends State<CrisisDetailScreen> {
+  late PostCriseFormData formData;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchFormData(widget.crisis.formDataId).then((data) {
+      setState(() {
+        formData = data;
+      });
+    }).catchError((error) {
+      print('Error fetching form data: $error');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Crisis Detail',
+          'Seizure Details',
           style: TextStyle(
             color: const Color(0xFF8A4FE9),
             fontSize: 24.0,
@@ -40,54 +59,54 @@ class CrisisDetailScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildDetailItem(
-                'Date of Crisis:',
-                // Formatez la date au format année, mois et jour
-                DateFormat.yMMMd().format(crisis.date),
+                'Date of Seizure:',
+                // Format the date to year, month, and day format
+                DateFormat.yMMMd().format(widget.crisis.date),
               ),
               _buildDetailItem(
                 'Start Time:',
-                '${crisis.startTime.hour}:${crisis.startTime.minute}',
+                '${widget.crisis.startTime.hour}:${widget.crisis.startTime.minute}',
               ),
               _buildDetailItem(
                 'End Time:',
-                '${crisis.endTime.hour}:${crisis.endTime.minute}',
+                '${widget.crisis.endTime.hour}:${widget.crisis.endTime.minute}',
               ),
               _buildDetailItem(
                 'Duration:',
-                crisis.duration.toString(),
+                widget.crisis.duration.toString(),
               ),
               _buildDetailItem(
-                'Type of Crisis:',
-                crisis.type.toString().split('.').last,
+                'Type of Seizure:',
+                widget.crisis.type.toString().split('.').last,
               ),
-              _buildDetailItem('Location:', crisis.location),
-              // Afficher la carte pour la location
-              //_buildMapItem('Location:', crisis.location),
+              _buildDetailItem('Location:', widget.crisis.location),
               _buildDetailItem(
                 'Emergency Services Called:',
-                crisis.emergencyServicesCalled ? 'Yes' : 'No',
+                widget.crisis.emergencyServicesCalled ? 'Yes' : 'No',
               ),
               _buildDetailItem(
                 'Medical Assistance:',
-                crisis.medicalAssistance ? 'Yes' : 'No',
+                widget.crisis.medicalAssistance ? 'Yes' : 'No',
               ),
               _buildDetailItem(
                 'Severity:',
-                crisis.severity,
+                widget.crisis.severity,
               ),
               SizedBox(height: 20),
+              // Button to display associated form
               Center(
                 child: TextButton(
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PostCriseFormulaire(),
+                        builder: (context) =>
+                            PostCriseFormulaire(id: formData.id),
                       ),
                     );
                   },
                   child: Text(
-                    'Crisis Form',
+                    'Seizure Form',
                     style:
                         TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
@@ -99,6 +118,18 @@ class CrisisDetailScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<PostCriseFormData> fetchFormData(String formDataId) async {
+    final response =
+        await http.get(Uri.parse('http://localhost:9090/seizures/$formDataId'));
+
+    if (response.statusCode == 200) {
+      // Convert the JSON response to a PostCriseFormData object
+      return PostCriseFormData.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load form data');
+    }
   }
 
   Widget _buildDetailItem(String label, String value) {
@@ -120,7 +151,7 @@ class CrisisDetailScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 120.0, // Largeur maximale du label
+            width: 120.0, // Maximum width of the label
             padding: EdgeInsets.all(10.0),
             child: Text(
               label,
@@ -144,64 +175,4 @@ class CrisisDetailScreen extends StatelessWidget {
       ),
     );
   }
-
-  /* Widget _buildMapItem(String label, String value) {
-    // Splittez les coordonnées de la localisation (par exemple, "latitude,longitude")
-    List<String> coordinates = value.split(',');
-    double latitude = double.parse(coordinates[0]);
-    double longitude = double.parse(coordinates[1]);
-
-    return Container(
-      margin: EdgeInsets.only(bottom: 10.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 1,
-            blurRadius: 3,
-            offset: Offset(0, 2), // changes position of shadow
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.all(10.0),
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF8A4FE9),
-              ),
-            ),
-          ),
-          Container(
-            height: 200, // Ajustez la hauteur de la carte selon vos besoins
-            child: FlutterMap(
-              options: MapOptions(
-                center: LatLng(latitude,
-                    longitude), // Utilisez les coordonnées de la localisation de la crise
-                zoom: 10.0, // Zoom initial de la carte
-              ),
-              children: [
-                // Ajoutez une liste vide ou les enfants de la carte
-                // Vous pouvez ajouter d'autres widgets ici si nécessaire
-              ],
-              layers: [
-                TileLayerOptions(
-                  urlTemplate:
-                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  subdomains: ['a', 'b', 'c'],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }*/
 }

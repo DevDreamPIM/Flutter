@@ -2,11 +2,10 @@ import 'dart:convert';
 import 'package:epilepto_guard/Models/postCriseForm.dart';
 import 'package:http/http.dart' as http;
 
-
 class PostFormService {
   static const String baseURL = 'http://localhost:9090';
 
-  Future<void> sendDataToBackend(PostCriseFormData formData) async {
+  Future<String?> sendDataToBackend(PostCriseFormData formData) async {
     final url = '$baseURL/postForm';
 
     try {
@@ -20,14 +19,17 @@ class PostFormService {
 
       if (response.statusCode == 200) {
         // La requête a réussi, traitez la réponse si nécessaire
-        print('Réponse du serveur : ${response.body}');
+        final responseData = jsonDecode(response.body);
+        return responseData['criseId']; // Récupérer l'ID de la crise
       } else {
         // La requête a échoué, affichez le code d'erreur
         print('Erreur lors de la requête : ${response.statusCode}');
+        return null;
       }
     } catch (e) {
       // Gérer les erreurs de connexion ou de traitement
       print('Erreur lors de l\'envoi des données au backend : $e');
+      return null;
     }
   }
 }

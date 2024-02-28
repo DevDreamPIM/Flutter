@@ -25,7 +25,7 @@ class _CrisisHistoryScreenState extends State<CrisisHistoryScreen> {
         crises = data.map((item) => Crisis.fromJson(item)).toList();
       });
     } else {
-      throw Exception('Failed to load crises');
+      throw Exception('Failed to load seizures');
     }
   }
 
@@ -40,7 +40,7 @@ class _CrisisHistoryScreenState extends State<CrisisHistoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Crisis History',
+          'Seizures History',
           style: TextStyle(
             color: const Color(0xFF8A4FE9),
             fontSize: 24.0,
@@ -91,97 +91,4 @@ class _CrisisHistoryScreenState extends State<CrisisHistoryScreen> {
 
 
 
-/*class CrisisHistoryScreen extends StatelessWidget {
-  final List<Crisis> crises = [
-    Crisis(
-      date: DateTime(2024, 2, 8),
-      startTime: TimeOfDay(hour: 9, minute: 0),
-      endTime: TimeOfDay(hour: 9, minute: 30),
-      duration: 30, // en minutes
-      type: CrisisType.partial,
-      location: 'Home',
-      //symptoms: ['Symptom 1', 'Symptom 2'],
-      //preSymptoms: 'Pre-symptom',
-      emergencyServicesCalled: false,
-      medicalAssistance: true,
-      severity: 'mild',
-    ),
-    Crisis(
-      date: DateTime(2024, 2, 5),
-      startTime: TimeOfDay(hour: 12, minute: 0),
-      endTime: TimeOfDay(hour: 12, minute: 15),
-      duration: 15, // en minutes
-      type: CrisisType.generalized,
-      location: 'School',
-      // symptoms: ['Symptom 3', 'Symptom 4'],
-      // preSymptoms: 'Pre-symptom',
-      emergencyServicesCalled: true,
-      medicalAssistance: true,
-      severity: 'moderate',
-    ),
-    Crisis(
-      date: DateTime(2024, 2, 2),
-      startTime: TimeOfDay(hour: 18, minute: 0),
-      endTime: TimeOfDay(hour: 18, minute: 5),
-      duration: 5, // en minutes
-      type: CrisisType.absence,
-      location: 'Park',
-      // symptoms: ['Symptom 5', 'Symptom 6'],
-      // preSymptoms: 'Pre-symptom',
-      emergencyServicesCalled: false,
-      medicalAssistance: false,
-      severity: 'severe',
-    ),
-  ];
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Crisis History',
-          style: TextStyle(
-            color: const Color(0xFF8A4FE9),
-            fontSize: 24.0,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: Container(
-        padding: EdgeInsets.all(20.0),
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/background/login.png'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: ListView.builder(
-          itemCount: crises.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Card(
-              elevation: 4, // Ajouter une ombre
-              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: ListTile(
-                title: Text(
-                  DateFormat.yMMMd().format(crises[index].date),
-                  style: TextStyle(fontSize: 18.0),
-                ),
-                subtitle: Text(
-                  crises[index].type.toString().split('.')[1],
-                  style: TextStyle(fontSize: 16.0),
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CrisisDetailScreen(crises[index]),
-                    ),
-                  );
-                },
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-}*/
+

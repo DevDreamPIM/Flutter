@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:epilepto_guard/Models/postCriseForm.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 enum CrisisType {
   partial,
@@ -7,7 +11,7 @@ enum CrisisType {
 }
 
 class Crisis {
-  //final String idCrise;
+  final String idCrise;
   final DateTime date;
   final TimeOfDay startTime;
   final TimeOfDay endTime;
@@ -17,9 +21,10 @@ class Crisis {
   final bool emergencyServicesCalled;
   final bool medicalAssistance;
   final String severity;
+  final String formDataId; //l'id du formulaire de crise
 
   Crisis({
-    //required this.idCrise,
+    required this.idCrise,
     required this.date,
     required this.startTime,
     required this.endTime,
@@ -29,21 +34,24 @@ class Crisis {
     required this.emergencyServicesCalled,
     required this.medicalAssistance,
     required this.severity,
+    required this.formDataId,
   });
 
   // Méthode pour désérialiser un objet JSON en instance de Crisis
   factory Crisis.fromJson(Map<String, dynamic> json) {
     return Crisis(
-      date: DateTime.parse(json['date']),
-      startTime: _parseTimeOfDay(json['startTime']),
-      endTime: _parseTimeOfDay(json['endTime']),
-      duration: json['duration'],
-      location: json['location'],
+      idCrise: json['_id'] ?? '',
+      date: DateTime.parse(json['date'] ?? ''),
+      startTime:_parseTimeOfDay( json['startTime'] ?? ''),
+      endTime:_parseTimeOfDay( json['endTime'] ?? ''),
+      duration: json['duration'] ?? 0,
+      location: json['location'] ?? '',
       type: CrisisType.values.firstWhere(
           (type) => type.toString() == 'CrisisType.${json['type']}'),
-      emergencyServicesCalled: json['emergencyServicesCalled'],
-      medicalAssistance: json['medicalAssistance'],
-      severity: json['severity'],
+      emergencyServicesCalled: json['emergencyServicesCalled'] ?? false,
+      medicalAssistance: json['medicalAssistance'] ?? false,
+      severity: json['severity'] ?? '',
+      formDataId: json['formDataId'] ?? '',
     );
   }
 
