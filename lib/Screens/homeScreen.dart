@@ -18,11 +18,11 @@ class HomeScreen extends StatefulWidget {
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
-
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+
   Icon getWeatherIcon(String weatherCondition) {
     switch (weatherCondition.toLowerCase()) {
       case 'clear':
@@ -60,12 +60,14 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Home'),
       ),
-        drawer:  Drawers(
-            selectedIndex: _selectedIndex,
-            onItemTapped: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });}),
+      drawer: Drawers(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -96,24 +98,53 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                 ),
+                //*****************2*********************** */
                 Expanded(
-                  child: _buildClickableCard(
-                    context,
-                    Colors.transparent,
-                    'Pair to device',
-                    () {
+                  child: InkWell(
+                    onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => MainPageBluetooth(),
                         ),
                       );
+                      // Action à effectuer lorsque l'image est cliquée
                     },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(
+                            'assets/images/background/pairdevice.jpg',
+                          ),
+                          fit: BoxFit
+                              .cover, // Pour que l'image occupe tout le conteneur
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                              height:
+                                  10), // Espacement entre l'image et le titre
+                          Text(
+                            'Pair to Device',
+                            style: TextStyle(
+                              fontSize:
+                                  20, // Ajustez la taille de la police selon vos besoins
+                              fontWeight: FontWeight
+                                  .bold, // Vous pouvez modifier le style du texte ici
+                              color: Colors.blueGrey, // Couleur du texte
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
+          //*************3********************************* */
           Expanded(
             child: _buildClickableCardWithBackgroundImage(
               context,
@@ -180,9 +211,8 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              getWeatherIcon(
-                  weatherCondition), // Afficher l'icône météo correspondante
-              SizedBox(height: 10), // Espacement entre l'icône et le titre
+              getWeatherIcon(weatherCondition),
+              SizedBox(height: 10),
               Text(
                 title,
                 style: TextStyle(
@@ -248,7 +278,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(width: 10), // Espacement à gauche de l'image
+              SizedBox(width: 10),
               Expanded(
                 child: Text(
                   title,
