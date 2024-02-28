@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:epilepto_guard/Screens/Drugs/ListDrug.dart';
 import 'package:epilepto_guard/models/drug.dart';
 import 'package:epilepto_guard/services/drugService.dart';
+import 'package:http/http.dart' as http;
 
 class AddMedicineScreen extends StatefulWidget {
   const AddMedicineScreen({Key? key}) : super(key: key);
@@ -54,7 +55,15 @@ class _AddMedicineScreenState extends State<AddMedicineScreen> {
                   onPressed: _pickImage,
                   icon: Icon(Icons.upload),
                   label: Text('Upload Image'),
+                  
                 ),
+                SizedBox(height: 20),
+                _selectedImage != null
+                    ? Text(
+                        'Selected Image: ${_selectedImage!.path}',
+                        style: TextStyle(fontSize: 16),
+                      )
+                    : SizedBox.shrink(),
                 SizedBox(height: 20),
                 AnimatedTextField(
                   hintText: 'Name',
@@ -188,18 +197,18 @@ class _AddMedicineScreenState extends State<AddMedicineScreen> {
     );
   }
 
-  Future<void> _pickImage() async {
-    XFile? pickedImage = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    );
+ Future<void> _pickImage() async {
+  XFile? pickedImage = await ImagePicker().pickImage(
+    source: ImageSource.gallery,
+  );
 
-    if (pickedImage != null) {
-      setState(() {
-        _selectedImage = pickedImage;
-        _newDrug.image = pickedImage.path;
-      });
-    }
+  if (pickedImage != null) {
+    setState(() {
+      _selectedImage = pickedImage;
+      _newDrug.image = pickedImage.path; // Mettre à jour le chemin de l'image dans _newDrug.image
+    });
   }
+}
 
   Future<void> _selectStartTakingDate() async {
     final DateTime? pickedDate = await showDatePicker(
