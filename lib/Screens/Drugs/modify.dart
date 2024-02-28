@@ -14,6 +14,7 @@ class UpdateMedicineScreen extends StatefulWidget {
 }
 
 class _UpdateMedicineScreenState extends State<UpdateMedicineScreen> {
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   DateTime? _selectedStartTakingDate;
   DateTime? _selectedEndTakingDate;
   XFile? _selectedImage;
@@ -73,6 +74,30 @@ class _UpdateMedicineScreenState extends State<UpdateMedicineScreen> {
     }
   }
 
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Success"),
+          content: Text("Drug updated successfully"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ListDrug()),
+                );
+              },
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     String startDateText = _selectedStartTakingDate != null
@@ -95,128 +120,152 @@ class _UpdateMedicineScreenState extends State<UpdateMedicineScreen> {
         ),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ElevatedButton.icon(
-                onPressed: _pickImage,
-                icon: Icon(Icons.upload),
-                label: Text('Upload Image'),
-              ),
-              SizedBox(height: 20),
-              AnimatedTextField(
-                hintText: 'Name',
-                onChanged: (value) {
-                  setState(() {
-                    _newDrug.name = value;
-                  });
-                },
-              ),
-              SizedBox(height: 20),
-              AnimatedTextField(
-                hintText: 'Description',
-                onChanged: (value) {
-                  setState(() {
-                    _newDrug.description = value;
-                  });
-                },
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: _selectStartTakingDate,
-                      child: Text(
-                        startDateText,
-                        style: TextStyle(color: Colors.black),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: _pickImage,
+                  icon: Icon(Icons.upload),
+                  label: Text('Upload Image'),
+                ),
+                SizedBox(height: 20),
+                AnimatedTextField(
+                  hintText: 'Name',
+                  onChanged: (value) {
+                    setState(() {
+                      _newDrug.name = value;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Name cannot be empty';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20),
+                AnimatedTextField(
+                  hintText: 'Description',
+                  onChanged: (value) {
+                    setState(() {
+                      _newDrug.description = value;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Description cannot be empty';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: _selectStartTakingDate,
+                        child: Text(
+                          startDateText,
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: 20),
-                  Expanded(
-                    child: TextButton(
-                      onPressed: _selectEndTakingDate,
-                      child: Text(
-                        endDateText,
-                        style: TextStyle(color: Colors.black),
+                    SizedBox(width: 20),
+                    Expanded(
+                      child: TextButton(
+                        onPressed: _selectEndTakingDate,
+                        child: Text(
+                          endDateText,
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              AnimatedTextField(
-                hintText: 'Day Of Week',
-                onChanged: (value) {
-                  setState(() {
-                    _newDrug.dayOfWeek = value;
-                  });
-                },
-              ),
-              SizedBox(height: 20),
-              AnimatedTextField(
-                hintText: 'Number Of Time A Day',
-                onChanged: (value) {
-                  setState(() {
-                    _newDrug.numberOfTimeADay = value;
-                  });
-                },
-              ),
-              SizedBox(height: 20),
-              AnimatedDropdownFormField(
-                hintText: 'Quantity Per Take',
-                items: [
-                  '1',
-                  '2',
-                  '3',
-                  '4',
-                  '5'
-                ], // Example items, change as needed
+                  ],
+                ),
+                SizedBox(height: 20),
+                AnimatedTextField(
+                  hintText: 'Day Of Week',
+                  onChanged: (value) {
+                    setState(() {
+                      _newDrug.dayOfWeek = value;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Day of Week cannot be empty';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20),
+                AnimatedTextField(
+                  hintText: 'Number Of Time A Day',
+                  onChanged: (value) {
+                    setState(() {
+                      _newDrug.numberOfTimeADay = value;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Number of Time a Day cannot be empty';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20),
+                AnimatedDropdownFormField(
+                  hintText: 'Quantity Per Take',
+                  items: [
+                    '1',
+                    '2',
+                    '3',
+                    '4',
+                    '5'
+                  ], // Example items, change as needed
 
-                onChanged: (value) {
-                  setState(() {
-                    _newDrug.quantityPerTake = int.tryParse(value ?? '');
-                  });
-                },
-              ),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-  onPressed: () async {
-    try {
-      await DrugService().updateDrug(_newDrug.name, _newDrug); // Pass _newDrug instead of _newDrug.name
-      Navigator.pop(context); // Close current screen
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ListDrug()),
-      );
-    } catch (e) {
-      print('Failed to update drug: $e');
-    }
-  },
-  style: ElevatedButton.styleFrom(
-    backgroundColor: const Color(0xFF8A4FE9),
-  ),
-  child: Padding(
-    padding: EdgeInsets.symmetric(vertical: 16.0),
-    child: Text(
-      'Update',
-      style: TextStyle(
-        fontSize: 18.0,
-        color: Colors.white,
-      ),
-    ),
-  ),
-),
-
+                  onChanged: (value) {
+                    setState(() {
+                      _newDrug.quantityPerTake = int.tryParse(value ?? '');
+                    });
+                  },
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            try {
+                              await DrugService().updateDrug(_newDrug.name, _newDrug);
+                              _showSuccessDialog(); // Show success dialog
+                            } catch (e) {
+                              print('Failed to update drug: $e');
+                            }
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF8A4FE9),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16.0),
+                          child: Text(
+                            'Update',
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -227,11 +276,13 @@ class _UpdateMedicineScreenState extends State<UpdateMedicineScreen> {
 class AnimatedTextField extends StatefulWidget {
   final String hintText;
   final ValueChanged<String>? onChanged;
+  final FormFieldValidator<String>? validator;
 
   const AnimatedTextField({
     Key? key,
     required this.hintText,
     this.onChanged,
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -249,7 +300,7 @@ class _AnimatedTextFieldState extends State<AnimatedTextField> {
         borderRadius: BorderRadius.circular(50.0),
         color: _isFocused ? Colors.white : Colors.white.withOpacity(0.7),
       ),
-      child: TextField(
+      child: TextFormField(
         decoration: InputDecoration(
           hintText: widget.hintText,
           border: InputBorder.none,
@@ -273,11 +324,12 @@ class _AnimatedTextFieldState extends State<AnimatedTextField> {
             });
           }
         },
-        onSubmitted: (value) {
+        onFieldSubmitted: (value) {
           setState(() {
             _isFocused = false;
           });
         },
+        validator: widget.validator,
       ),
     );
   }
