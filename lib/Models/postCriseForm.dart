@@ -107,7 +107,9 @@ class PostCriseFormData {
       concentrationDifficultiesChecked:
           json['concentrationDifficultiesChecked'],
       increasedSensitivityChecked: json['increasedSensitivityChecked'],
-      triggerFactorsSelection: List<bool>.from(json['triggerFactorsSelection']),
+      triggerFactorsSelection: json['triggerFactorsSelection'] != null
+          ? List<bool>.from(json['triggerFactorsSelection'])
+          : [],
       injured: json['injured'],
       conscious: json['conscious'],
       episodes: json['episodes'],

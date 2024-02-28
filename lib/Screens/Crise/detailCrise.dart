@@ -125,8 +125,14 @@ class _CrisisDetailScreenState extends State<CrisisDetailScreen> {
         await http.get(Uri.parse('http://localhost:9090/seizures/$formDataId'));
 
     if (response.statusCode == 200) {
-      // Convert the JSON response to a PostCriseFormData object
-      return PostCriseFormData.fromJson(jsonDecode(response.body));
+      // Convertir la réponse JSON en un objet Map<String, dynamic>
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+
+      // Accéder aux données du formulaire à partir de la clé 'formData'
+      final formDataJson = responseData['formData'];
+
+      // Convertir les données du formulaire JSON en un objet PostCriseFormData
+      return PostCriseFormData.fromJson(formDataJson);
     } else {
       throw Exception('Failed to load form data');
     }
