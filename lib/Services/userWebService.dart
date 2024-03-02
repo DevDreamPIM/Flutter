@@ -377,4 +377,18 @@ class UserWebService {
       print('Error signing in with Google: $error');
     }
   }*/
+  Future<http.Response?> desactivateAccount(String id) async {
+    final url = Uri.parse(
+        '${Constantes.URL_API}${Constantes.URL_API_USER}/desactivateAccount');
+    final response = await http.post(
+      url,
+      body: jsonEncode({
+        'id': id
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+  }
 }

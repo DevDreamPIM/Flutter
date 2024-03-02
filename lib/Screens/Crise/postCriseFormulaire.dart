@@ -1,9 +1,13 @@
+import 'package:epilepto_guard/Models/postCriseForm.dart';
+import 'package:epilepto_guard/Services/postFormService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_picker/flutter_picker.dart';
+import 'package:http/http.dart' as http;
 
 class PostCriseFormulaire extends StatefulWidget {
-  const PostCriseFormulaire({Key? key}) : super(key: key);
+  final int id;
+  const PostCriseFormulaire({Key? key, required this.id}) : super(key: key);
 
   @override
   _PostCriseFormulaireState createState() => _PostCriseFormulaireState();
@@ -11,8 +15,15 @@ class PostCriseFormulaire extends StatefulWidget {
 
 class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
   //** VARIABLES **//
-  double _rating = 0;
-  //* */
+
+  late int _id;
+
+  @override
+  void initState() {
+    super.initState();
+    _id = widget.id;
+  }
+
   List<bool> _triggerFactorsSelection = List.generate(11, (index) => false);
 
   // Variables pour stocker les heures et les minutes sélectionnées
@@ -34,6 +45,39 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
   //boolean variable medication
   bool? _regularMedication;
 
+  //boolean variable injured
+  bool? _injured;
+
+  //boolean variable conscious
+  bool? _conscious;
+
+  //boolean variable episodes
+  bool? _episodes;
+
+  //boolean variable memoryDisturbances
+  bool? _memoryDisturbances;
+
+  //boolean variable assistance
+  bool? _assistance;
+
+  //boolean variable advice
+  bool? _advice;
+
+  // rate variable
+  double _emotionalStateRating = 0;
+  double _recoveryRating = 0;
+  double _stressAnxietyRating = 0;
+  double _medicalCareRating = 0;
+
+//text field area
+  TextEditingController _signsresponseController = TextEditingController();
+  TextEditingController _symptomsresponseController = TextEditingController();
+  TextEditingController _addresponseController = TextEditingController();
+
+// Déclarez une instance du service PostFormService
+  final PostFormService _postFormService = PostFormService();
+
+//*********************************************************** */
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,18 +104,7 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
         child: ListView(
           children: [
             //*******************************1******************** */
-            _buildQuestionWithResponse(
-              'When did you first feel the initial signs of the seizure?',
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'Réponse...',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-              ),
-            ),
-            //***********************2************************************** */
+
             _buildQuestionWithResponse(
               'How long did the seizure last?',
               Row(
@@ -94,6 +127,24 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                     ),
                   ),
                 ],
+              ),
+            ),
+
+            //***********************2************************************** */
+            _buildQuestionWithResponse(
+              'When did you first feel the initial signs of the seizure?',
+              TextFormField(
+                controller: _signsresponseController,
+                decoration: InputDecoration(
+                  hintText: 'Réponse...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                /*  // Définissez une fonction de rappel pour mettre à jour la valeur de réponse 1
+                onChanged: (value) {
+                 
+                },*/
               ),
             ),
             //*************3*********************************** */
@@ -298,35 +349,43 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                       });
                     },
                   ),
-
-                  //***********************5************************** */
                 ],
               ),
             ),
+
+//********************************************************** */
+
             _buildQuestionWithResponse(
               'Were you injured during the seizure?',
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'Réponse...',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+              Column(
+                children: [
+                  RadioListTile<bool>(
+                    title: Text('Yes'),
+                    value: true,
+                    groupValue: _injured,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _injured = value;
+                      });
+                    },
                   ),
-                ),
+                  RadioListTile<bool>(
+                    title: Text('No'),
+                    value: false,
+                    groupValue: _injured,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _injured = value;
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
+
+            //**************************************************************
             _buildQuestionWithResponse(
-              'Did you experience confusion, significant fatigue, or any changes in your behavior or sensations after the seizure?',
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'Réponse...',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-              ),
-            ),
-            _buildQuestionWithResponse(
-              'Did you require medical assistance or emergency intervention?',
+              'Did you notice any changes in your emotional state after the seizure?',
               RatingBar.builder(
                 initialRating: 0,
                 minRating: 0,
@@ -339,22 +398,13 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                   color: const Color(0xFF8A4FE9),
                 ),
                 onRatingUpdate: (rating) {
-                  _rating = rating;
-                  // Add logic to save rating here
+                  setState(() {
+                    _emotionalStateRating = rating;
+                  });
                 },
               ),
             ),
-            _buildQuestionWithResponse(
-              'Did you notice any changes in your emotional state after the seizure?',
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'Réponse...',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-              ),
-            ),
+            //************************************************* */
             _buildQuestionWithResponse(
               'How would you describe the post-seizure recovery in terms of fatigue and the time required to regain normal capabilities?',
               RatingBar.builder(
@@ -369,12 +419,13 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                   color: const Color(0xFF8A4FE9),
                 ),
                 onRatingUpdate: (rating) {
-                  _rating = rating;
-                  // Add logic to save rating here
+                  setState(() {
+                    _recoveryRating = rating;
+                  });
                 },
               ),
             ),
-            // Ajoutez une nouvelle question à votre formulaire
+//****************************************************************************** */
             _buildQuestionWithResponse(
               'Are you regular in your medication intake?',
               Column(
@@ -402,39 +453,95 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                 ],
               ),
             ),
-            _buildQuestionWithResponse(
-              'What sensations or experiences did you feel during the seizure?',
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'Réponse...',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-              ),
-            ),
+//****************************************************************************** */
+
             _buildQuestionWithResponse(
               'Were you conscious during the seizure, or did you lose consciousness?',
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'Réponse...',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+              Column(
+                children: [
+                  RadioListTile<bool>(
+                    title: Text('Conscious'),
+                    value: true,
+                    groupValue: _conscious,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _conscious = value;
+                      });
+                    },
                   ),
-                ),
+                  RadioListTile<bool>(
+                    title: Text('unconscious'),
+                    value: false,
+                    groupValue: _conscious,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _conscious = value;
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
+
+            //*********************************************** */
+            _buildQuestionWithResponse(
+              'Did the seizure involve repeated episodes without fully regaining consciousness in between?',
+              Column(
+                children: [
+                  RadioListTile<bool>(
+                    title: Text('Yes'),
+                    value: true,
+                    groupValue: _episodes,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _episodes = value;
+                      });
+                    },
+                  ),
+                  RadioListTile<bool>(
+                    title: Text('No'),
+                    value: false,
+                    groupValue: _episodes,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _episodes = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+            //*********************************************** */
+
             _buildQuestionWithResponse(
               'Did you experience any memory disturbances after the seizure?',
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: 'Réponse...',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+              Column(
+                children: [
+                  RadioListTile<bool>(
+                    title: Text('Yes'),
+                    value: true,
+                    groupValue: _memoryDisturbances,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _memoryDisturbances = value;
+                      });
+                    },
                   ),
-                ),
+                  RadioListTile<bool>(
+                    title: Text('No'),
+                    value: false,
+                    groupValue: _memoryDisturbances,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _memoryDisturbances = value;
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
+            //*********************************************** */
             _buildQuestionWithResponse(
               'How would you assess your level of stress or anxiety before and after the seizure?',
               RatingBar.builder(
@@ -449,34 +556,17 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                   color: const Color(0xFF8A4FE9),
                 ),
                 onRatingUpdate: (rating) {
-                  _rating = rating;
-                  // Add logic to save rating here
+                  setState(() {
+                    _stressAnxietyRating = rating;
+                  });
                 },
               ),
             ),
+//*********************************************** */
             _buildQuestionWithResponse(
-              'How do you evaluate your ability to resume daily activities after the seizure?',
-              RatingBar.builder(
-                initialRating: 0,
-                minRating: 0,
-                direction: Axis.horizontal,
-                allowHalfRating: true,
-                itemCount: 5,
-                itemSize: 40.0,
-                itemBuilder: (context, _) => Icon(
-                  Icons.star,
-                  color: const Color(0xFF8A4FE9),
-                ),
-                onRatingUpdate: (rating) {
-                  _rating = rating;
-                  // Add logic to save rating here
-                },
-              ),
-            ),
-            //***********a recuperer (boolean)********************* */
-            _buildQuestionWithResponse(
-              'Do you want additional advice on managing your epilepsy?',
+              'Did you experience any specific symptoms after the seizure, such as headaches, nausea, or dizziness?',
               TextFormField(
+                controller: _symptomsresponseController,
                 maxLines: null, // Allow user to input multiple lines
                 decoration: InputDecoration(
                   hintText: 'Your response...',
@@ -486,6 +576,37 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                 ),
               ),
             ),
+            //***************************************************** */
+
+            _buildQuestionWithResponse(
+              'Did you require medical assistance or emergency intervention?',
+              Column(
+                children: [
+                  RadioListTile<bool>(
+                    title: Text('Yes'),
+                    value: true,
+                    groupValue: _assistance,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _assistance = value;
+                      });
+                    },
+                  ),
+                  RadioListTile<bool>(
+                    title: Text('No'),
+                    value: false,
+                    groupValue: _assistance,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _assistance = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+            //************************************************* */
             _buildQuestionWithResponse(
               'How do you assess the medical care or assistance you received during the seizure?',
               RatingBar.builder(
@@ -500,26 +621,48 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                   color: const Color(0xFF8A4FE9),
                 ),
                 onRatingUpdate: (rating) {
-                  _rating = rating;
-                  // Add logic to save rating here
+                  setState(() {
+                    _medicalCareRating = rating;
+                  });
                 },
               ),
             ),
+
+            //*************************************************
+
             _buildQuestionWithResponse(
-              'Did you experience any specific symptoms after the seizure, such as headaches, nausea, or dizziness?',
-              TextFormField(
-                maxLines: null, // Allow user to input multiple lines
-                decoration: InputDecoration(
-                  hintText: 'Your response...',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+              'Do you want additional advice on managing your epilepsy?',
+              Column(
+                children: [
+                  RadioListTile<bool>(
+                    title: Text('Yes'),
+                    value: true,
+                    groupValue: _advice,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _advice = value;
+                      });
+                    },
                   ),
-                ),
+                  RadioListTile<bool>(
+                    title: Text('No'),
+                    value: false,
+                    groupValue: _advice,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _advice = value;
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
+
+            //***************************************************** */
             _buildQuestionWithResponse(
               'Do you have anything to add?',
               TextFormField(
+                controller: _addresponseController,
                 maxLines: null, // Allow user to input multiple lines
                 decoration: InputDecoration(
                   hintText: 'Your response...',
@@ -529,11 +672,11 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                 ),
               ),
             ),
+            //*****************************************************
+
             SizedBox(height: 20.0),
             ElevatedButton(
-              onPressed: () {
-                // Add logic to save responses here
-              },
+              onPressed: _saveForm,
               style: ElevatedButton.styleFrom(
                 backgroundColor:
                     const Color(0xFF8A4FE9), // Set background color here
@@ -541,7 +684,7 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                     vertical: 16.0), // Adjust button height here
               ),
               child: Text(
-                'Save',
+                'Submit Form',
                 style: TextStyle(
                   color: Colors.white, // Set text color to white
                   fontSize: 18.0, // Adjust text size here
@@ -552,6 +695,48 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
         ),
       ),
     );
+  }
+
+// fonction pour gérer l'action lorsque le bouton "Save" est pressé
+  void _saveForm() {
+    // Récupérer les valeurs des champs texte
+    String response1 = _signsresponseController.text;
+    String response2 = _symptomsresponseController.text;
+    String response3 = _addresponseController.text;
+
+    // Créer une instance de PostCriseFormData
+    PostCriseFormData formData = PostCriseFormData(
+      id: _id,
+      selectedHours: _selectedHours,
+      selectedMinutes: _selectedMinutes,
+      visualAuraChecked: _visualAuraChecked,
+      sensoryAuraChecked: _sensoryAuraChecked,
+      auditoryAuraChecked: _auditoryAuraChecked,
+      gustatoryOrOlfactoryAuraChecked: _gustatoryOrOlfactoryAuraChecked,
+      headachesChecked: _headachesChecked,
+      excessiveFatigueChecked: _excessiveFatigueChecked,
+      abnormalMoodChecked: _abnormalMoodChecked,
+      sleepDisturbancesChecked: _sleepDisturbancesChecked,
+      concentrationDifficultiesChecked: _concentrationDifficultiesChecked,
+      increasedSensitivityChecked: _increasedSensitivityChecked,
+      triggerFactorsSelection: _triggerFactorsSelection,
+      injured: _injured,
+      conscious: _conscious,
+      episodes: _episodes,
+      memoryDisturbances: _memoryDisturbances,
+      assistance: _assistance,
+      advice: _advice,
+      emotionalStateRating: _emotionalStateRating,
+      recoveryRating: _recoveryRating,
+      stressAnxietyRating: _stressAnxietyRating,
+      medicalCareRating: _medicalCareRating,
+      response1: response1,
+      response2: response2,
+      response3: response3,
+    );
+
+    // Envoyer les données au backend
+    _postFormService.sendDataToBackend(formData);
   }
 
   // Méthode pour construire un cadre question-réponse

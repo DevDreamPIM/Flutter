@@ -5,6 +5,7 @@ import 'package:epilepto_guard/Screens/MedicalSheet/medicalSheetScreen.dart';
 import 'package:epilepto_guard/Screens/User/loginScreen.dart';
 import 'package:epilepto_guard/Screens/UserProfil/updateProfileScreen.dart';
 import 'package:epilepto_guard/colors.dart';
+import 'package:epilepto_guard/Screens/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -26,7 +27,7 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         backgroundColor:
-            Colors.transparent, // Make AppBar background transparent
+        Colors.transparent, // Make AppBar background transparent
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -56,7 +57,7 @@ class ProfileScreen extends StatelessWidget {
           SingleChildScrollView(
             child: Container(
               padding:
-                  const EdgeInsets.all(16.0), // Adjust padding if necessary
+              const EdgeInsets.all(16.0), // Adjust padding if necessary
               child: Column(
                 children: [
                   // Your existing widgetSingleChildScrollView(
@@ -92,7 +93,7 @@ class ProfileScreen extends StatelessWidget {
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
-                                  Color(0xFF8A4FE9), // Background color
+                              Color(0xFF8A4FE9), // Background color
                             ),
                             child: const Text(
                               'Edit Profile', // Make sure to replace 'Edit Profile' with a variable if it's dynamic
@@ -112,7 +113,10 @@ class ProfileScreen extends StatelessWidget {
                         ProfileMenuWidget(
                             title: "Settings",
                             icon: LineAwesomeIcons.cog,
-                            onPress: () {}),
+                            onPress: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => Settings()));
+                            }),
                         ProfileMenuWidget(
                             title: "Calendar",
                             icon: LineAwesomeIcons.calendar,
@@ -208,21 +212,21 @@ class ProfileMenuWidget extends StatelessWidget {
       ),
       title: Text(title,
           style:
-              Theme.of(context).textTheme.bodyText1?.apply(color: textColor)),
+          Theme.of(context).textTheme.bodyText1?.apply(color: textColor)),
       trailing: endIcon
           ? Container(
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-                color: AppColors.lightPurple,
-              ),
-              child: const Icon(
-                LineAwesomeIcons.angle_right,
-                size: 18.0,
-                color: Color(0xFF8A4FE9),
-              ),
-            )
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100),
+          color: AppColors.lightPurple,
+        ),
+        child: const Icon(
+          LineAwesomeIcons.angle_right,
+          size: 18.0,
+          color: Color(0xFF8A4FE9),
+        ),
+      )
           : null,
     );
   }

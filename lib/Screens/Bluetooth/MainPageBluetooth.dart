@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import './ChatPage.dart';
 import './DiscoveryPage.dart';
@@ -52,6 +53,15 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
         _bluetoothState = state;
       });
     });
+
+    // Request location permission
+    Permission.location.request();
+
+    // Request Bluetooth scan permission
+    Permission.bluetoothScan.request();
+
+    // Request Bluetooth connect permission
+    Permission.bluetoothConnect.request();
   }
 
   @override

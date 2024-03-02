@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ChatPage extends StatefulWidget {
   final BluetoothDevice server;
@@ -35,9 +36,12 @@ class _ChatPage extends State<ChatPage> {
   bool isConnecting = true;
   bool isDisconnecting = false;
 
+  String? userId; // Variable to store the retrieved user ID
+
   @override
   void initState() {
     super.initState();
+    _retrieveUserId(); // Call method to retrieve user ID
 
     BluetoothConnection.toAddress(widget.server.address).then((_connection) {
       print('Connected to the device');
@@ -46,6 +50,11 @@ class _ChatPage extends State<ChatPage> {
         isConnecting = false;
         isDisconnecting = false;
       });
+
+      // Send userId
+      if (userId != null) {
+        _sendMessage("uid:" + userId!);
+      }
 
       connection.input.listen(_onDataReceived).onDone(() {
         // Example: Detect which side closed the connection
@@ -66,6 +75,14 @@ class _ChatPage extends State<ChatPage> {
     }).catchError((error) {
       print('Cannot connect, exception occured');
       print(error);
+    });
+  }
+
+  void _retrieveUserId() async {
+    final storage = FlutterSecureStorage();
+    String? id = await storage.read(key: 'id');
+    setState(() {
+      userId = id;
     });
   }
 

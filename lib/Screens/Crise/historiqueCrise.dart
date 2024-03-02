@@ -3,54 +3,44 @@ import 'package:flutter/material.dart';
 import 'package:epilepto_guard/Models/crise.dart';
 import 'package:intl/intl.dart';
 
-class CrisisHistoryScreen extends StatelessWidget {
-  final List<Crisis> crises = [
-    Crisis(
-      date: DateTime(2024, 2, 8),
-      startTime: TimeOfDay(hour: 9, minute: 0),
-      endTime: TimeOfDay(hour: 9, minute: 30),
-      duration: 30, // en minutes
-      type: CrisisType.partial,
-      location: 'Home',
-      //symptoms: ['Symptom 1', 'Symptom 2'],
-      //preSymptoms: 'Pre-symptom',
-      emergencyServicesCalled: false,
-      medicalAssistance: true,
-      severity: 'mild',
-    ),
-    Crisis(
-      date: DateTime(2024, 2, 5),
-      startTime: TimeOfDay(hour: 12, minute: 0),
-      endTime: TimeOfDay(hour: 12, minute: 15),
-      duration: 15, // en minutes
-      type: CrisisType.generalized,
-      location: 'School',
-      // symptoms: ['Symptom 3', 'Symptom 4'],
-      // preSymptoms: 'Pre-symptom',
-      emergencyServicesCalled: true,
-      medicalAssistance: true,
-      severity: 'moderate',
-    ),
-    Crisis(
-      date: DateTime(2024, 2, 2),
-      startTime: TimeOfDay(hour: 18, minute: 0),
-      endTime: TimeOfDay(hour: 18, minute: 5),
-      duration: 5, // en minutes
-      type: CrisisType.absence,
-      location: 'Park',
-      // symptoms: ['Symptom 5', 'Symptom 6'],
-      // preSymptoms: 'Pre-symptom',
-      emergencyServicesCalled: false,
-      medicalAssistance: false,
-      severity: 'severe',
-    ),
-  ];
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:epilepto_guard/Utils/Constantes.dart';
+
+class CrisisHistoryScreen extends StatefulWidget {
+  @override
+  _CrisisHistoryScreenState createState() => _CrisisHistoryScreenState();
+}
+
+class _CrisisHistoryScreenState extends State<CrisisHistoryScreen> {
+  List<Crisis> crises = [];
+
+  Future<void> fetchCrises() async {
+    final response =
+        await http.get(Uri.parse('${Constantes.URL_API}/seizures/'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(response.body);
+      setState(() {
+        crises = data.map((item) => Crisis.fromJson(item)).toList();
+      });
+    } else {
+      throw Exception('Failed to load seizures');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCrises();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Crisis History',
+          'Seizures History',
           style: TextStyle(
             color: const Color(0xFF8A4FE9),
             fontSize: 24.0,
@@ -70,7 +60,7 @@ class CrisisHistoryScreen extends StatelessWidget {
           itemCount: crises.length,
           itemBuilder: (BuildContext context, int index) {
             return Card(
-              elevation: 4, // Ajouter une ombre
+              elevation: 4,
               margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: ListTile(
                 title: Text(
