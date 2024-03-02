@@ -17,7 +17,7 @@ class _CrisisHistoryScreenState extends State<CrisisHistoryScreen> {
 
   Future<void> fetchCrises() async {
     final response =
-        await http.get(Uri.parse('http://127.0.0.1:9090/seizures/'));
+        await http.get(Uri.parse('${Constantes.URL_API}/seizures/'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);
@@ -87,8 +87,3 @@ class _CrisisHistoryScreenState extends State<CrisisHistoryScreen> {
     );
   }
 }
-
-
-
-
-

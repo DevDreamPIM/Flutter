@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:epilepto_guard/Models/crise.dart' as CriseModel;
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:epilepto_guard/Utils/Constantes.dart';
 
 class CrisisDetailScreen extends StatefulWidget {
   final CriseModel.Crisis crisis;
@@ -122,7 +123,7 @@ class _CrisisDetailScreenState extends State<CrisisDetailScreen> {
 
   Future<PostCriseFormData> fetchFormData(String formDataId) async {
     final response =
-        await http.get(Uri.parse('http://localhost:9090/seizures/$formDataId'));
+        await http.get(Uri.parse('${Constantes.URL_API}/seizures/$formDataId'));
 
     if (response.statusCode == 200) {
       // Convertir la réponse JSON en un objet Map<String, dynamic>
