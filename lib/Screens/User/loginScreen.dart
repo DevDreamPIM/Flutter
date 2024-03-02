@@ -4,6 +4,7 @@ import 'package:epilepto_guard/Services/userWebService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../HomeScreen.dart';
 
@@ -16,7 +17,23 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _passwordVisible = false;
+  bool _rememberMe = false;
   final _formKey = GlobalKey<FormBuilderState>();
+  final _googleSignIn = GoogleSignIn(
+    clientId:
+        '485905293101-t2vlph7ob8tpotsmnofgo1qi19dusi58.apps.googleusercontent.com',
+    scopes: <String>['email', 'profile', 'openid'],
+  );
+  @override
+  void initState() {
+    final _googleSignIn = GoogleSignIn(
+      clientId:
+          '485905293101-aah8f4uhq456u7aqdl2s7gmbuq7lo32s.apps.googleusercontent.com',
+      scopes: <String>['email', 'profile', 'openid'],
+    );
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,28 +121,73 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                         SizedBox(height: 20),
+                        // Remember Me checkbox
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _rememberMe,
+                              onChanged: (value) {
+                                setState(() {
+                                  _rememberMe = value!;
+                                });
+                              },
+                              // Customize the color of the checkbox
+                              fillColor:
+                                  MaterialStateProperty.resolveWith<Color?>(
+                                (Set<MaterialState> states) {
+                                  if (states.contains(MaterialState.selected)) {
+                                    return const Color(
+                                        0xFF8A4FE9); // Selected color
+                                  }
+                                  return Colors.white; // Unselected color
+                                },
+                              ),
+                            ),
+                            // Customize the color of the text
+                            Text(
+                              'Remember Me',
+                              style: TextStyle(
+                                color: const Color(0xFF8A4FE9),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 20),
                         // Login button
 
                         Container(
                           width: double.infinity, // Extends to both sides
                           child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               // Add login functionality
                               if (_formKey.currentState!.saveAndValidate()) {
-                               
+                                final email =
+                                    _formKey.currentState!.value['email'];
+                                final password =
+                                    _formKey.currentState!.value['password'];
+
+                                // Check the state of the "Remember Me" checkbox
+                                if (_rememberMe) {
+                                  // Save user's email and password to secure storage
+                                  final storage = FlutterSecureStorage();
+                                  await storage.write(
+                                      key: 'email', value: email);
+                                  await storage.write(
+                                      key: 'password', value: password);
+                                } else {
+                                  // Clear saved user's email and password
+                                  final storage = FlutterSecureStorage();
+                                  await storage.delete(key: 'email');
+                                  await storage.delete(key: 'password');
+                                }
+
+                                // Proceed with login
                                 UserWebService()
-                                    .login(
-                                        context,
-                                        _formKey.currentState!.value['email'],
-                                        _formKey
-                                            .currentState!.value['password'])
+                                    .login(context, email, password)
                                     .then((value) async {
                                   if (value) {
-                                    // Save user data to secure storage
-                                    const storage = FlutterSecureStorage();
-                                    var data = await storage.read(key: "token");
-                                    print(data);
-
+                                    // Navigate to home screen after successful login
                                     Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (context) =>
@@ -173,8 +235,48 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             // Google sign in button
                             InkWell(
-                              onTap: () {
+                              onTap: () async {
+                                final creds = await _googleSignIn.signIn();
+                                if (creds == null) {
+                                  debugPrint('Could not Sign in');
+                                } else {
+                                  debugPrint('Signed in Successfully');
+                                  print(creds.email);
+                                  final googleKey = await creds.authentication;
+
+                                  FlutterSecureStorage().write(
+                                      key: 'token',
+                                      value: googleKey.accessToken);
+
+                                  final fullName = creds
+                                      .displayName; // Assuming creds is the GoogleSignInAccount
+                                  final List<String> parts =
+                                      fullName!.split(' ');
+                                  String firstName = '';
+                                  String lastName = '';
+
+                                  if (parts.isNotEmpty) {
+                                    // First part is the first name
+                                    firstName = parts.first;
+
+                                    // Last part (if exists) and everything after it is the last name
+                                    if (parts.length > 1) {
+                                      lastName = parts.sublist(1).join(' ');
+                                    }
+                                  }
+                                  FlutterSecureStorage()
+                                      .write(key: 'email', value: creds.email);
+                                  FlutterSecureStorage().write(
+                                      key: 'firstName', value: firstName);
+                                  FlutterSecureStorage()
+                                      .write(key: 'lastName', value: lastName);
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => HomeScreen()));
+                                }
                                 // Add Google sign in functionality
+                                /*UserWebService().handleGoogleSignIn().then((value) async {
+                                 
+                                });*/
                               },
                               child: Padding(
                                 padding: EdgeInsets.symmetric(

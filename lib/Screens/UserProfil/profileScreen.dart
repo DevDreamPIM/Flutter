@@ -143,22 +143,25 @@ class ProfileScreen extends StatelessWidget {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => ListDrug()));
                             }),
-                        ProfileMenuWidget(
-                          title: "Logout",
-                          icon: LineAwesomeIcons.alternate_sign_out,
-                          textColor: Colors.red,
-                          endIcon: false,
-                          onPress: () async {
-                            const storage = FlutterSecureStorage();
-                            await storage.delete(key: "token").then((value) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const LoginScreen()),
-                              );
-                            });
-                          },
-                        ),
+                       ProfileMenuWidget(
+  title: "Logout",
+  icon: LineAwesomeIcons.alternate_sign_out,
+  textColor: Colors.red,
+  endIcon: false,
+  onPress: () async {
+    final storage = FlutterSecureStorage();
+    await storage.delete(key: "token").then((_) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (route) => false, // Remove all routes on the stack
+      );
+    }).catchError((error) {
+      print("Error occurred during logout: $error");
+    });
+  },
+),
+
                       ],
                     ),
                   ),

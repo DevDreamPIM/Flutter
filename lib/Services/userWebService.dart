@@ -4,8 +4,10 @@ import 'package:epilepto_guard/Utils/Constantes.dart';
 import 'package:epilepto_guard/Utils/rescrueStorage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-
+import 'package:google_sign_in/google_sign_in.dart';
 class UserWebService {
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+
   Future<bool> registerUser(
       String firstName,
       String lastName,
@@ -285,8 +287,7 @@ class UserWebService {
     }
   }
 
-  Future<void> updateMedicalFile(
-       String token, BuildContext context) async {
+  Future<void> updateMedicalFile(String token, BuildContext context) async {
     final url = Uri.parse(
         '${Constantes.URL_API}${Constantes.URL_API_USER}/updateMedicalFile');
     final response = await http.put(
@@ -308,7 +309,8 @@ class UserWebService {
     }
   }
 
-Future<User?> getMedicalFile(String token, String id,BuildContext context) async {
+  Future<User?> getMedicalFile(
+      String token, String id, BuildContext context) async {
     final url = Uri.parse(
         '${Constantes.URL_API}${Constantes.URL_API_USER}/getMedicalFile');
     final response = await http.get(
@@ -320,7 +322,6 @@ Future<User?> getMedicalFile(String token, String id,BuildContext context) async
     );
 
     if (response.statusCode == 200) {
-
       print('Medical file retrieved successfully!');
       print(response.body);
       return User.fromJson(json.decode(response.body));
@@ -331,4 +332,49 @@ Future<User?> getMedicalFile(String token, String id,BuildContext context) async
     }
   }
 
+ /* Future<void> handleGoogleSignIn() async {
+    try {
+      final _clientIDweb =
+          '485905293101-t2vlph7ob8tpotsmnofgo1qi19dusi58.apps.googleusercontent.com';
+   
+      //final _googleLogout = await _googleSignIn.signOut();
+
+      //final GoogleSignInCredentials? googleSignInAccount = await _googleSignIn.signInOnline();
+
+      if (googleSignInAccount != null) {
+        // Retrieve authentication credentials
+        final  googleSignInAuthentication = await googleSignInAccount.accessToken;
+
+        // Retrieve user's email
+        final idToken = googleSignInAccount.idToken;
+
+       // print(email);
+        // Retrieve Google ID token
+        
+        print(idToken);
+
+        // Send the authentication credentials (idToken and email) to your backend for verification
+        final response = await http.post(
+          Uri.parse(
+              '${Constantes.URL_API}${Constantes.URL_API_USER}/googleSignIn'), // Replace with your backend URL
+          body: {
+            'idToken': idToken,
+            //'email': email,
+          },
+        );
+
+        if (response.statusCode == 200) {
+          // Handle successful authentication
+          // Navigate to main app screen upon successful authentication
+        } else {
+          // Handle server errors
+          print(
+              'Failed to authenticate with Google. Server returned ${response.statusCode}');
+        }
+      }
+    } catch (error) {
+      // Handle sign-in errors
+      print('Error signing in with Google: $error');
+    }
+  }*/
 }
