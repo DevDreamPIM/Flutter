@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:epilepto_guard/Screens/Drugs/ListDrug.dart';
 import 'package:epilepto_guard/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -7,7 +8,6 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:weather/weather.dart';
 import 'package:epilepto_guard/Screens/Drugs/add.dart';
 import '../../colors.dart';
-
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -44,21 +44,29 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Calendar',
+        title: Text(
+          'Calendar',
           style: TextStyle(
-          color: Colors.white,
+            color: Colors.white,
+          ),
         ),
-      ),
-      backgroundColor: const Color(0xFFC987E1),
+        backgroundColor: const Color(0xFFC987E1),
       ),
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/background/background.png'),
-                fit: BoxFit.cover,
-              ),
+            decoration: BoxDecoration(
+              image: _weather != null
+                  ? DecorationImage(
+                      image: AssetImage(
+                          'assets/images/background/weather/${_weather!.weatherIcon}.png'),
+                      fit: BoxFit.cover,
+                    )
+                  : const DecorationImage(
+                      image:
+                          AssetImage('assets/images/background/background.png'),
+                      fit: BoxFit.cover,
+                    ), // Placeholder or default background
             ),
             child: Column(
               children: [
@@ -99,18 +107,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ListTile(
               title: Center(child: Text('Add Drug')),
               onTap: () {
-                // Handle selection of Item 1
+                Navigator.pop(context);
                 Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => AddMedicineScreen()),
-                        );
+                  context,
+                  MaterialPageRoute(builder: (context) => AddMedicineScreen()),
+                );
               },
             ),
             ListTile(
-              title: Center(child: Text('Add Drug Reminder')),
+              title: Center(child: Text('List of Drugs')),
               onTap: () {
-                // Handle selection of Item 2
                 Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ListDrug()),
+                );
               },
             ),
             // ListTile(
@@ -126,28 +137,61 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
+  Map<DateTime, List<dynamic>> _events = {
+    DateTime(2024, 3, 3): ['Event A', 'Event B'], // Events on March 3, 2024
+  };
+
   Widget _buildCalendarUI() {
-    return Padding(
-      padding: const EdgeInsets.all(6.0),
+    return Align(
+      alignment: Alignment.topCenter,
       child: Container(
-        margin: EdgeInsets.only(top: 20),
-        child: Column(
-          children: [
-            Container(
-              child: TableCalendar(
-                rowHeight: 80,
-                headerStyle: HeaderStyle(
-                    formatButtonVisible: false, titleCentered: true),
-                availableGestures: AvailableGestures.all,
-                selectedDayPredicate: (day) => isSameDay(day, today),
-                focusedDay: today,
-                firstDay: DateTime.utc(2023),
-                lastDay: DateTime.utc(2034),
-                onDaySelected: _onDaySelected,
+        margin: const EdgeInsets.only(top: 20),
+        width: MediaQuery.of(context).size.width * 0.9,
+        height: MediaQuery.of(context).size.height * 0.65,
+        child: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: MediaQuery.of(context).size.height * 0.65,
+              decoration: BoxDecoration(
+                color: AppColors.purple.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ListView(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(6.0),
+                    child: Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: Column(
+                        children: [
+                          Container(
+                            child: TableCalendar(
+                              rowHeight: 80,
+                              headerStyle: HeaderStyle(
+                                  formatButtonVisible: false,
+                                  titleCentered: true),
+                              availableGestures: AvailableGestures.all,
+                              selectedDayPredicate: (day) =>
+                                  isSameDay(day, today),
+                              focusedDay: today,
+                              firstDay: DateTime.utc(2023),
+                              lastDay: DateTime.utc(2034),
+                              onDaySelected: _onDaySelected,
+                            ),
+                          ),
+                          //Text("Selected Day: ${today.toString().split(" ")[0]}"),
+                          //here display the drugs of the selected day
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            Text("Selected Day: ${today.toString().split(" ")[0]}"),
-          ],
+          ),
         ),
       ),
     );
@@ -177,11 +221,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   color: AppColors.purple.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.05,
+                ),
                 child: Row(
                   children: [
-                    // First Column
                     Expanded(
+                      flex: 1,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -199,11 +245,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         ],
                       ),
                     ),
-                    // Second Column
+                    SizedBox(width: 16), // Add some spacing between columns
                     Expanded(
+                      flex: 2,
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment
-                            .end, // Align elements to the right
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
@@ -245,10 +291,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               ),
                             ],
                           ),
-                          // Text(
-                          //   "Max: ${_weather?.tempMax?.celsius?.toStringAsFixed(0)}°C - Min: ${_weather?.tempMin?.celsius?.toStringAsFixed(0)}°C",
-                          //   style: TextStyle(fontSize: 16),
-                          // ),
                           Text(
                             "Wind: ${_weather?.windSpeed?.toStringAsFixed(0)}m/s",
                             style: const TextStyle(fontSize: 16),
