@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:epilepto_guard/Models/drug.dart';
 import 'package:epilepto_guard/Screens/Drugs/ListDrug.dart';
 import 'package:epilepto_guard/consts.dart';
 import 'package:flutter/material.dart';
@@ -22,16 +23,70 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Weather? _weather;
   String cityName = "Tunis";
 
-  DateTime today = DateTime.now();
-  void _onDaySelected(DateTime day, DateTime focusedDay) {
-    setState(() {
-      today = day;
-    });
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay;
+
+  final Map<DateTime, List<Drug>> _events = {
+    /*
+    DateTime(2024, 3, 3): [
+      Drug(
+        name: 'Drug A',
+        startTakingDate: DateTime(2024, 3, 3),
+        endTakingDate: DateTime(2024, 3, 3),
+        numberOfTimeADay: '',
+      )
+    ],
+    DateTime(2024, 2, 3): [
+      Drug(
+        name: 'Drug B',
+        startTakingDate: DateTime(2024, 2, 3),
+        endTakingDate: DateTime(2024, 3, 5),
+        numberOfTimeADay: '',
+      )
+    ],
+    DateTime.now(): [
+      Drug(
+        name: 'Drug C',
+        startTakingDate: DateTime(2024, 3, 2),
+        endTakingDate: DateTime(2024, 3, 5),
+        numberOfTimeADay: '',
+      ),
+      Drug(
+        name: 'Drug D',
+        startTakingDate: DateTime(2024, 3, 2),
+        endTakingDate: DateTime(2024, 3, 5),
+        numberOfTimeADay: '',
+      )
+    ],
+    */
+  }; //exemple static pour le test
+
+  List<Drug> _getEventsForDay(DateTime day) {
+    return _events[day] ?? [];
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    if (!isSameDay(_selectedDay, selectedDay)) {
+      setState(() {
+        _selectedDay = selectedDay;
+        _focusedDay = focusedDay;
+        _selectedEvents.value = _getEventsForDay(selectedDay);
+      });
+    }
+  }
+
+  late final ValueNotifier<List<Drug>> _selectedEvents;
 
   @override
   void initState() {
     super.initState();
+    _selectedDay = _focusedDay;
+    _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
     // _wf.currentWeatherByLocation();
     _wf.currentWeatherByCityName(cityName).then((w) {
       setState(() {
@@ -66,7 +121,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       image:
                           AssetImage('assets/images/background/background.png'),
                       fit: BoxFit.cover,
-                    ), // Placeholder or default background
+                    ),
             ),
             child: Column(
               children: [
@@ -124,22 +179,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 );
               },
             ),
-            // ListTile(
-            //   title: Center(child: Text('Item 3')),
-            //   onTap: () {
-            //     // Handle selection of Item 3
-            //     Navigator.pop(context);
-            //   },
-            // ),
           ],
         );
       },
     );
   }
-
-  Map<DateTime, List<dynamic>> _events = {
-    DateTime(2024, 3, 3): ['Event A', 'Event B'], // Events on March 3, 2024
-  };
 
   Widget _buildCalendarUI() {
     return Align(
@@ -159,35 +203,51 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 borderRadius: BorderRadius.circular(10),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: ListView(
+              child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(6.0),
-                    child: Container(
-                      margin: EdgeInsets.only(top: 20),
-                      child: Column(
-                        children: [
-                          Container(
-                            child: TableCalendar(
-                              rowHeight: 80,
-                              headerStyle: HeaderStyle(
-                                  formatButtonVisible: false,
-                                  titleCentered: true),
-                              availableGestures: AvailableGestures.all,
-                              selectedDayPredicate: (day) =>
-                                  isSameDay(day, today),
-                              focusedDay: today,
-                              firstDay: DateTime.utc(2023),
-                              lastDay: DateTime.utc(2034),
-                              onDaySelected: _onDaySelected,
-                            ),
-                          ),
-                          //Text("Selected Day: ${today.toString().split(" ")[0]}"),
-                          //here display the drugs of the selected day
-                        ],
-                      ),
+                  TableCalendar(
+                    locale: "en_US",
+                    rowHeight: 80,
+                    headerStyle: const HeaderStyle(
+                      formatButtonVisible: false,
+                      titleCentered: true,
                     ),
+                    availableGestures: AvailableGestures.all,
+                    selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                    startingDayOfWeek: StartingDayOfWeek.monday,
+                    focusedDay: _focusedDay,
+                    firstDay: DateTime.utc(2023),
+                    lastDay: DateTime.utc(2034),
+                    onDaySelected: _onDaySelected,
+                    onPageChanged: (focusedDay) {
+                      _focusedDay = focusedDay;
+                    },
+                    eventLoader: (day) {
+                      return _getEventsForDay(day);
+                    }, // Load drug events for each day
                   ),
+                  const SizedBox(height: 8.0),
+                  Expanded(
+                    child: ValueListenableBuilder<List<Drug>>(
+                        valueListenable: _selectedEvents,
+                        builder: (context, value, _) {
+                          return ListView.builder(
+                              itemCount: value.length,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  margin: EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 4),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(),
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: ListTile(
+                                    onTap: () => print("tap"),
+                                    title: Text('hello'), //${value[index]}'),
+                                  ),
+                                );
+                              });
+                        }),
+                  )
                 ],
               ),
             ),
