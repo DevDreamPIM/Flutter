@@ -1,5 +1,5 @@
 class PostCriseFormData {
-  int id; // id de la crise associée
+  String idCrise; // id de la crise associée
   int selectedHours;
   int selectedMinutes;
   bool visualAuraChecked;
@@ -28,9 +28,9 @@ class PostCriseFormData {
   String response3;
 
   PostCriseFormData({
-    required this.id,
-    required this.selectedHours,
-    required this.selectedMinutes,
+    required this.idCrise,
+    this.selectedHours = 0,
+    this.selectedMinutes = 5,
     required this.visualAuraChecked,
     required this.sensoryAuraChecked,
     required this.auditoryAuraChecked,
@@ -60,7 +60,7 @@ class PostCriseFormData {
   // Méthode pour sérialiser les données du formulaire
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'id': idCrise,
       'selectedHours': selectedHours,
       'selectedMinutes': selectedMinutes,
       'visualAuraChecked': visualAuraChecked,
@@ -93,7 +93,7 @@ class PostCriseFormData {
   // Méthode pour désérialiser les données du formulaire
   factory PostCriseFormData.fromJson(Map<String, dynamic> json) {
     return PostCriseFormData(
-      id: json['id'],
+      idCrise: json['id'],
       selectedHours: json['selectedHours'],
       selectedMinutes: json['selectedMinutes'],
       visualAuraChecked: json['visualAuraChecked'],

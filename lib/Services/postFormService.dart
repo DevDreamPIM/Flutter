@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'package:epilepto_guard/Models/postCriseForm.dart';
+import 'package:epilepto_guard/Utils/Constantes.dart';
 import 'package:http/http.dart' as http;
 
 class PostFormService {
-  static const String baseURL = 'http://localhost:9090';
-
   Future<String?> sendDataToBackend(PostCriseFormData formData) async {
-    final url = '$baseURL/postForm';
+    final url = 'http://127.0.0.1:9090/postCriseForm';
 
     try {
       final response = await http.post(

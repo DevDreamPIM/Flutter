@@ -285,8 +285,7 @@ class UserWebService {
     }
   }
 
-  Future<void> updateMedicalFile(
-       String token, BuildContext context) async {
+  Future<void> updateMedicalFile(String token, BuildContext context) async {
     final url = Uri.parse(
         '${Constantes.URL_API}${Constantes.URL_API_USER}/updateMedicalFile');
     final response = await http.put(
@@ -308,7 +307,8 @@ class UserWebService {
     }
   }
 
-Future<User?> getMedicalFile(String token, String id,BuildContext context) async {
+  Future<User?> getMedicalFile(
+      String token, String id, BuildContext context) async {
     final url = Uri.parse(
         '${Constantes.URL_API}${Constantes.URL_API_USER}/getMedicalFile');
     final response = await http.get(
@@ -320,7 +320,6 @@ Future<User?> getMedicalFile(String token, String id,BuildContext context) async
     );
 
     if (response.statusCode == 200) {
-
       print('Medical file retrieved successfully!');
       print(response.body);
       return User.fromJson(json.decode(response.body));
@@ -336,13 +335,10 @@ Future<User?> getMedicalFile(String token, String id,BuildContext context) async
         '${Constantes.URL_API}${Constantes.URL_API_USER}/desactivateAccount');
     final response = await http.post(
       url,
-      body: jsonEncode({
-        'id': id
-      }),
+      body: jsonEncode({'id': id}),
       headers: {
         'Content-Type': 'application/json',
       },
     );
-
   }
 }
