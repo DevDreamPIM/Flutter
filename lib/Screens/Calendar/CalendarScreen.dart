@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:epilepto_guard/Models/drug.dart';
+import 'package:epilepto_guard/models/drug.dart';
 import 'package:epilepto_guard/Screens/Drugs/ListDrug.dart';
 import 'package:epilepto_guard/consts.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +9,7 @@ import 'package:weather/weather.dart';
 import 'package:epilepto_guard/Screens/Drugs/add.dart';
 import '../../colors.dart';
 import 'package:calendar_view/calendar_view.dart';
+import 'package:epilepto_guard/services/drugService.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -23,43 +24,56 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Weather? _weather;
   String cityName = "Tunis";
 
-  final Map<DateTime, List<Drug>> _events = {
-    DateTime(2024, 3, 5): [
-      Drug(
-        name: 'Drug 1',
-        startTakingDate: DateTime(2024, 3, 5),
-        endTakingDate: DateTime(2024, 3, 5),
-        numberOfTimeADay: '',
-      )
-    ],
-    DateTime(2024, 3, 12): [
-      Drug(
-        name: 'Drug 2',
-        startTakingDate: DateTime(2024, 3, 12),
-        endTakingDate: DateTime(2024, 3, 12),
-        numberOfTimeADay: '',
-      ),
-      Drug(
-        name: 'Drug 3',
-        startTakingDate: DateTime(2024, 3, 12),
-        endTakingDate: DateTime(2024, 3, 12),
-        numberOfTimeADay: '',
-      ),
-    ],
-    /* 
-  Add more events here if needed
-  */
-  };
+  final DrugService drugService = DrugService();
+  List<Drug> drugs = [];
+
+  final Map<DateTime, List<Drug>> _events = {};
 
   @override
   void initState() {
     super.initState();
+    fetchDrugs();
     // _wf.currentWeatherByLocation();
     _wf.currentWeatherByCityName(cityName).then((w) {
       setState(() {
         _weather = w;
       });
     });
+  }
+
+  Future<void> fetchDrugs() async {
+    try {
+      List<Drug> fetchedDrugs = await drugService.getAllDrugs();
+      setState(() {
+        drugs = fetchedDrugs;
+        _events.clear(); // Clear existing events
+        for (var drug in drugs) {
+          if (drug.startTakingDate != null) {
+            DateTime startDate = DateTime(
+              drug.startTakingDate!.year,
+              drug.startTakingDate!.month,
+              drug.startTakingDate!.day,
+            );
+            // Check if the date already exists in _events
+            if (_events.containsKey(startDate)) {
+              // Add the drug to the existing list
+              _events[startDate]!.add(drug);
+            } else {
+              // Create a new list with the drug
+              _events[startDate] = [drug];
+            }
+          }
+        }
+      });
+    } catch (e) {
+      print('Error loading drugs: $e');
+      // Handle errors loading drugs
+    }
+  }
+
+  Future<void> _refresh() async {
+    // Mettez à jour la liste des drugs
+    await fetchDrugs();
   }
 
   @override
@@ -174,60 +188,65 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: MonthView(
-                        controller:
-                            CalendarControllerProvider.of(context).controller,
-                        cellBuilder: (date, events, isToday, isInMonth) {
-                          List<Widget> children = [];
+                      child: StatefulBuilder(
+                        builder: (context, setState) => MonthView(
+                          key: ValueKey(_events
+                              .length), // Force rebuild when _events changes
+                          controller:
+                              CalendarControllerProvider.of(context).controller,
+                          cellBuilder: (date, events, isToday, isInMonth) {
+                            List<Widget> children = [];
 
-                          // Add date number
-                          children.add(
-                            Container(
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: isToday
-                                    ? AppColors.turquoise
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                '${date.day}',
-                                style: TextStyle(
-                                  color: isInMonth ? Colors.white : Colors.grey,
-                                  fontWeight: FontWeight.bold,
+                            // Add date number
+                            children.add(
+                              Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: isToday
+                                      ? AppColors.turquoise
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
-                              ),
-                            ),
-                          );
-
-                          // Add events for the date
-                          if (_events.containsKey(date)) {
-                            _events[date]!.forEach((event) {
-                              children.add(
-                                Container(
-                                  padding: EdgeInsets.symmetric(vertical: 4),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    event
-                                        .name, // Assuming 'name' is a property of your Drug model
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
+                                child: Text(
+                                  '${date.day}',
+                                  style: TextStyle(
+                                    color:
+                                        isInMonth ? Colors.white : Colors.grey,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              );
-                            });
-                          }
+                              ),
+                            );
 
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: children,
-                          );
-                        },
-                        onCellTap: (events, date) {
-                          // Handle cell tap event here
-                          print('Cell tapped: $date');
-                        },
+                            // Add events for the date
+                            if (_events.containsKey(date)) {
+                              _events[date]!.forEach((event) {
+                                children.add(
+                                  Container(
+                                    padding: EdgeInsets.symmetric(vertical: 4),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      event
+                                          .name, // Assuming 'name' is a property of your Drug model
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              });
+                            }
+
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: children,
+                            );
+                          },
+                          onCellTap: (events, date) {
+                            // Handle cell tap event here
+                            print('Cell tapped: $date');
+                          },
+                        ),
                       ),
                     ),
                   ],
