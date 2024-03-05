@@ -5,10 +5,10 @@ import 'package:epilepto_guard/Screens/Drugs/ListDrug.dart';
 import 'package:epilepto_guard/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:weather/weather.dart';
 import 'package:epilepto_guard/Screens/Drugs/add.dart';
 import '../../colors.dart';
+import 'package:calendar_view/calendar_view.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -23,70 +23,37 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Weather? _weather;
   String cityName = "Tunis";
 
-  DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
-
   final Map<DateTime, List<Drug>> _events = {
-    /*
-    DateTime(2024, 3, 3): [
+    DateTime(2024, 3, 5): [
       Drug(
-        name: 'Drug A',
-        startTakingDate: DateTime(2024, 3, 3),
-        endTakingDate: DateTime(2024, 3, 3),
-        numberOfTimeADay: '',
-      )
-    ],
-    DateTime(2024, 2, 3): [
-      Drug(
-        name: 'Drug B',
-        startTakingDate: DateTime(2024, 2, 3),
+        name: 'Drug 1',
+        startTakingDate: DateTime(2024, 3, 5),
         endTakingDate: DateTime(2024, 3, 5),
         numberOfTimeADay: '',
       )
     ],
-    DateTime.now(): [
+    DateTime(2024, 3, 12): [
       Drug(
-        name: 'Drug C',
-        startTakingDate: DateTime(2024, 3, 2),
-        endTakingDate: DateTime(2024, 3, 5),
+        name: 'Drug 2',
+        startTakingDate: DateTime(2024, 3, 12),
+        endTakingDate: DateTime(2024, 3, 12),
         numberOfTimeADay: '',
       ),
       Drug(
-        name: 'Drug D',
-        startTakingDate: DateTime(2024, 3, 2),
-        endTakingDate: DateTime(2024, 3, 5),
+        name: 'Drug 3',
+        startTakingDate: DateTime(2024, 3, 12),
+        endTakingDate: DateTime(2024, 3, 12),
         numberOfTimeADay: '',
-      )
+      ),
     ],
-    */
-  }; //exemple static pour le test
-
-  List<Drug> _getEventsForDay(DateTime day) {
-    return _events[day] ?? [];
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    if (!isSameDay(_selectedDay, selectedDay)) {
-      setState(() {
-        _selectedDay = selectedDay;
-        _focusedDay = focusedDay;
-        _selectedEvents.value = _getEventsForDay(selectedDay);
-      });
-    }
-  }
-
-  late final ValueNotifier<List<Drug>> _selectedEvents;
+    /* 
+  Add more events here if needed
+  */
+  };
 
   @override
   void initState() {
     super.initState();
-    _selectedDay = _focusedDay;
-    _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
     // _wf.currentWeatherByLocation();
     _wf.currentWeatherByCityName(cityName).then((w) {
       setState(() {
@@ -186,69 +153,85 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   Widget _buildCalendarUI() {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Container(
-        margin: const EdgeInsets.only(top: 20),
-        width: MediaQuery.of(context).size.width * 0.9,
-        height: MediaQuery.of(context).size.height * 0.65,
-        child: ClipRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.9,
-              height: MediaQuery.of(context).size.height * 0.65,
-              decoration: BoxDecoration(
-                color: AppColors.purple.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  TableCalendar(
-                    locale: "en_US",
-                    rowHeight: 80,
-                    headerStyle: const HeaderStyle(
-                      formatButtonVisible: false,
-                      titleCentered: true,
-                    ),
-                    availableGestures: AvailableGestures.all,
-                    selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                    startingDayOfWeek: StartingDayOfWeek.monday,
-                    focusedDay: _focusedDay,
-                    firstDay: DateTime.utc(2023),
-                    lastDay: DateTime.utc(2034),
-                    onDaySelected: _onDaySelected,
-                    onPageChanged: (focusedDay) {
-                      _focusedDay = focusedDay;
-                    },
-                    eventLoader: (day) {
-                      return _getEventsForDay(day);
-                    }, // Load drug events for each day
-                  ),
-                  const SizedBox(height: 8.0),
-                  Expanded(
-                    child: ValueListenableBuilder<List<Drug>>(
-                        valueListenable: _selectedEvents,
-                        builder: (context, value, _) {
-                          return ListView.builder(
-                              itemCount: value.length,
-                              itemBuilder: (context, index) {
-                                return Container(
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 4),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(),
-                                      borderRadius: BorderRadius.circular(12)),
-                                  child: ListTile(
-                                    onTap: () => print("tap"),
-                                    title: Text('hello'), //${value[index]}'),
+    return Expanded(
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: Container(
+          margin: const EdgeInsets.only(top: 20),
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: MediaQuery.of(context).size.height * 0.65,
+          child: ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppColors.purple.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: MonthView(
+                        controller:
+                            CalendarControllerProvider.of(context).controller,
+                        cellBuilder: (date, events, isToday, isInMonth) {
+                          List<Widget> children = [];
+
+                          // Add date number
+                          children.add(
+                            Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: isToday
+                                    ? AppColors.turquoise
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                '${date.day}',
+                                style: TextStyle(
+                                  color: isInMonth ? Colors.white : Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          );
+
+                          // Add events for the date
+                          if (_events.containsKey(date)) {
+                            _events[date]!.forEach((event) {
+                              children.add(
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 4),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    event
+                                        .name, // Assuming 'name' is a property of your Drug model
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                );
-                              });
-                        }),
-                  )
-                ],
+                                ),
+                              );
+                            });
+                          }
+
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: children,
+                          );
+                        },
+                        onCellTap: (events, date) {
+                          // Handle cell tap event here
+                          print('Cell tapped: $date');
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
