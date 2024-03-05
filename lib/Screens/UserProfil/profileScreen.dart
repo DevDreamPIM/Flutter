@@ -1,29 +1,36 @@
+import 'dart:io';
+
 import 'package:epilepto_guard/Screens/Calendar/CalendarScreen.dart';
 import 'package:epilepto_guard/Screens/Crise/historiqueCrise.dart';
 import 'package:epilepto_guard/Screens/Drugs/ListDrug.dart';
 import 'package:epilepto_guard/Screens/MedicalSheet/medicalSheetScreen.dart';
 import 'package:epilepto_guard/Screens/User/loginScreen.dart';
+import 'package:epilepto_guard/Screens/UserProfil/image.dart';
 import 'package:epilepto_guard/Screens/UserProfil/updateProfileScreen.dart';
 import 'package:epilepto_guard/colors.dart';
-import 'package:epilepto_guard/Screens/settings.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+// Placeholder button text
 
-const double DefaultSize = 16.0; // Placeholder for your DefaultSize value
-const String ProfileImage =
-    'assets/images/user/youssef.jpg'; // Placeholder image path
-const String ProfileHeading = 'Youssef Farhat'; // Placeholder text
-const String ProfileSubHeading = 'Youssef.farhat@esprit.tn'; // Placeholder text
-const String EditProfile = 'Edit Profile'; // Placeholder button text
-
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+
+  @override
   Widget build(BuildContext context) {
-    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
-    return Scaffold(
+  const double DefaultSize = 16.0;
+  const String ProfileHeading = 'Youssef Farhat'; // Placeholder text
+  const String ProfileSubHeading = 'Youssef.farhat@esprit.tn'; // Placeholder text
+  return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor:
@@ -70,7 +77,7 @@ class ProfileScreen extends StatelessWidget {
                           height: 120,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(100),
-                            child: Image.asset(ProfileImage),
+                            child: Image.asset("assets/images/user/youssef.jpg"),// i want to change this code with my pretty selected image 
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -115,8 +122,10 @@ class ProfileScreen extends StatelessWidget {
                             icon: LineAwesomeIcons.cog,
                             onPress: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => Settings()));
-                            }),
+                                  builder: (context) => HomeScreen()));
+                            }
+
+                            ),
                         ProfileMenuWidget(
                             title: "Calendar",
                             icon: LineAwesomeIcons.calendar,
