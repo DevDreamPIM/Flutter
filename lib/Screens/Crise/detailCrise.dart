@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:epilepto_guard/Models/crise.dart' as CriseModel;
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:epilepto_guard/Utils/Constantes.dart';
 
 class CrisisDetailScreen extends StatefulWidget {
   final CriseModel.Crisis crisis;
