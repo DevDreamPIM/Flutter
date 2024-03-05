@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:epilepto_guard/Models/postCriseForm.dart';
 import 'package:epilepto_guard/Screens/Crise/postCriseFormulaire.dart';
+import 'package:epilepto_guard/Utils/Constantes.dart';
 import 'package:flutter/material.dart';
 import 'package:epilepto_guard/Models/crise.dart' as CriseModel;
 import 'package:intl/intl.dart';
@@ -11,25 +12,25 @@ import 'package:epilepto_guard/Utils/Constantes.dart';
 class CrisisDetailScreen extends StatefulWidget {
   final CriseModel.Crisis crisis;
 
-  const CrisisDetailScreen(this.crisis);
+  const CrisisDetailScreen({required this.crisis});
 
   @override
   _CrisisDetailScreenState createState() => _CrisisDetailScreenState();
 }
 
 class _CrisisDetailScreenState extends State<CrisisDetailScreen> {
-  late PostCriseFormData formData;
+  late List<PostCriseFormData> formData = [];
 
   @override
   void initState() {
     super.initState();
-    fetchFormData(widget.crisis.formDataId).then((data) {
+    /* fetchFormData(widget.crisis.formDataId).then((data) {
       setState(() {
         formData = data;
       });
     }).catchError((error) {
       print('Error fetching form data: $error');
-    });
+    });*/
   }
 
   @override
@@ -102,7 +103,7 @@ class _CrisisDetailScreenState extends State<CrisisDetailScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            PostCriseFormulaire(id: formData.id),
+                            PostCriseFormulaire(id: widget.crisis.idCrise),
                       ),
                     );
                   },
@@ -121,19 +122,15 @@ class _CrisisDetailScreenState extends State<CrisisDetailScreen> {
     );
   }
 
-  Future<PostCriseFormData> fetchFormData(String formDataId) async {
+  Future<List<PostCriseFormData>> fetchFormData(String formDataId) async {
     final response =
         await http.get(Uri.parse('${Constantes.URL_API}/seizures/$formDataId'));
 
     if (response.statusCode == 200) {
-      // Convertir la réponse JSON en un objet Map<String, dynamic>
-      final Map<String, dynamic> responseData = jsonDecode(response.body);
-
-      // Accéder aux données du formulaire à partir de la clé 'formData'
-      final formDataJson = responseData['formData'];
-
-      // Convertir les données du formulaire JSON en un objet PostCriseFormData
-      return PostCriseFormData.fromJson(formDataJson);
+      List<dynamic> data = json.decode(response!.body);
+      print("list dataaaaaaaaaaaaaaaaaaaaa");
+      print(data.map((json) => PostCriseFormData.fromJson(json)).toList());
+      return data.map((json) => PostCriseFormData.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load form data');
     }

@@ -382,13 +382,10 @@ class UserWebService {
         '${Constantes.URL_API}${Constantes.URL_API_USER}/desactivateAccount');
     final response = await http.post(
       url,
-      body: jsonEncode({
-        'id': id
-      }),
+      body: jsonEncode({'id': id}),
       headers: {
         'Content-Type': 'application/json',
       },
     );
-
   }
 }

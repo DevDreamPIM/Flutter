@@ -42,8 +42,8 @@ class Crisis {
     return Crisis(
       idCrise: json['_id'] ?? '',
       date: DateTime.parse(json['date'] ?? ''),
-      startTime:_parseTimeOfDay( json['startTime'] ?? ''),
-      endTime:_parseTimeOfDay( json['endTime'] ?? ''),
+      startTime: _parseTimeOfDay(json['startTime'] ?? ''),
+      endTime: _parseTimeOfDay(json['endTime'] ?? ''),
       duration: json['duration'] ?? 0,
       location: json['location'] ?? '',
       type: CrisisType.values.firstWhere(
