@@ -287,13 +287,13 @@ class UserWebService {
     }
   }
 
-  Future<void> updateMedicalFile(String token, BuildContext context) async {
+  Future<void> updateMedicalFile(String birthDate, String weight, String height,String token, BuildContext context) async {
     final url = Uri.parse(
         '${Constantes.URL_API}${Constantes.URL_API_USER}/updateMedicalFile');
     final response = await http.put(
       url,
       body:
-          jsonEncode({"birthDate": "2000-03-14", "weight": 50, "height": 157}),
+          jsonEncode({"birthDate": birthDate, "weight": weight, "height": height}),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

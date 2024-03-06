@@ -52,7 +52,9 @@ dependencies:
   pie_chart: ^5.4.0
   flutter_picker: ^2.1.0
   google_sign_in: ^6.2.1
-  url_launcher: ^6.2.5 
+  pdf: ^3.10.8
+  path_provider: ^2.1.2
+  html: ^0.15.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
