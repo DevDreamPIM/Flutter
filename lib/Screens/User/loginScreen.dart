@@ -1,3 +1,5 @@
+import 'package:epilepto_guard/Screens/Doctor/patientDetail.dart';
+import 'package:epilepto_guard/Screens/Doctor/patientsList.dart';
 import 'package:epilepto_guard/Screens/User/registerScreen.dart';
 import 'package:epilepto_guard/Screens/User/verifEmailScreen.dart';
 import 'package:epilepto_guard/Services/userWebService.dart';
@@ -186,13 +188,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                 UserWebService()
                                     .login(context, email, password)
                                     .then((value) async {
-                                  if (value) {
+                                      print(value);
+                                  if (value == 'patient') {
                                     // Navigate to home screen after successful login
                                     Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 HomeScreen()));
                                   }
+                                  else
+                                    {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PatientsList()));
+                                    }
                                 });
                               }
                             },

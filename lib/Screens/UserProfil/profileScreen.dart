@@ -9,12 +9,16 @@ import 'package:epilepto_guard/Screens/UserProfil/image.dart';
 import 'package:epilepto_guard/Screens/UserProfil/updateProfileScreen.dart';
 import 'package:epilepto_guard/Utils/Constantes.dart';
 import 'package:epilepto_guard/colors.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+
+import '../../Services/userWebService.dart';
+import '../settings.dart';
 // Placeholder button text
 
 class ProfileScreen extends StatefulWidget {
@@ -28,6 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? fullName;
   String? image;
   String? email;
+
   @override
   void initState() {
     super.initState();
@@ -86,8 +91,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(
-                      "assets/images/background/login.png"), // Specify the path to your background image
+                  image: AssetImage("assets/images/background/login.png"),
+                  // Specify the path to your background image
                   fit: BoxFit.cover,
                 ),
               ),
@@ -140,7 +145,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     Color(0xFF8A4FE9), // Background color
                               ),
                               child: const Text(
-                                'Edit Profile', // Make sure to replace 'Edit Profile' with a variable if it's dynamic
+                                'Edit Profile',
+                                // Make sure to replace 'Edit Profile' with a variable if it's dynamic
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),
@@ -154,13 +160,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             height: 10,
                           ),
                           // MENU
-                          ProfileMenuWidget(
-                              title: "Settings",
-                              icon: LineAwesomeIcons.cog,
-                              onPress: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => HomeScreen()));
-                              }),
+                          // ProfileMenuWidget(
+                          //     title: "Settings",
+                          //     icon: LineAwesomeIcons.cog,
+                          //     onPress: () {
+                          //       Navigator.of(context).push(MaterialPageRoute(
+                          //           builder: (context) => Settings()));
+                          //     }),
                           ProfileMenuWidget(
                               title: "Calendar",
                               icon: LineAwesomeIcons.calendar,
@@ -179,7 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         MedicalSheetScreen()));
                               }),
                           ProfileMenuWidget(
-                              title: "Seizure History",
+                              title: "Crisis History",
                               icon: LineAwesomeIcons.history,
                               onPress: () {
                                 Navigator.of(context).push(MaterialPageRoute(
@@ -193,6 +199,116 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => ListDrug()));
                               }),
+                          ListTile(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('Confirmation'),
+                                    content: const Text(
+                                        'Are you sure you want to deactivate your account?'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text(
+                                          'No',
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          final storage =
+                                              FlutterSecureStorage();
+                                          final id =
+                                              await storage.read(key: 'id');
+
+                                          http.Response? res =
+                                              await UserWebService()
+                                                  .desactivateAccount(id!);
+                                          Navigator.pop(context);
+                                          if (res?.statusCode == 200) {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title:
+                                                      const Text("Information"),
+                                                  content: const Text(
+                                                      "Account successfully desactivated!"),
+                                                  actions: [
+                                                    TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                context),
+                                                        child: const Text(
+                                                            "Dismiss"))
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          } else {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                      "Server error"),
+                                                  content: const Text(
+                                                      "Account could not desactivated! Please try again later."),
+                                                  actions: [
+                                                    TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                context),
+                                                        child: const Text(
+                                                            "Dismiss"))
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          }
+                                          await storage
+                                              .delete(key: "token")
+                                              .then((value) {});
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const LoginScreen()),
+                                          );
+                                        },
+                                        child: Text('Yes',
+                                            style:
+                                                TextStyle(color: Colors.green)),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            leading: Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Color(0xFFC4A4F4),
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  LineAwesomeIcons.remove_user,
+                                  color: Color(0xFF9A65EE),
+                                ),
+                              ),
+                            ),
+                            title: const Text(
+                              'Deactivate Account',
+                              style: TextStyle(color: Color(0xFFEF5259)),
+                            ),
+                          ),
+                          const Divider(color: Colors.grey),
                           ProfileMenuWidget(
                             title: "Logout",
                             icon: LineAwesomeIcons.alternate_sign_out,
