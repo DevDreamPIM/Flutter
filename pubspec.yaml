@@ -53,10 +53,12 @@ dependencies:
   pie_chart: ^5.4.0
   flutter_picker: ^2.1.0
   google_sign_in: ^6.2.1
-  url_launcher: ^6.2.5 
+  pdf: ^3.8.4
+  path_provider: ^2.1.2
+  html: ^0.15.0
   
   scoped_model: ^2.0.0
-  image: ^3.0.1
+  image: ^4.1.7
   network_image: ^0.1.1
   cached_network_image: ^3.3.0
   image_cropper: ^5.0.1

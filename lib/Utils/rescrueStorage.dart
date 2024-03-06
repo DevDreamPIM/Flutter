@@ -11,6 +11,10 @@ class RescureStorage {
     await storage.write(key: "lastName", value: responseData['lastName']);
     await storage.write(key: "phoneNumber", value: responseData['phoneNumber'].toString());
     await storage.write(key: "role", value: responseData['role']);
+    await storage.write(key: "birthDate", value: responseData['birthDate']);
+    await storage.write(key: "weight", value: responseData['weight'].toString());
+    await storage.write(key: "height", value: responseData['height'].toString());
+    await storage.write(key: "numP", value: responseData['numP'].toString());
   }
 
   

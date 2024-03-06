@@ -10,34 +10,33 @@ class MedicalSheetScreen extends StatefulWidget {
 }
 
 class _MedicalSheetScreenState extends State<MedicalSheetScreen> {
+  String? firstName;
+  String? lastName;
+  String? birthDate;
+  String? phoneNumber;
+  String? weight;
+  String? height;
 
-String? firstName;
-String? lastName;
-String? birthDate;
-String? phoneNumber;
-String? weight;
-String? height;
-
-@override
-void initState() {
-  super.initState();
-  _loadUserData();
-}
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
 
   _loadUserData() async {
-  final storage = FlutterSecureStorage();
-  
-  // Use await to wait for the completion of each read operation
-  firstName = await storage.read(key: "firstName");
-  lastName = await storage.read(key: "lastName");
- // birthDate = await storage.read(key: "birthDate");
-  phoneNumber = await storage.read(key: "phoneNumber");
- // weight = await storage.read(key: "weight");
- // height = await storage.read(key: "height");
+    final storage = FlutterSecureStorage();
 
-  // Set state to reflect the changes
-  setState(() {});
-}
+    // Use await to wait for the completion of each read operation
+    firstName = await storage.read(key: "firstName");
+    lastName = await storage.read(key: "lastName");
+    birthDate = await storage.read(key: "birthDate");
+    phoneNumber = await storage.read(key: "phoneNumber");
+    weight = await storage.read(key: "weight");
+    height = await storage.read(key: "height");
+
+    // Set state to reflect the changes
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,15 +70,16 @@ void initState() {
                 children: [
                   _buildInfoRow('First Name', firstName ?? ''),
                   _buildInfoRow('Last Name', lastName ?? ''),
-                  _buildInfoRow('Birth Date','2000-03-14'),
+                  _buildInfoRow('Birth Date', birthDate ?? ''),
                   _buildInfoRow('Phone Number', phoneNumber ?? ''),
-                  _buildInfoRow('Weight', '50 kg'),
-                  _buildInfoRow('Height', '157 cm'),
+                  _buildInfoRow('Weight', '$weight kg' ?? ''),
+                  _buildInfoRow('Height', '$height cm' ?? ''),
                   Padding(
                     padding: EdgeInsets.all(16.0),
                     child: ElevatedButton.icon(
                       onPressed: () {
                         // Add your export functionality here
+                        //  _exportToPdf();
                       },
                       icon: Icon(
                         Icons.file_download,

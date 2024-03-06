@@ -29,18 +29,20 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
   }
 
   _loadUserData() async {
-    const storage = FlutterSecureStorage();
+    final storage = FlutterSecureStorage();
 
     // Use await to wait for the completion of each read operation
     firstName = await storage.read(key: "firstName");
     lastName = await storage.read(key: "lastName");
-    //birthDate = await storage.read(key: "birthDate");
+    birthDate = await storage.read(key: "birthDate");
     phoneNumber = await storage.read(key: "phoneNumber");
-    //weight = await storage.read(key: "weight");
-    //height = await storage.read(key: "height");
+    weight = await storage.read(key: "weight");
+    height = await storage.read(key: "height");
 
     // Set state to reflect the changes
-    setState(() {});
+    setState(() {
+      print(firstName);
+    });
   }
 
   @override
@@ -82,10 +84,11 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const SizedBox(height: 10),
+
                         // First Name text field
                         FormBuilderTextField(
                           name: 'firstName',
-                          initialValue: firstName ?? '',
+                          initialValue: firstName! ?? '',
                           decoration: InputDecoration(
                             hintText: 'First Name',
                             border: OutlineInputBorder(
@@ -99,7 +102,7 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                         // Last Name text field
                         FormBuilderTextField(
                           name: 'lastName',
-                          initialValue: lastName ?? '',
+                          initialValue: lastName! ?? '',
                           decoration: InputDecoration(
                             hintText: 'Last Name',
                             border: OutlineInputBorder(
@@ -112,7 +115,7 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                         const SizedBox(height: 20),
                         FormBuilderTextField(
                           name: 'phoneNumber',
-                          initialValue: phoneNumber ?? '',
+                          initialValue: phoneNumber! ?? '',
                           decoration: InputDecoration(
                             hintText: 'Phone Number',
                             border: OutlineInputBorder(
@@ -129,7 +132,7 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                           onTap: () async {
                             final DateTime? pickedDate = await showDatePicker(
                               context: context,
-                              initialDate: birthDate != null
+                              initialDate: birthDate! != null
                                   ? DateTime.parse(birthDate!)
                                   : DateTime.now(),
 
@@ -194,7 +197,7 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                         const SizedBox(height: 20),
                         FormBuilderTextField(
                           name: 'weight',
-                          initialValue: weight ?? '',
+                          initialValue: weight! ?? '',
                           decoration: InputDecoration(
                             hintText: 'Weight',
                             border: OutlineInputBorder(
@@ -207,8 +210,8 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your weight';
-                            } else if (value.length < 3 && value.length > 1) {
-                              return 'weight must be at least 3 characters long';
+                            } else if (value.length < 2 || value.length > 3) {
+                              return 'Weight must be 2 or 3 characters long';
                             } else if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
                               return 'weight can only contain numbers';
                             }
@@ -220,7 +223,7 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                         const SizedBox(height: 20),
                         FormBuilderTextField(
                           name: 'height',
-                          initialValue: height ?? '',
+                          initialValue: height! ?? '',
                           decoration: InputDecoration(
                             hintText: 'Height',
                             border: OutlineInputBorder(
@@ -233,7 +236,7 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your height';
-                            } else if (value.length < 3 && value.length > 1) {
+                            } else if (value.length < 2 || value.length > 3) {
                               return 'height must be at least 3 characters long';
                             } else if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
                               return 'height can only contain numbers';
@@ -248,12 +251,43 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                           width: double.infinity, // Extends to both sides
                           child: ElevatedButton(
                             onPressed: () async {
-                              // Add login functionality
-                              const storage = FlutterSecureStorage();
-                              var token = await storage.read(key: "token");
-                              await UserWebService()
-                                  .updateMedicalFile(token!, context);
-                              Navigator.of(context).pop(context);
+                              _formKey.currentState!.save();
+                              if (_formKey.currentState!.validate()) {
+                                print(_formKey.currentState!.value);
+                                const storage = FlutterSecureStorage();
+                                var token = await storage.read(key: "token");
+                                print(token);
+                                await UserWebService()
+                                    .updateMedicalFile(
+                                      _formKey.currentState!.fields['birthDate']!.value,
+                                              _formKey.currentState!.fields['weight']!.value
+                                                  .toString(),
+                                              _formKey.currentState!.fields['height']!.value,
+                                      token!, context);
+                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        const SnackBar(
+                                                          content: Text(
+                                                              'Medical file updated successfully',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white)),
+                                                          backgroundColor:
+                                                              Colors.green,
+                                                        ),
+                                                      );
+                                Navigator.of(context).pop(context);
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Please correct the errors in the form.',
+                                        style: TextStyle(color: Colors.white)),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(
