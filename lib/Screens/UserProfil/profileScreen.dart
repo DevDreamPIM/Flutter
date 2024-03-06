@@ -111,7 +111,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               borderRadius: BorderRadius.circular(100),
                               child: Image.network(
                                 '${Constantes.USER_IMAGE_URL}/$image',
-                                fit: BoxFit.cover, // This ensures the image covers the container bounds
+                                fit: BoxFit
+                                    .cover, // This ensures the image covers the container bounds
                               ),
                             ),
                           ),
@@ -131,7 +132,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: ElevatedButton(
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => UpdateProfileScreen()));
+                                    builder: (context) =>
+                                        UpdateProfileScreen()));
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
@@ -143,7 +145,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                           ),
-        
+
                           const SizedBox(
                             height: 30,
                           ),
@@ -173,14 +175,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               icon: LineAwesomeIcons.medical_notes,
                               onPress: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => MedicalSheetScreen()));
+                                    builder: (context) =>
+                                        MedicalSheetScreen()));
                               }),
                           ProfileMenuWidget(
-                              title: "Crisis History",
+                              title: "Seizure History",
                               icon: LineAwesomeIcons.history,
                               onPress: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => CrisisHistoryScreen()));
+                                    builder: (context) =>
+                                        CrisisHistoryScreen()));
                               }),
                           ProfileMenuWidget(
                               title: "Drugs",
@@ -200,7 +204,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const LoginScreen()),
+                                      builder: (context) =>
+                                          const LoginScreen()),
                                   (route) =>
                                       false, // Remove all routes on the stack
                                 );
@@ -274,5 +279,4 @@ class ProfileMenuWidget extends StatelessWidget {
           : null,
     );
   }
-  
 }

@@ -14,43 +14,78 @@ class PostCriseFormulaire extends StatefulWidget {
 }
 
 class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
+  //** VARIABLES **//
+
   late String _id;
+
+  List<bool>? _triggerFactorsSelection = List.generate(11, (index) => false);
+
+  // Variables pour stocker les heures et les minutes sélectionnées
+  int _selectedHours = 0;
+  int _selectedMinutes = 0;
+
+  //  option de réponse pour les auras
+  bool? _visualAuraChecked = false;
+  bool? _sensoryAuraChecked = false;
+  bool? _auditoryAuraChecked = false;
+  bool? _gustatoryOrOlfactoryAuraChecked = false;
+  bool? _headachesChecked = false;
+  bool? _excessiveFatigueChecked = false;
+  bool? _abnormalMoodChecked = false;
+  bool? _sleepDisturbancesChecked = false;
+  bool? _concentrationDifficultiesChecked = false;
+  bool? _increasedSensitivityChecked = false;
+
+  //boolean variable medication
+  bool _medicationIntake = false;
+
+  //boolean variable injured
+  bool _injured = false;
+
+  //boolean variable conscious
+  bool _conscious = false;
+
+  //boolean variable episodes
+  bool _episodes = false;
+
+  //boolean variable memoryDisturbances
+  bool _memoryDisturbances = false;
+
+  //boolean variable assistance
+  bool _assistance = false;
+
+  //boolean variable advice
+  bool _advice = false;
+
+  // rate variable
+  double _emotionalStateRating = 0;
+  double _recoveryRating = 0;
+  double _stressAnxietyRating = 0;
+  double _medicalCareRating = 0;
+
+//text field area
+  TextEditingController? _signsresponseController;
+  TextEditingController? _symptomsresponseController;
+  TextEditingController? _addresponseController;
+
+// Déclarez une instance du service PostFormService
+  final PostFormService _postFormService = PostFormService();
 
   @override
   void initState() {
     super.initState();
     _id = widget.id;
+    _emotionalStateRating = 0;
+    _recoveryRating = 0;
+    _stressAnxietyRating = 0;
+    _medicalCareRating = 0;
+
+    _signsresponseController = TextEditingController();
+    _symptomsresponseController = TextEditingController();
+    _addresponseController = TextEditingController();
   }
 
-  List<bool> _triggerFactorsSelection = List.generate(11, (index) => false);
-  int _selectedHours = 0;
-  int _selectedMinutes = 0;
-  bool _visualAuraChecked = false;
-  bool _sensoryAuraChecked = false;
-  bool _auditoryAuraChecked = false;
-  bool _gustatoryOrOlfactoryAuraChecked = false;
-  bool _headachesChecked = false;
-  bool _excessiveFatigueChecked = false;
-  bool _abnormalMoodChecked = false;
-  bool _sleepDisturbancesChecked = false;
-  bool _concentrationDifficultiesChecked = false;
-  bool _increasedSensitivityChecked = false;
-  bool? _regularMedication;
-  bool? _injured;
-  bool? _conscious;
-  bool? _episodes;
-  bool? _memoryDisturbances;
-  bool? _assistance;
-  bool? _advice;
-  double _emotionalStateRating = 0;
-  double _recoveryRating = 0;
-  double _stressAnxietyRating = 0;
-  double _medicalCareRating = 0;
-  TextEditingController _signsresponseController = TextEditingController();
-  TextEditingController _symptomsresponseController = TextEditingController();
-  TextEditingController _addresponseController = TextEditingController();
-  final PostFormService _postFormService = PostFormService();
-
+//*********************************************************** */
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,8 +107,12 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
             fit: BoxFit.cover,
           ),
         ),
+
+        //********************FORM************************* */
         child: ListView(
           children: [
+            //*******************************1******************** */
+
             _buildQuestionWithResponse(
               'How long did the seizure last?',
               Row(
@@ -98,112 +137,233 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                 ],
               ),
             ),
-             _buildQuestionWithResponse(
-              'Are identifiable triggering factors present ?',
+
+            //***********************2************************************** */
+            _buildQuestionWithResponse(
+              'When did you first feel the initial signs of the seizure?',
+              TextFormField(
+                controller: _signsresponseController,
+                decoration: InputDecoration(
+                  hintText: 'Réponse...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                /*  // Définissez une fonction de rappel pour mettre à jour la valeur de réponse 1
+                onChanged: (value) {
+                 
+                },*/
+              ),
+            ),
+            //*************3*********************************** */
+            _buildQuestionWithResponse(
+              'Did you experience an aura before the seizure?',
               Column(
                 children: [
-                  _buildCheckboxQuestion(
-                    'Emotional or psychological stress, such as anxiety or fear, or physical stress',
-                    _triggerFactorsSelection[0],
+                  _buildCheckboxQuestionForNullableBool(
+                    'Visual Aura',
+                    _visualAuraChecked,
                     (value) {
                       setState(() {
-                        _triggerFactorsSelection[0] = value!;
+                        _visualAuraChecked = value!;
                       });
                     },
                   ),
-                  _buildCheckboxQuestion(
-                    'Lack of sleep or sleep disruption',
-                    _triggerFactorsSelection[1],
+                  _buildCheckboxQuestionForNullableBool(
+                    'Sensory Aura',
+                    _sensoryAuraChecked,
                     (value) {
                       setState(() {
-                        _triggerFactorsSelection[1] = value!;
+                        _sensoryAuraChecked = value!;
                       });
                     },
                   ),
-                  _buildCheckboxQuestion(
-                    'Excessive alcohol or drug consumption',
-                    _triggerFactorsSelection[2],
+                  _buildCheckboxQuestionForNullableBool(
+                    'Auditory Aura',
+                    _auditoryAuraChecked,
                     (value) {
                       setState(() {
-                        _triggerFactorsSelection[2] = value!;
+                        _auditoryAuraChecked = value!;
                       });
                     },
                   ),
-                  _buildCheckboxQuestion(
-                    'Bright flashes or stroboscopic lights',
-                    _triggerFactorsSelection[3],
+                  _buildCheckboxQuestionForNullableBool(
+                    'Gustatory or Olfactory Aura',
+                    _gustatoryOrOlfactoryAuraChecked,
                     (value) {
                       setState(() {
-                        _triggerFactorsSelection[3] = value!;
+                        _gustatoryOrOlfactoryAuraChecked = value!;
                       });
                     },
                   ),
-             _buildCheckboxQuestion(
-                    'Omission or interruption of anticonvulsant medication',
-                    _triggerFactorsSelection[4],
+                  _buildCheckboxQuestionForNullableBool(
+                    'Headaches',
+                    _headachesChecked,
                     (value) {
                       setState(() {
-                        _triggerFactorsSelection[4] = value!;
+                        _headachesChecked = value!;
                       });
                     },
                   ),
-                  _buildCheckboxQuestion(
-                    'Hormones',
-                    _triggerFactorsSelection[5],
+                  _buildCheckboxQuestionForNullableBool(
+                    'Excessive Fatigue',
+                    _excessiveFatigueChecked,
                     (value) {
                       setState(() {
-                        _triggerFactorsSelection[5] = value!;
+                        _excessiveFatigueChecked = value!;
                       });
                     },
                   ),
-                  _buildCheckboxQuestion(
-                    'Extreme fatigue or lack of rest',
-                    _triggerFactorsSelection[6],
+                  _buildCheckboxQuestionForNullableBool(
+                    'Abnormal Mood',
+                    _abnormalMoodChecked,
                     (value) {
                       setState(() {
-                        _triggerFactorsSelection[6] = value!;
+                        _abnormalMoodChecked = value!;
                       });
                     },
                   ),
-                  _buildCheckboxQuestion(
-                    'Consumption of certain foods or drinks (caffeine, aspartame, certain food additives)',
-                    _triggerFactorsSelection[7],
+                  _buildCheckboxQuestionForNullableBool(
+                    'Sleep Disturbances',
+                    _sleepDisturbancesChecked,
                     (value) {
                       setState(() {
-                        _triggerFactorsSelection[7] = value!;
+                        _sleepDisturbancesChecked = value!;
                       });
                     },
                   ),
-                  _buildCheckboxQuestion(
-                    'Changes in body temperature',
-                    _triggerFactorsSelection[8],
+                  _buildCheckboxQuestionForNullableBool(
+                    'Concentration Difficulties',
+                    _concentrationDifficultiesChecked,
                     (value) {
                       setState(() {
-                        _triggerFactorsSelection[8] = value!;
+                        _concentrationDifficultiesChecked = value!;
                       });
                     },
                   ),
-                  _buildCheckboxQuestion(
-                    'Certain physical activities or specific sports',
-                    _triggerFactorsSelection[9],
+                  _buildCheckboxQuestionForNullableBool(
+                    'Increased Sensitivity',
+                    _increasedSensitivityChecked,
                     (value) {
                       setState(() {
-                        _triggerFactorsSelection[9] = value!;
-                      });
-                    },
-                  ),
-                  _buildCheckboxQuestion(
-                    'Illness',
-                    _triggerFactorsSelection[10],
-                    (value) {
-                      setState(() {
-                        _triggerFactorsSelection[10] = value!;
+                        _increasedSensitivityChecked = value!;
                       });
                     },
                   ),
                 ],
               ),
             ),
+            //****************4********************************************* */
+            _buildQuestionWithResponse(
+              'Are identifiable triggering factors present ?',
+              Column(
+                children: [
+                  _buildCheckboxQuestion(
+                    'Emotional or psychological stress, such as anxiety or fear, or physical stress',
+                    _triggerFactorsSelection?[0] ??
+                        false, // Vérifiez si _triggerFactorsSelection n'est pas null, sinon utilisez false comme valeur par défaut
+                    (value) {
+                      setState(() {
+                        _triggerFactorsSelection?[0] = value ?? false;
+                      });
+                    },
+                  ),
+                  _buildCheckboxQuestion(
+                    'Lack of sleep or sleep disruption',
+                    _triggerFactorsSelection?[1] ?? false,
+                    (value) {
+                      setState(() {
+                        _triggerFactorsSelection?[1] = value ?? false;
+                      });
+                    },
+                  ),
+                  _buildCheckboxQuestion(
+                    'Excessive alcohol or drug consumption',
+                    _triggerFactorsSelection?[2] ?? false,
+                    (value) {
+                      setState(() {
+                        _triggerFactorsSelection?[2] = value ?? false;
+                      });
+                    },
+                  ),
+                  _buildCheckboxQuestion(
+                    'Bright flashes or stroboscopic lights',
+                    _triggerFactorsSelection?[3] ?? false,
+                    (value) {
+                      setState(() {
+                        _triggerFactorsSelection?[3] = value ?? false;
+                      });
+                    },
+                  ),
+                  _buildCheckboxQuestion(
+                    'Omission or interruption of anticonvulsant medication',
+                    _triggerFactorsSelection?[4] ?? false,
+                    (value) {
+                      setState(() {
+                        _triggerFactorsSelection?[4] = value ?? false;
+                      });
+                    },
+                  ),
+                  _buildCheckboxQuestion(
+                    'Hormones',
+                    _triggerFactorsSelection?[5] ?? false,
+                    (value) {
+                      setState(() {
+                        _triggerFactorsSelection?[5] = value ?? false;
+                      });
+                    },
+                  ),
+                  _buildCheckboxQuestion(
+                    'Extreme fatigue or lack of rest',
+                    _triggerFactorsSelection?[6] ?? false,
+                    (value) {
+                      setState(() {
+                        _triggerFactorsSelection?[6] = value ?? false;
+                      });
+                    },
+                  ),
+                  _buildCheckboxQuestion(
+                    'Consumption of certain foods or drinks (caffeine, aspartame, certain food additives)',
+                    _triggerFactorsSelection?[7] ?? false,
+                    (value) {
+                      setState(() {
+                        _triggerFactorsSelection?[7] = value ?? false;
+                      });
+                    },
+                  ),
+                  _buildCheckboxQuestion(
+                    'Changes in body temperature',
+                    _triggerFactorsSelection?[8] ?? false,
+                    (value) {
+                      setState(() {
+                        _triggerFactorsSelection?[8] = value ?? false;
+                      });
+                    },
+                  ),
+                  _buildCheckboxQuestion(
+                    'Certain physical activities or specific sports',
+                    _triggerFactorsSelection?[9] ?? false,
+                    (value) {
+                      setState(() {
+                        _triggerFactorsSelection?[9] = value ?? false;
+                      });
+                    },
+                  ),
+                  _buildCheckboxQuestion(
+                    'Illness',
+                    _triggerFactorsSelection?[10] ?? false,
+                    (value) {
+                      setState(() {
+                        _triggerFactorsSelection?[10] = value ?? false;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+//********************************************************** */
+
             _buildQuestionWithResponse(
               'Were you injured during the seizure?',
               Column(
@@ -214,7 +374,7 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                     groupValue: _injured,
                     onChanged: (bool? value) {
                       setState(() {
-                        _injured = value;
+                        _injured = value!;
                       });
                     },
                   ),
@@ -224,17 +384,19 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                     groupValue: _injured,
                     onChanged: (bool? value) {
                       setState(() {
-                        _injured = value;
+                        _injured = value!;
                       });
                     },
                   ),
                 ],
               ),
             ),
+
+            //**************************************************************
             _buildQuestionWithResponse(
               'Did you notice any changes in your emotional state after the seizure?',
               RatingBar.builder(
-                initialRating: 0,
+                initialRating: _emotionalStateRating,
                 minRating: 0,
                 direction: Axis.horizontal,
                 allowHalfRating: true,
@@ -251,10 +413,11 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                 },
               ),
             ),
+            //************************************************* */
             _buildQuestionWithResponse(
               'How would you describe the post-seizure recovery in terms of fatigue and the time required to regain normal capabilities?',
               RatingBar.builder(
-                initialRating: 0,
+                initialRating: _recoveryRating,
                 minRating: 0,
                 direction: Axis.horizontal,
                 allowHalfRating: true,
@@ -271,6 +434,7 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                 },
               ),
             ),
+//****************************************************************************** */
             _buildQuestionWithResponse(
               'Are you regular in your medication intake?',
               Column(
@@ -278,26 +442,28 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                   RadioListTile<bool>(
                     title: Text('Yes'),
                     value: true,
-                    groupValue: _regularMedication,
+                    groupValue: _medicationIntake,
                     onChanged: (bool? value) {
                       setState(() {
-                        _regularMedication = value;
+                        _medicationIntake = value!;
                       });
                     },
                   ),
                   RadioListTile<bool>(
                     title: Text('No'),
                     value: false,
-                    groupValue: _regularMedication,
+                    groupValue: _medicationIntake,
                     onChanged: (bool? value) {
                       setState(() {
-                        _regularMedication = value;
+                        _medicationIntake = value!;
                       });
                     },
                   ),
                 ],
               ),
             ),
+//****************************************************************************** */
+
             _buildQuestionWithResponse(
               'Were you conscious during the seizure, or did you lose consciousness?',
               Column(
@@ -308,7 +474,7 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                     groupValue: _conscious,
                     onChanged: (bool? value) {
                       setState(() {
-                        _conscious = value;
+                        _conscious = value!;
                       });
                     },
                   ),
@@ -318,13 +484,15 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                     groupValue: _conscious,
                     onChanged: (bool? value) {
                       setState(() {
-                        _conscious = value;
+                        _conscious = value!;
                       });
                     },
                   ),
                 ],
               ),
             ),
+
+            //*********************************************** */
             _buildQuestionWithResponse(
               'Did the seizure involve repeated episodes without fully regaining consciousness in between?',
               Column(
@@ -335,7 +503,7 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                     groupValue: _episodes,
                     onChanged: (bool? value) {
                       setState(() {
-                        _episodes = value;
+                        _episodes = value!;
                       });
                     },
                   ),
@@ -345,13 +513,16 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                     groupValue: _episodes,
                     onChanged: (bool? value) {
                       setState(() {
-                        _episodes = value;
+                        _episodes = value!;
                       });
                     },
                   ),
                 ],
               ),
             ),
+
+            //*********************************************** */
+
             _buildQuestionWithResponse(
               'Did you experience any memory disturbances after the seizure?',
               Column(
@@ -362,7 +533,7 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                     groupValue: _memoryDisturbances,
                     onChanged: (bool? value) {
                       setState(() {
-                        _memoryDisturbances = value;
+                        _memoryDisturbances = value!;
                       });
                     },
                   ),
@@ -372,17 +543,18 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                     groupValue: _memoryDisturbances,
                     onChanged: (bool? value) {
                       setState(() {
-                        _memoryDisturbances = value;
+                        _memoryDisturbances = value!;
                       });
                     },
                   ),
                 ],
               ),
             ),
+            //*********************************************** */
             _buildQuestionWithResponse(
               'How would you assess your level of stress or anxiety before and after the seizure?',
               RatingBar.builder(
-                initialRating: 0,
+                initialRating: _stressAnxietyRating,
                 minRating: 0,
                 direction: Axis.horizontal,
                 allowHalfRating: true,
@@ -399,63 +571,151 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                 },
               ),
             ),
+//*********************************************** */
             _buildQuestionWithResponse(
               'Did you experience any specific symptoms after the seizure, such as headaches, nausea, or dizziness?',
               TextFormField(
                 controller: _symptomsresponseController,
-                maxLines: null,
+                maxLines: null, // Allow user to input multiple lines
                 decoration: InputDecoration(
-                  hintText: 'Réponse...',
+                  hintText: 'Your response...',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
               ),
             ),
+            //***************************************************** */
+
             _buildQuestionWithResponse(
-              'Did you receive medical assistance or advice after the seizure?',
+              'Did you require medical assistance or emergency intervention?',
               Column(
                 children: [
                   RadioListTile<bool>(
-                    title: Text('Assistance'),
+                    title: Text('Yes'),
                     value: true,
                     groupValue: _assistance,
                     onChanged: (bool? value) {
                       setState(() {
-                        _assistance = value;
+                        _assistance = value!;
                       });
                     },
                   ),
                   RadioListTile<bool>(
-                    title: Text('Advice'),
+                    title: Text('No'),
                     value: false,
-                    groupValue: _advice,
+                    groupValue: _assistance,
                     onChanged: (bool? value) {
                       setState(() {
-                        _advice = value;
+                        _assistance = value!;
                       });
                     },
                   ),
                 ],
               ),
             ),
+
+            //************************************************* */
             _buildQuestionWithResponse(
-              'What additional measures did you take after the seizure?',
+              'How do you assess the medical care or assistance you received during the seizure?',
+              RatingBar.builder(
+                initialRating: _medicalCareRating,
+                minRating: 0,
+                direction: Axis.horizontal,
+                allowHalfRating: true,
+                itemCount: 5,
+                itemSize: 40.0,
+                itemBuilder: (context, _) => Icon(
+                  Icons.star,
+                  color: const Color(0xFF8A4FE9),
+                ),
+                onRatingUpdate: (rating) {
+                  setState(() {
+                    _medicalCareRating = rating;
+                  });
+                },
+              ),
+            ),
+
+            //*************************************************
+
+            _buildQuestionWithResponse(
+              'Do you want additional advice on managing your epilepsy?',
+              Column(
+                children: [
+                  RadioListTile<bool>(
+                    title: Text('Yes'),
+                    value: true,
+                    groupValue: _advice,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _advice = value!;
+                      });
+                    },
+                  ),
+                  RadioListTile<bool>(
+                    title: Text('No'),
+                    value: false,
+                    groupValue: _advice,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _advice = value!;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+            //***************************************************** */
+            _buildQuestionWithResponse(
+              'Do you have anything to add?',
               TextFormField(
                 controller: _addresponseController,
-                maxLines: null,
+                maxLines: null, // Allow user to input multiple lines
                 decoration: InputDecoration(
-                  hintText: 'Réponse...',
+                  hintText: 'Your response...',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
               ),
             ),
-           ElevatedButton(
-  onPressed: () {
-    _postFormService.sendDataToBackend(
-      PostCriseFormData(
+            //*****************************************************
+
+            SizedBox(height: 20.0),
+            ElevatedButton(
+              onPressed: _saveForm,
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    const Color(0xFF8A4FE9), // Set background color here
+                padding: EdgeInsets.symmetric(
+                    vertical: 16.0), // Adjust button height here
+              ),
+              child: Text(
+                'Submit Form',
+                style: TextStyle(
+                  color: Colors.white, // Set text color to white
+                  fontSize: 18.0, // Adjust text size here
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+// fonction pour gérer l'action lorsque le bouton "Save" est pressé
+  void _saveForm() {
+    try {
+      // Récupérer les valeurs des champs texte de manière sécurisée
+      String response1 = _signsresponseController?.text ?? '';
+      String response2 = _symptomsresponseController?.text ?? '';
+      String response3 = _addresponseController?.text ?? '';
+
+      // Créer une instance de PostCriseFormData
+      PostCriseFormData formData = PostCriseFormData(
         idCrise: _id,
         selectedHours: _selectedHours,
         selectedMinutes: _selectedMinutes,
@@ -472,6 +732,7 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
         triggerFactorsSelection: _triggerFactorsSelection,
         injured: _injured,
         conscious: _conscious,
+        medicationIntake: _medicationIntake,
         episodes: _episodes,
         memoryDisturbances: _memoryDisturbances,
         assistance: _assistance,
@@ -480,63 +741,59 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
         recoveryRating: _recoveryRating,
         stressAnxietyRating: _stressAnxietyRating,
         medicalCareRating: _medicalCareRating,
-        response1: _signsresponseController.text,
-        response2: _symptomsresponseController.text,
-        response3: _addresponseController.text,
-      ),
-    );
-  },
-              child: Text('Submit'),
-            ),
-  
-          ],
-        ),
-      ),
-    );
+        response1: response1,
+        response2: response2,
+        response3: response3,
+      );
+
+      // Envoyer les données au backend
+      _postFormService.sendDataToBackend(formData);
+    } catch (e, stackTrace) {
+      // Gérer les erreurs
+      print('Erreur lors de l\'enregistrement du formulaire: $e');
+      print(stackTrace);
+      // Ajoutez ici toute logique de gestion des erreurs supplémentaire si nécessaire
+    }
   }
 
+  // Méthode pour construire un cadre question-réponse
   Widget _buildQuestionWithResponse(String question, Widget responseWidget) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0),
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10.0),
+      padding: EdgeInsets.all(10.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             question,
-            style: TextStyle(
-              color: const Color(0xFF8A4FE9),
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 8.0),
+          SizedBox(height: 10.0),
           responseWidget,
         ],
       ),
     );
   }
 
-  Widget _buildCheckboxQuestion(
-      String title, bool value, ValueChanged<bool?> onChanged) {
-    return Row(
-      children: [
-        Checkbox(
-          value: value,
-          onChanged: onChanged,
-        ),
-        Text(title),
-      ],
-    );
-  }
-
-  Future<void> _showTimePicker() async {
+  // Méthode pour afficher le sélecteur de temps
+  void _showTimePicker() {
     Picker(
-      adapter: NumberPickerAdapter(
-        data: [
-          NumberPickerColumn(begin: 0, end: 23),
-          NumberPickerColumn(begin: 0, end: 59),
-        ],
-      ),
+      adapter: NumberPickerAdapter(data: [
+        NumberPickerColumn(begin: 0, end: 23, suffix: Text(' hours')),
+        NumberPickerColumn(begin: 0, end: 59, suffix: Text(' minutes')),
+      ]),
       delimiter: [
         PickerDelimiter(
           child: Container(
@@ -547,14 +804,44 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
         ),
       ],
       hideHeader: true,
-      title: Text('Select Time'),
-      selectedTextStyle: TextStyle(color: Colors.blue),
+      confirmText: 'OK',
+      cancelText: 'Cancel',
       onConfirm: (Picker picker, List<int> value) {
         setState(() {
           _selectedHours = value[0];
           _selectedMinutes = value[1];
         });
       },
-    ).showModal(context);
+    ).showDialog(context);
+  }
+
+  // Méthode pour construire une question avec cases à cocher bool
+  Widget _buildCheckboxQuestion(
+      String question, bool value, Function(bool?) onChanged) {
+    return CheckboxListTile(
+      title: Text(
+        question,
+        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+      ),
+      value: value,
+      onChanged: onChanged,
+      controlAffinity: ListTileControlAffinity.leading,
+      activeColor: const Color(0xFF8A4FE9),
+    );
+  }
+
+// Fonction pour construire une question avec cases à cocher pour bool?
+  Widget _buildCheckboxQuestionForNullableBool(
+      String question, bool? value, Function(bool?) onChanged) {
+    return CheckboxListTile(
+      title: Text(
+        question,
+        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+      ),
+      value: value ?? false, // Gère le cas où value est null
+      onChanged: onChanged,
+      controlAffinity: ListTileControlAffinity.leading,
+      activeColor: const Color(0xFF8A4FE9),
+    );
   }
 }

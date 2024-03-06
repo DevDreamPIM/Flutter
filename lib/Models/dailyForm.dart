@@ -11,7 +11,7 @@ class DailyForm {
   double? sleeping;
   double? flashingLights;
   double? exercise;
-  //List<dynamic>? list; // Liste d'attributs manquante
+  String mealSleepNoValue;
   String recentChanges;
   bool visualAuraChecked;
   bool sensoryAuraChecked;
@@ -35,7 +35,7 @@ class DailyForm {
     this.sleeping,
     this.flashingLights,
     this.exercise,
-    //this.list, // Liste d'attributs manquante
+    required this.mealSleepNoValue,
     required this.recentChanges,
     required this.visualAuraChecked,
     required this.sensoryAuraChecked,
@@ -64,7 +64,7 @@ class DailyForm {
       'sleeping': sleeping,
       'flashingLights': flashingLights,
       'exercise': exercise,
-      //'list': list, // Liste d'attributs manquante
+      'mealSleepNoValue': mealSleepNoValue,
       'recentChanges': recentChanges,
       'visualAuraChecked': visualAuraChecked,
       'sensoryAuraChecked': sensoryAuraChecked,
@@ -92,7 +92,7 @@ class DailyForm {
       sleeping: json['sleeping'],
       flashingLights: json['flashingLights'],
       exercise: json['exercise'],
-      //list: json['list'], // Liste d'attributs manquante
+      mealSleepNoValue: json['mealSleepNoValue'],
       recentChanges: json['recentChanges'],
       visualAuraChecked: json['visualAuraChecked'],
       sensoryAuraChecked: json['sensoryAuraChecked'],

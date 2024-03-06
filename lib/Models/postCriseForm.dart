@@ -1,60 +1,67 @@
 class PostCriseFormData {
   String idCrise; // id de la crise associée
+
   int selectedHours;
   int selectedMinutes;
-  bool visualAuraChecked;
-  bool sensoryAuraChecked;
-  bool auditoryAuraChecked;
-  bool gustatoryOrOlfactoryAuraChecked;
-  bool headachesChecked;
-  bool excessiveFatigueChecked;
-  bool abnormalMoodChecked;
-  bool sleepDisturbancesChecked;
-  bool concentrationDifficultiesChecked;
-  bool increasedSensitivityChecked;
-  List<bool> triggerFactorsSelection;
-  bool? injured;
-  bool? conscious;
-  bool? episodes;
-  bool? memoryDisturbances;
-  bool? assistance;
-  bool? advice;
+
+  String? response1;
+
+  bool? visualAuraChecked;
+  bool? sensoryAuraChecked;
+  bool? auditoryAuraChecked;
+  bool? gustatoryOrOlfactoryAuraChecked;
+  bool? headachesChecked;
+  bool? excessiveFatigueChecked;
+  bool? abnormalMoodChecked;
+  bool? sleepDisturbancesChecked;
+  bool? concentrationDifficultiesChecked;
+  bool? increasedSensitivityChecked;
+
+  List<bool>? triggerFactorsSelection;
+
+  bool injured;
   double emotionalStateRating;
   double recoveryRating;
+  bool medicationIntake;
+  bool conscious;
+  bool episodes;
+  bool memoryDisturbances;
   double stressAnxietyRating;
+  String? response2;
+  bool assistance;
   double medicalCareRating;
-  String response1;
-  String response2;
-  String response3;
+  bool advice;
+  String? response3;
 
   PostCriseFormData({
     required this.idCrise,
-    this.selectedHours = 0,
-    this.selectedMinutes = 5,
-    required this.visualAuraChecked,
-    required this.sensoryAuraChecked,
-    required this.auditoryAuraChecked,
-    required this.gustatoryOrOlfactoryAuraChecked,
-    required this.headachesChecked,
-    required this.excessiveFatigueChecked,
-    required this.abnormalMoodChecked,
-    required this.sleepDisturbancesChecked,
-    required this.concentrationDifficultiesChecked,
-    required this.increasedSensitivityChecked,
-    required this.triggerFactorsSelection,
+    required this.selectedHours,
+    required this.selectedMinutes,
+    this.response1,
+    this.visualAuraChecked,
+    this.sensoryAuraChecked,
+    this.auditoryAuraChecked,
+    this.gustatoryOrOlfactoryAuraChecked,
+    this.headachesChecked,
+    this.excessiveFatigueChecked,
+    this.abnormalMoodChecked,
+    this.sleepDisturbancesChecked,
+    this.concentrationDifficultiesChecked,
+    this.increasedSensitivityChecked,
+    this.triggerFactorsSelection,
     required this.injured,
+    required this.emotionalStateRating,
+    required this.recoveryRating,
+    required this.medicationIntake,
     required this.conscious,
     required this.episodes,
     required this.memoryDisturbances,
-    required this.assistance,
-    required this.advice,
-    required this.emotionalStateRating,
-    required this.recoveryRating,
     required this.stressAnxietyRating,
+    this.response2,
+    required this.assistance,
     required this.medicalCareRating,
-    required this.response1,
-    required this.response2,
-    required this.response3,
+    required this.advice,
+    this.response3,
   });
 
   // Méthode pour sérialiser les données du formulaire
@@ -63,6 +70,7 @@ class PostCriseFormData {
       'id': idCrise,
       'selectedHours': selectedHours,
       'selectedMinutes': selectedMinutes,
+      'response1': response1,
       'visualAuraChecked': visualAuraChecked,
       'sensoryAuraChecked': sensoryAuraChecked,
       'auditoryAuraChecked': auditoryAuraChecked,
@@ -75,17 +83,17 @@ class PostCriseFormData {
       'increasedSensitivityChecked': increasedSensitivityChecked,
       'triggerFactorsSelection': triggerFactorsSelection,
       'injured': injured,
+      'emotionalStateRating': emotionalStateRating,
+      'recoveryRating': recoveryRating,
+      'medicationIntake': medicationIntake,
       'conscious': conscious,
       'episodes': episodes,
       'memoryDisturbances': memoryDisturbances,
-      'assistance': assistance,
-      'advice': advice,
-      'emotionalStateRating': emotionalStateRating,
-      'recoveryRating': recoveryRating,
       'stressAnxietyRating': stressAnxietyRating,
-      'medicalCareRating': medicalCareRating,
-      'response1': response1,
       'response2': response2,
+      'assistance': assistance,
+      'medicalCareRating': medicalCareRating,
+      'advice': advice,
       'response3': response3,
     };
   }
@@ -96,6 +104,7 @@ class PostCriseFormData {
       idCrise: json['id'],
       selectedHours: json['selectedHours'],
       selectedMinutes: json['selectedMinutes'],
+      response1: json['response1'],
       visualAuraChecked: json['visualAuraChecked'],
       sensoryAuraChecked: json['sensoryAuraChecked'],
       auditoryAuraChecked: json['auditoryAuraChecked'],
@@ -111,17 +120,17 @@ class PostCriseFormData {
           ? List<bool>.from(json['triggerFactorsSelection'])
           : [],
       injured: json['injured'],
+      emotionalStateRating: json['emotionalStateRating'],
+      recoveryRating: json['recoveryRating'],
+      medicationIntake: json['medicationIntake'],
       conscious: json['conscious'],
       episodes: json['episodes'],
       memoryDisturbances: json['memoryDisturbances'],
-      assistance: json['assistance'],
-      advice: json['advice'],
-      emotionalStateRating: json['emotionalStateRating'],
-      recoveryRating: json['recoveryRating'],
       stressAnxietyRating: json['stressAnxietyRating'],
-      medicalCareRating: json['medicalCareRating'],
-      response1: json['response1'],
       response2: json['response2'],
+      assistance: json['assistance'],
+      medicalCareRating: json['medicalCareRating'],
+      advice: json['advice'],
       response3: json['response3'],
     );
   }
