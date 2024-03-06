@@ -90,7 +90,7 @@ class UserWebService {
     }
   }
 
-  Future<bool> login(context, email, password) async {
+  Future<String?> login(context, email, password) async {
     Map<String, Object> userObject = {
       "email": email,
       "password": password,
@@ -122,7 +122,7 @@ class UserWebService {
         backgroundColor: Colors.green,
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      return true;
+      return responseData['role'];
     } else {
       SnackBar snackBar = SnackBar(
         content: Row(
@@ -137,7 +137,7 @@ class UserWebService {
 
       print('Failed to login user. Status code: ${response.statusCode}');
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      return false;
+      return null;
     }
   }
 
