@@ -1,4 +1,5 @@
 import 'package:epilepto_guard/Models/userRole.dart';
+import 'package:epilepto_guard/Screens/User/loginScreen.dart';
 import 'package:epilepto_guard/Screens/homeScreen.dart';
 import 'package:epilepto_guard/Services/userWebService.dart';
 import 'package:flutter/material.dart';
@@ -66,9 +67,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               return 'Please enter your first name';
                             } else if (value.length < 2) {
                               return 'First name must be at least 2 characters long';
-                            } else if (!RegExp(r'^[a-zA-Z]+$')
-                                .hasMatch(value)) {
-                              return 'First name can only contain letters';
+                            } else if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+                              return 'First name can only contain letters and spaces';
                             }
                             return null;
                           },
@@ -90,9 +90,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               return 'Please enter your last name';
                             } else if (value.length < 2) {
                               return 'First name must be at least 2 characters long';
-                            } else if (!RegExp(r'^[a-zA-Z]+$')
-                                .hasMatch(value)) {
-                              return 'First name can only contain letters';
+                            } else if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+                              return 'First name can only contain letters and spaces';
                             }
                             return null;
                           },
@@ -312,7 +311,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        const HomeScreen())),
+                                                        const LoginScreen())),
                                                     }
                                                   else
                                                     {

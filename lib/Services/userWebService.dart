@@ -1,10 +1,17 @@
 import 'dart:convert';
+//import 'dart:html' as html;
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:epilepto_guard/Models/user.dart';
 import 'package:epilepto_guard/Utils/Constantes.dart';
 import 'package:epilepto_guard/Utils/rescrueStorage.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart'; // For MediaType
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:path/path.dart' as path;
+
+
 class UserWebService {
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
@@ -287,13 +294,13 @@ class UserWebService {
     }
   }
 
-  Future<void> updateMedicalFile(String token, BuildContext context) async {
+  Future<void> updateMedicalFile(String birthDate, String weight, String height,String token, BuildContext context) async {
     final url = Uri.parse(
         '${Constantes.URL_API}${Constantes.URL_API_USER}/updateMedicalFile');
     final response = await http.put(
       url,
       body:
-          jsonEncode({"birthDate": "2000-03-14", "weight": 50, "height": 157}),
+          jsonEncode({"birthDate": birthDate, "weight": weight, "height": height}),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -332,7 +339,7 @@ class UserWebService {
     }
   }
 
- /* Future<void> handleGoogleSignIn() async {
+  /* Future<void> handleGoogleSignIn() async {
     try {
       final _clientIDweb =
           '485905293101-t2vlph7ob8tpotsmnofgo1qi19dusi58.apps.googleusercontent.com';
@@ -387,5 +394,62 @@ class UserWebService {
         'Content-Type': 'application/json',
       },
     );
+  }
+
+   Future<String?> updateProfile({
+    required String firstName,
+    required String lastName,
+    required String phoneNumber,
+    required List<String> emergencyContacts,
+    File? imageFile,
+    String? token, // Assuming token authentication
+  }) async {
+    var uri = Uri.parse('${Constantes.URL_API}${Constantes.URL_API_USER}/updateProfile'); // Adjust the path as needed
+    var request = http.MultipartRequest('PUT', uri);
+
+    // Add headers for authorization if necessary
+    if (token != null) {
+      request.headers['Authorization'] = 'Bearer $token';
+    }
+
+    // Adding text fields to the request
+    request.fields['firstName'] = firstName;
+    request.fields['lastName'] = lastName;
+    request.fields['phoneNumber'] = phoneNumber;
+    request.fields['emergencyContacts'] = jsonEncode(emergencyContacts);
+
+    // Handling the image file
+    if (imageFile != null) {
+      // Directly add the file to the request
+      request.files.add(
+        http.MultipartFile(
+          'image', 
+          imageFile.readAsBytes().asStream(), 
+          await imageFile.length(),
+          filename: path.basename(imageFile.path),
+          contentType: MediaType('image', path.extension(imageFile.path).replaceAll('.', '')), // Dynamically get the file extension
+        )
+      );
+    }
+
+  // Add headers and fields as in your snippet...
+
+  var streamedResponse = await request.send();
+
+  if (streamedResponse.statusCode == 200) {
+    // Parse the response body
+    final response = await http.Response.fromStream(streamedResponse);
+    final responseData = json.decode(response.body);
+
+    // Assuming the server response includes an 'image' field with the URL
+    String? updatedImageUrl = responseData['image'];
+
+    print('Profile updated successfully. New image URL: $updatedImageUrl');
+    return updatedImageUrl; // Return the new image URL
+  } else {
+    // Log error and possibly parse the error message
+    print('Failed to update profile: ${streamedResponse.reasonPhrase}');
+    return null; // Return null to indicate failure or absence of the image URL
+  }
   }
 }
