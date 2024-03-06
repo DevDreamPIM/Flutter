@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:epilepto_guard/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -17,6 +18,11 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
 
   String _address = "...";
   String _name = "...";
+
+  String BtWatchName = "DevDream-SmartWatch-BT";
+
+  bool liveMonitoringEnabled;
+  _MainPageBluetooth() : liveMonitoringEnabled = true;
 
   @override
   void initState() {
@@ -74,13 +80,28 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flutter Bluetooth Serial'),
+        title: const Text('DevDream Connectivity Settings'),
       ),
       body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+                'assets/images/background/login.png'), // Replace 'background.jpg' with your image path
+            fit: BoxFit.cover,
+          ),
+        ),
         child: ListView(
           children: <Widget>[
             Divider(),
-            ListTile(title: const Text('General')),
+            const ListTile(
+              title: Text(
+                'General',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.purple,
+                ),
+              ),
+            ),
             SwitchListTile(
               title: const Text('Enable Bluetooth'),
               value: _bluetoothState.isEnabled,
@@ -100,29 +121,22 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
               },
             ),
             ListTile(
-              title: const Text('Bluetooth status'),
-              subtitle: Text(_bluetoothState.toString()),
-              trailing: ElevatedButton(
-                child: const Text('Settings'),
-                onPressed: () {
-                  FlutterBluetoothSerial.instance.openSettings();
-                },
-              ),
+              title: const Text('Smartwatch device name'),
+              subtitle: Text(BtWatchName),
             ),
-            ListTile(
-              title: const Text('Local adapter address'),
-              subtitle: Text(_address),
-            ),
-            ListTile(
-              title: const Text('Local adapter name'),
-              subtitle: Text(_name),
-              onLongPress: null,
+            SwitchListTile(
+              title: const Text('Enable Live Seizure Monitoring'),
+              value: liveMonitoringEnabled,
+              onChanged: (bool value) {
+                setState(() {
+                  liveMonitoringEnabled = value;
+                });
+              },
             ),
             Divider(),
             ListTile(
               title: TextButton(
-                  child:
-                      const Text('Connect to paired device to chat with ESP32'),
+                  child: Text('Pair and connect to $BtWatchName'),
                   onPressed: () async {
                     final BluetoothDevice selectedDevice =
                         await Navigator.of(context).push(
