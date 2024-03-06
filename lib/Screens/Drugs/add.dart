@@ -210,35 +210,39 @@ class _AddMedicineScreenState extends State<AddMedicineScreen> {
   }
 }
 
-  Future<void> _selectStartTakingDate() async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: _selectedStartTakingDate ?? DateTime.now(),
-      firstDate: DateTime(2022),
-      lastDate: DateTime(2030),
-    );
+ Future<void> _selectStartTakingDate() async {
+  final DateTime? pickedDate = await showDatePicker(
+    context: context,
+    initialDate: _selectedStartTakingDate ?? DateTime.now(),
+    firstDate: DateTime(2022),
+    lastDate: DateTime(2030),
+  );
 
-    if (pickedDate != null) {
-      setState(() {
-        _selectedStartTakingDate = pickedDate;
-      });
-    }
+  if (pickedDate != null) {
+    setState(() {
+      _selectedStartTakingDate = pickedDate;
+      _newDrug.startTakingDate = pickedDate; // Met à jour la valeur de _newDrug.startTakingDate
+    });
   }
+}
+
 
   Future<void> _selectEndTakingDate() async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: _selectedEndTakingDate ?? DateTime.now(),
-      firstDate: DateTime(2022),
-      lastDate: DateTime(2030),
-    );
+  final DateTime? pickedDate = await showDatePicker(
+    context: context,
+    initialDate: _selectedEndTakingDate ?? DateTime.now(),
+    firstDate: DateTime(2022),
+    lastDate: DateTime(2030),
+  );
 
-    if (pickedDate != null) {
-      setState(() {
-        _selectedEndTakingDate = pickedDate;
-      });
-    }
+  if (pickedDate != null) {
+    setState(() {
+      _selectedEndTakingDate = pickedDate;
+      _newDrug.endTakingDate = pickedDate; // Met à jour la valeur de _newDrug.endTakingDate
+    });
   }
+}
+
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
