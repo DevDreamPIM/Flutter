@@ -1,7 +1,13 @@
+import 'dart:ui';
+
 import 'package:epilepto_guard/Components/drawer.dart';
 import 'package:epilepto_guard/Screens/Bluetooth/MainPageBluetooth.dart';
 import 'package:epilepto_guard/Screens/Crise/formulaireQuotidien.dart';
+import 'package:epilepto_guard/colors.dart';
+import 'package:epilepto_guard/consts.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:weather/weather.dart';
 import 'package:epilepto_guard/Screens/PreSeizure/detectedSigns.dart';
 import 'package:epilepto_guard/Screens/PreSeizure/healthData.dart';
 import 'package:epilepto_guard/Screens/PreSeizure/seizureStatistics.dart';
@@ -22,6 +28,24 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+
+//marwenapi
+  final WeatherFactory _wf = WeatherFactory(OPENWEATHER_API_KEY);
+  Weather? _weather;
+  String cityName = "Tunis";
+
+  @override
+  void initState() {
+    super.initState();
+    // _wf.currentWeatherByLocation();
+    _wf.currentWeatherByCityName(cityName).then((w) {
+      setState(() {
+        _weather = w;
+      });
+    });
+  }
+
+  //************************************************************ */
 
   Icon getWeatherIcon(String weatherCondition) {
     switch (weatherCondition.toLowerCase()) {
@@ -76,28 +100,55 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
-                  child: FutureBuilder<String>(
-                    future: fetchWeatherData('Tunis'),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      } else {
-                        final weatherCondition = snapshot.data!;
-                        return _buildClickableCardWithWeather(
-                          context,
-                          Colors.transparent,
-                          'Weather',
-                          weatherCondition,
-                          () {
-                            // Action à effectuer lorsque le widget est cliqué
-                          },
-                        );
-                      }
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CalendarScreen(),
+                        ),
+                      );
                     },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Stack(
+                        fit: StackFit
+                            .expand, // Ajustement pour que les enfants occupent tout l'espace disponible
+                        children: [
+                          // Image de fond
+                          _weather != null
+                              ? Container(
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                        'assets/images/background/weather/${_weather!.weatherIcon}.png',
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  decoration: BoxDecoration(
+                                    image: const DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/background/background.png'),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                          // Contenu du Stack
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildWeatherUI(), // Affichez votre méthode _buildWeatherUI() ici
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
+
                 //*****************2*********************** */
                 Expanded(
                   child: InkWell(
@@ -110,33 +161,36 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                       // Action à effectuer lorsque l'image est cliquée
                     },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(
-                            'assets/images/background/pairdevice.jpg',
-                          ),
-                          fit: BoxFit
-                              .cover, // Pour que l'image occupe tout le conteneur
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                              height:
-                                  10), // Espacement entre l'image et le titre
-                          Text(
-                            'Pair to Device',
-                            style: TextStyle(
-                              fontSize:
-                                  20, // Ajustez la taille de la police selon vos besoins
-                              fontWeight: FontWeight
-                                  .bold, // Vous pouvez modifier le style du texte ici
-                              color: Colors.blueGrey, // Couleur du texte
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(
+                              'assets/images/background/pairdevice.jpg',
                             ),
+                            fit: BoxFit
+                                .cover, // Pour que l'image occupe tout le conteneur
                           ),
-                        ],
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                                height:
+                                    10), // Espacement entre l'image et le titre
+                            Text(
+                              'Pair to Device',
+                              style: TextStyle(
+                                fontSize:
+                                    20, // Ajustez la taille de la police selon vos besoins
+                                fontWeight: FontWeight
+                                    .bold, // Vous pouvez modifier le style du texte ici
+                                color: Colors.blueGrey, // Couleur du texte
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -294,5 +348,123 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildWeatherUI() {
+    if (_weather == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    } else {
+      DateTime now = _weather!.date!;
+
+      return Align(
+        alignment: Alignment.topCenter,
+        child: Container(
+          margin: const EdgeInsets.only(top: 20),
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: MediaQuery.of(context).size.height * 0.2,
+          child: ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.1,
+                decoration: BoxDecoration(
+                  color:
+                      const Color.fromARGB(255, 226, 217, 241).withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.05,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            DateFormat("EEEE, MMMM dd").format(now),
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Text(
+                            DateFormat("hh:mm a").format(now),
+                            style: const TextStyle(
+                              fontSize: 28,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 16), // Add some spacing between columns
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            _weather?.areaName ?? "No Area Name",
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4),
+                                decoration: BoxDecoration(
+                                  color:
+                                      const Color.fromARGB(255, 226, 217, 241)
+                                          .withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Image.network(
+                                      "http://openweathermap.org/img/wn/${_weather?.weatherIcon}@4x.png",
+                                      width: 50,
+                                      height: 50,
+                                    ),
+                                    Text(
+                                      _weather?.weatherDescription ??
+                                          "No Description",
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                "${_weather?.temperature?.celsius?.toStringAsFixed(0)}°C",
+                                style: const TextStyle(fontSize: 28),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            "Wind: ${_weather?.windSpeed?.toStringAsFixed(0)}m/s",
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Text(
+                            "Humidity: ${_weather?.humidity?.toStringAsFixed(0)}%",
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
   }
 }
