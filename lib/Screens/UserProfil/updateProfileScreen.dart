@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:epilepto_guard/Services/userWebService.dart';
+import 'package:epilepto_guard/Utils/Constantes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -26,6 +28,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   String? lastName;
   String? email;
   String? phoneNumber;
+  String? image;
+  String? token;
 
   @override
   void initState() {
@@ -33,27 +37,42 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     _loadUserData();
   }
 
+Future<void> navigateToUpdateProfile() async {
+  
+  final updated = await Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => UpdateProfileScreen()), // Adjust for your actual Update Profile screen class
+  );
+
+  if (updated == true) {
+    _loadUserData(); 
+  }
+}
+
   void _loadUserData() async {
     final storage = FlutterSecureStorage();
 
     // Asynchronously load data
     String? loadedFirstName = await storage.read(key: "firstName");
     String? loadedLastName = await storage.read(key: "lastName");
-
+    String? loadedImage = await storage.read(key: "image");
     String? loadedPhoneNumber = await storage.read(key: "phoneNumber");
+    String? loadedToken = await storage.read(key: "token");
 
     // Use setState to update your UI and set the controller's text safely
     if (mounted) {
       setState(() {
         firstName = loadedFirstName;
         lastName = loadedLastName;
-
+        image = loadedImage ?? '';
         phoneNumber = loadedPhoneNumber;
-
+        token = loadedToken ?? '';
         // Safely assign the loaded values to the controllers
         _firstNameController.text = loadedFirstName ?? '';
         _lastNameController.text = loadedLastName ?? '';
         _phoneController.text = loadedPhoneNumber ?? '';
+        _phoneController.text = loadedPhoneNumber ?? '';
+
         // Assign other values similarly
       });
     }
@@ -68,7 +87,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.pop(context),// the problem that i show me the previos data i want to navigate to the previous page without the previous data
           icon: const Icon(LineAwesomeIcons.angle_left),
         ),
         title: Text(editProfile, style: Theme.of(context).textTheme.headline4),
@@ -99,16 +118,22 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       width: 120,
                       height: 120,
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
-                        child: imageFile == null
-                            ? Image.asset(
-                                'assets/images/user/youssef.jpg', // Default image if no image is selected
+                        borderRadius: BorderRadius.circular(
+                            100), // Adjust the radius for the desired circular effect
+                        child: imageFile != null
+                            ? Image.file(
+                                imageFile!, // Display the selected/cropped image from file
                                 fit: BoxFit.cover,
                               )
-                            : Image.file(
-                                imageFile!, // Display the selected/cropped image
-                                fit: BoxFit.cover,
-                              ),
+                            : (image != null && image!.isNotEmpty)
+                                ? Image.network(
+                                    '${Constantes.USER_IMAGE_URL}/$image', // Display the image from the network
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.network(
+                                    '${Constantes.USER_IMAGE_URL}/$image', // Display the image from the network
+                                    fit: BoxFit.cover,
+                                  ),
                       ),
                     ),
                     Positioned(
@@ -419,24 +444,46 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     _phoneController.dispose();
     super.dispose();
   }
+Future<void> _submitForm() async {
+  if (_formKey.currentState!.validate()) {
+    // Assuming you have an instance of UserWebService
+    UserWebService userService = UserWebService();
+    String? newImageUrl = await userService.updateProfile(
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      phoneNumber: _phoneController.text,
+      emergencyContacts: emergencyContacts,
+      imageFile: imageFile,
+      token: token,
+    );
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
+    if (newImageUrl != null) {
+      // Profile updated successfully
+      const storage = FlutterSecureStorage();
+      await storage.write(key: "firstName", value: _firstNameController.text);
+      await storage.write(key: "lastName", value: _lastNameController.text);
+      await storage.write(key: "phoneNumber", value: _phoneController.text);
+      // Update the image URL in local storage only if it's not null
+      await storage.write(key: "image", value: newImageUrl);
+
+      // Optional: Verify the update was successful
+      String? updatedFirstName = await storage.read(key: "firstName");
+      print('First Name updated to: $updatedFirstName');
+
+      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.error, color: Colors.white),
-              SizedBox(width: 2),
-              Text('Profile Updated with succes!',
-                  style: TextStyle(color: Colors.white)),
-            ],
-          ),
-          backgroundColor: Colors.green,
-        ),
+        SnackBar(content: Text('Profile updated successfully')),
       );
-    } else {}
+    } else {
+      // Profile update failed
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update profile')),
+      );
+    }
   }
+}
+
+  
 
   _imgFromGallery() async {
     await picker
