@@ -3,7 +3,6 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class FormulaireQuotidien extends StatefulWidget {
   const FormulaireQuotidien({Key? key}) : super(key: key);
-
   @override
   _FormulaireQuotidienState createState() => _FormulaireQuotidienState();
 }
@@ -11,14 +10,16 @@ class FormulaireQuotidien extends StatefulWidget {
 class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
   TimeOfDay _bedTime = TimeOfDay.now(); // Pour stocker l'heure du coucher
   TimeOfDay _wakeUpTime = TimeOfDay.now(); // Pour stocker l'heure du réveil
-
-  double _rating = 0;
-
+  // rate variable
+  double _stressRating = 0;
+  double _alcoholDrugRating = 0;
+  double _moodchangesRating = 0;
+  double _sleepingRating = 0;
+  double _flashingLightsRating = 0;
+  double _exerciseRating = 0;
   bool _takenMedicationsAsPrescribed = false;
-
   String _mealSleepNoValue = '';
-
-  //Variables a cocher por la derniere question (13)
+  //Variables a cocher pour la derniere question (13)
   bool _visualAuraChecked = false;
   bool _sensoryAuraChecked = false;
   bool _auditoryAuraChecked = false;
@@ -29,7 +30,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
   bool _sleepDisturbancesChecked = false;
   bool _concentrationDifficultiesChecked = false;
   bool _increasedSensitivityChecked = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +51,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
             fit: BoxFit.cover,
           ),
         ),
-
         //******************* 1 ***************************************************
         child: ListView(
           children: [
@@ -98,7 +97,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                 ],
               ),
             ),
-
             //************************* 2 *********************************/
             Container(
               padding: EdgeInsets.all(20.0),
@@ -143,7 +141,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                 ],
               ),
             ),
-
             //********** 3 (rate) ****************************************
             Container(
               padding: EdgeInsets.all(20.0),
@@ -172,14 +169,14 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                       color: const Color(0xFF8A4FE9),
                     ),
                     onRatingUpdate: (rating) {
-                      _rating = rating;
-                      // Add logic to save rating here
+                      setState(() {
+                        _stressRating = rating;
+                      });
                     },
                   ),
                 ],
               ),
             ),
-
 //************ 4 ************************************************************ */
             Container(
               padding: EdgeInsets.all(20.0),
@@ -208,14 +205,14 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                       color: const Color(0xFF8A4FE9),
                     ),
                     onRatingUpdate: (rating) {
-                      _rating = rating;
-                      // Add logic to save rating here
+                      setState(() {
+                        _alcoholDrugRating = rating;
+                      });
                     },
                   ),
                 ],
               ),
             ),
-
 //********** *********** 5 *******************************************************/
             Container(
               padding: EdgeInsets.all(20.0),
@@ -268,7 +265,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                 ],
               ),
             ),
-
 //******************************** 6 *************************************** */
             Container(
               padding: EdgeInsets.all(20.0),
@@ -297,14 +293,14 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                       color: const Color(0xFF8A4FE9),
                     ),
                     onRatingUpdate: (rating) {
-                      _rating = rating;
-                      // Add logic to save rating here
+                      setState(() {
+                        _moodchangesRating = rating;
+                      });
                     },
                   ),
                 ],
               ),
             ),
-
 //********************  7 ************************************************* */
             Container(
               padding: EdgeInsets.all(20.0),
@@ -333,14 +329,14 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                       color: const Color(0xFF8A4FE9),
                     ),
                     onRatingUpdate: (rating) {
-                      _rating = rating;
-                      // Add logic to save rating here
+                      setState(() {
+                        _sleepingRating = rating;
+                      });
                     },
                   ),
                 ],
               ),
             ),
-
 //************************************** 8 ******************************** */
             Container(
               padding: EdgeInsets.all(20.0),
@@ -369,14 +365,14 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                       color: const Color(0xFF8A4FE9),
                     ),
                     onRatingUpdate: (rating) {
-                      _rating = rating;
-                      // Add logic to save rating here
+                      setState(() {
+                        _flashingLightsRating = rating;
+                      });
                     },
                   ),
                 ],
               ),
             ),
-
 //************************** 9 ********************************************* */
             Container(
               padding: EdgeInsets.all(20.0),
@@ -405,14 +401,14 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                       color: const Color(0xFF8A4FE9),
                     ),
                     onRatingUpdate: (rating) {
-                      _rating = rating;
-                      // Add logic to save rating here
+                      setState(() {
+                        _exerciseRating = rating;
+                      });
                     },
                   ),
                 ],
               ),
             ),
-
 //***********************  10 ****************************************************** */
             Container(
               padding: EdgeInsets.all(20.0),
@@ -479,7 +475,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                 ],
               ),
             ),
-
 //*******************************11******************************** */
             Container(
               padding: EdgeInsets.all(20.0),
@@ -507,7 +502,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                 ],
               ),
             ),
-
 //************************12****************************** */
             Container(
               padding: EdgeInsets.all(20.0),
@@ -524,10 +518,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                     style:
                         TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(
-                      height:
-                          35), // Ajoute un espacement entre le texte et les options
-
+                  SizedBox(height: 35),
                   // Première option
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -564,7 +555,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                     ],
                   ),
                   SizedBox(height: 20),
-
                   // Deuxième option
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -601,7 +591,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                     ],
                   ),
                   SizedBox(height: 20),
-
                   // Troisième option
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -638,7 +627,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                     ],
                   ),
                   SizedBox(height: 20),
-
                   // Quatrième option
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -675,7 +663,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                     ],
                   ),
                   SizedBox(height: 20),
-
                   // Cinquième option
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -712,7 +699,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                     ],
                   ),
                   SizedBox(height: 20),
-
                   // Sixième option
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -749,7 +735,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                     ],
                   ),
                   SizedBox(height: 20),
-
                   // Septième option
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -786,7 +771,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                     ],
                   ),
                   SizedBox(height: 20),
-
                   // Huitième option
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -823,7 +807,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                     ],
                   ),
                   SizedBox(height: 20),
-
                   // Neuvième option
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -860,7 +843,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                     ],
                   ),
                   SizedBox(height: 20),
-
                   // Dixième option
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -899,7 +881,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                 ],
               ),
             ),
-
 //************************************************************************************ */
             SizedBox(height: 20.0),
             ElevatedButton(
@@ -915,7 +896,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                     vertical: 16.0), // Ajuster la hauteur du bouton ici
               ),
               child: Text(
-                'Enregistrer',
+                'Save Form',
                 style: TextStyle(
                   color: Colors.white, // Définir la couleur du texte en blanc
                   fontSize: 18.0, // Ajuster la taille du texte ici
@@ -929,7 +910,6 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
   }
 
   // Méthode pour sélectionner l'heure avec le widget TimePicker
-
   Future<void> _selectBedTime(BuildContext context) async {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,

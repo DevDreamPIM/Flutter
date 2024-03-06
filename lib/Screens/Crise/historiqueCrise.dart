@@ -2,7 +2,6 @@ import 'package:epilepto_guard/Screens/Crise/detailCrise.dart';
 import 'package:flutter/material.dart';
 import 'package:epilepto_guard/Models/crise.dart';
 import 'package:intl/intl.dart';
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:epilepto_guard/Utils/Constantes.dart';
@@ -75,7 +74,8 @@ class _CrisisHistoryScreenState extends State<CrisisHistoryScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CrisisDetailScreen(crises[index]),
+                      builder: (context) =>
+                          CrisisDetailScreen(crisis: crises[index]),
                     ),
                   );
                 },

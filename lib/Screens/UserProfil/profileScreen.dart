@@ -1,33 +1,70 @@
+import 'dart:io';
+
 import 'package:epilepto_guard/Screens/Calendar/CalendarScreen.dart';
 import 'package:epilepto_guard/Screens/Crise/historiqueCrise.dart';
 import 'package:epilepto_guard/Screens/Drugs/ListDrug.dart';
 import 'package:epilepto_guard/Screens/MedicalSheet/medicalSheetScreen.dart';
 import 'package:epilepto_guard/Screens/User/loginScreen.dart';
+import 'package:epilepto_guard/Screens/UserProfil/image.dart';
 import 'package:epilepto_guard/Screens/UserProfil/updateProfileScreen.dart';
+import 'package:epilepto_guard/Utils/Constantes.dart';
 import 'package:epilepto_guard/colors.dart';
-import 'package:epilepto_guard/Screens/settings.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+// Placeholder button text
 
-const double DefaultSize = 16.0; // Placeholder for your DefaultSize value
-const String ProfileImage =
-    'assets/images/user/youssef.jpg'; // Placeholder image path
-const String ProfileHeading = 'Youssef Farhat'; // Placeholder text
-const String ProfileSubHeading = 'Youssef.farhat@esprit.tn'; // Placeholder text
-const String EditProfile = 'Edit Profile'; // Placeholder button text
-
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String? fullName;
+  String? image;
+  String? email;
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final storage = FlutterSecureStorage();
+
+    String? loadedFirstName = await storage.read(key: "firstName");
+    String? loadedLastName = await storage.read(key: "lastName");
+    String? loadedEmail = await storage.read(key: "email");
+    String? loadedImage = await storage.read(key: "image");
+
+    // Ensure there's a space between first name and last name only if both are not null
+    String? loadedFullName = [loadedFirstName, loadedLastName]
+        .where((s) => s != null && s.isNotEmpty)
+        .join(" ");
+
+    if (mounted) {
+      setState(() {
+        fullName = loadedFullName.isNotEmpty ? loadedFullName : "Your Name";
+        image = loadedImage ?? '';
+        email = loadedEmail ?? '';
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    const double DefaultSize = 16.0;
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor:
-        Colors.transparent, // Make AppBar background transparent
+            Colors.transparent, // Make AppBar background transparent
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -41,139 +78,146 @@ class ProfileScreen extends StatelessWidget {
                   .white), // Adjust text color for visibility on background
         ),
       ),
-      body: Stack(
-        children: [
-          // Background image
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                    "assets/images/background/login.png"), // Specify the path to your background image
-                fit: BoxFit.cover,
+      body: RefreshIndicator(
+        onRefresh: _loadUserData,
+        child: Stack(
+          children: [
+            // Background image
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                      "assets/images/background/login.png"), // Specify the path to your background image
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          // Your existing content in a SingleChildScrollView
-          SingleChildScrollView(
-            child: Container(
-              padding:
-              const EdgeInsets.all(16.0), // Adjust padding if necessary
-              child: Column(
-                children: [
-                  // Your existing widgetSingleChildScrollView(
-                  Container(
-                    padding: const EdgeInsets.all(DefaultSize),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          width: 120,
-                          height: 120,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(100),
-                            child: Image.asset(ProfileImage),
+            // Your existing content in a SingleChildScrollView
+            SingleChildScrollView(
+              child: Container(
+                padding:
+                    const EdgeInsets.all(16.0), // Adjust padding if necessary
+                child: Column(
+                  children: [
+                    // Your existing widgetSingleChildScrollView(
+                    Container(
+                      padding: const EdgeInsets.all(DefaultSize),
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            width: 120,
+                            height: 120,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: Image.network(
+                                '${Constantes.USER_IMAGE_URL}/$image',
+                                fit: BoxFit.cover, // This ensures the image covers the container bounds
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          ProfileHeading,
-                          style: Theme.of(context).textTheme.headline4,
-                        ),
-                        Text(
-                          ProfileSubHeading,
-                          style: Theme.of(context).textTheme.bodyText2,
-                        ),
-                        const SizedBox(height: 20),
-                        SizedBox(
-                          width: 200,
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => UpdateProfileScreen()));
+                          const SizedBox(height: 10),
+                          Text(
+                            fullName ?? "Loading...",
+                            style: Theme.of(context).textTheme.headline4,
+                          ),
+                          Text(
+                            email ?? "Loading...",
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                          const SizedBox(height: 20),
+                          SizedBox(
+                            width: 200,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => UpdateProfileScreen()));
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Color(0xFF8A4FE9), // Background color
+                              ),
+                              child: const Text(
+                                'Edit Profile', // Make sure to replace 'Edit Profile' with a variable if it's dynamic
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+        
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          const Divider(),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          // MENU
+                          ProfileMenuWidget(
+                              title: "Settings",
+                              icon: LineAwesomeIcons.cog,
+                              onPress: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => HomeScreen()));
+                              }),
+                          ProfileMenuWidget(
+                              title: "Calendar",
+                              icon: LineAwesomeIcons.calendar,
+                              onPress: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => CalendarScreen()));
+                              }),
+                          const Divider(color: Colors.grey),
+                          const SizedBox(height: 10),
+                          ProfileMenuWidget(
+                              title: "Medical File",
+                              icon: LineAwesomeIcons.medical_notes,
+                              onPress: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => MedicalSheetScreen()));
+                              }),
+                          ProfileMenuWidget(
+                              title: "Crisis History",
+                              icon: LineAwesomeIcons.history,
+                              onPress: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => CrisisHistoryScreen()));
+                              }),
+                          ProfileMenuWidget(
+                              title: "Drugs",
+                              icon: LineAwesomeIcons.history,
+                              onPress: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => ListDrug()));
+                              }),
+                          ProfileMenuWidget(
+                            title: "Logout",
+                            icon: LineAwesomeIcons.alternate_sign_out,
+                            textColor: Colors.red,
+                            endIcon: false,
+                            onPress: () async {
+                              final storage = FlutterSecureStorage();
+                              await storage.delete(key: "token").then((_) {
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const LoginScreen()),
+                                  (route) =>
+                                      false, // Remove all routes on the stack
+                                );
+                              }).catchError((error) {
+                                print("Error occurred during logout: $error");
+                              });
                             },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                              Color(0xFF8A4FE9), // Background color
-                            ),
-                            child: const Text(
-                              'Edit Profile', // Make sure to replace 'Edit Profile' with a variable if it's dynamic
-                              style: TextStyle(color: Colors.white),
-                            ),
                           ),
-                        ),
-
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        const Divider(),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        // MENU
-                        ProfileMenuWidget(
-                            title: "Settings",
-                            icon: LineAwesomeIcons.cog,
-                            onPress: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => Settings()));
-                            }),
-                        ProfileMenuWidget(
-                            title: "Calendar",
-                            icon: LineAwesomeIcons.calendar,
-                            onPress: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => CalendarScreen()));
-                            }),
-                        const Divider(color: Colors.grey),
-                        const SizedBox(height: 10),
-                        ProfileMenuWidget(
-                            title: "Medical File",
-                            icon: LineAwesomeIcons.medical_notes,
-                            onPress: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => MedicalSheetScreen()));
-                            }),
-                        ProfileMenuWidget(
-                            title: "Crisis History",
-                            icon: LineAwesomeIcons.history,
-                            onPress: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => CrisisHistoryScreen()));
-                            }),
-                        ProfileMenuWidget(
-                            title: "Drugs",
-                            icon: LineAwesomeIcons.history,
-                            onPress: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => ListDrug()));
-                            }),
-                       ProfileMenuWidget(
-  title: "Logout",
-  icon: LineAwesomeIcons.alternate_sign_out,
-  textColor: Colors.red,
-  endIcon: false,
-  onPress: () async {
-    final storage = FlutterSecureStorage();
-    await storage.delete(key: "token").then((_) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-        (route) => false, // Remove all routes on the stack
-      );
-    }).catchError((error) {
-      print("Error occurred during logout: $error");
-    });
-  },
-),
-
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -212,22 +256,23 @@ class ProfileMenuWidget extends StatelessWidget {
       ),
       title: Text(title,
           style:
-          Theme.of(context).textTheme.bodyText1?.apply(color: textColor)),
+              Theme.of(context).textTheme.bodyText1?.apply(color: textColor)),
       trailing: endIcon
           ? Container(
-        width: 30,
-        height: 30,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100),
-          color: AppColors.lightPurple,
-        ),
-        child: const Icon(
-          LineAwesomeIcons.angle_right,
-          size: 18.0,
-          color: Color(0xFF8A4FE9),
-        ),
-      )
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                color: AppColors.lightPurple,
+              ),
+              child: const Icon(
+                LineAwesomeIcons.angle_right,
+                size: 18.0,
+                color: Color(0xFF8A4FE9),
+              ),
+            )
           : null,
     );
   }
+  
 }

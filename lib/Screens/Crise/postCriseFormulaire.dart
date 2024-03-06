@@ -6,7 +6,7 @@ import 'package:flutter_picker/flutter_picker.dart';
 import 'package:http/http.dart' as http;
 
 class PostCriseFormulaire extends StatefulWidget {
-  final int id;
+  final String id;
   const PostCriseFormulaire({Key? key, required this.id}) : super(key: key);
 
   @override
@@ -16,7 +16,7 @@ class PostCriseFormulaire extends StatefulWidget {
 class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
   //** VARIABLES **//
 
-  late int _id;
+  late String _id;
 
   @override
   void initState() {
@@ -706,7 +706,7 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
 
     // Créer une instance de PostCriseFormData
     PostCriseFormData formData = PostCriseFormData(
-      id: _id,
+      idCrise: _id,
       selectedHours: _selectedHours,
       selectedMinutes: _selectedMinutes,
       visualAuraChecked: _visualAuraChecked,
