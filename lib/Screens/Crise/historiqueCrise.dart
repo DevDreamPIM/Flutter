@@ -1,6 +1,7 @@
 import 'package:epilepto_guard/Screens/Crise/detailCrise.dart';
 import 'package:flutter/material.dart';
 import 'package:epilepto_guard/Models/crise.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -14,9 +15,30 @@ class CrisisHistoryScreen extends StatefulWidget {
 class _CrisisHistoryScreenState extends State<CrisisHistoryScreen> {
   List<Crisis> crises = [];
 
-  Future<void> fetchCrises() async {
+  /*Future<void> fetchCrises() async {
     final response =
         await http.get(Uri.parse('${Constantes.URL_API}/seizures/'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(response.body);
+      setState(() {
+        crises = data.map((item) => Crisis.fromJson(item)).toList();
+      });
+    } else {
+      throw Exception('Failed to load seizures');
+    }
+  }*/
+
+  Future<void> fetchCrises() async {
+    const storage = FlutterSecureStorage();
+    final String? token = await storage.read(key: "token");
+
+    final response = await http.get(
+      Uri.parse('${Constantes.URL_API}/seizures/'),
+      headers: <String, String>{
+        'Authorization': 'Bearer $token',
+      },
+    );
 
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);

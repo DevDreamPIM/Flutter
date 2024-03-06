@@ -8,8 +8,10 @@ class FormulaireQuotidien extends StatefulWidget {
 }
 
 class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
+
   TimeOfDay _bedTime = TimeOfDay.now(); // Pour stocker l'heure du coucher
   TimeOfDay _wakeUpTime = TimeOfDay.now(); // Pour stocker l'heure du réveil
+
   // rate variable
   double _stressRating = 0;
   double _alcoholDrugRating = 0;
@@ -30,6 +32,8 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
   bool _sleepDisturbancesChecked = false;
   bool _concentrationDifficultiesChecked = false;
   bool _increasedSensitivityChecked = false;
+
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
