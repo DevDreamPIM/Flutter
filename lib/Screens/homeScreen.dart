@@ -361,9 +361,9 @@ class _HomeScreenState extends State<HomeScreen> {
       return Align(
         alignment: Alignment.topCenter,
         child: Container(
-          margin: const EdgeInsets.only(top: 20),
+          margin: const EdgeInsets.only(top: 10),
           width: MediaQuery.of(context).size.width * 0.9,
-          height: MediaQuery.of(context).size.height * 0.2,
+          height: MediaQuery.of(context).size.height * 0.25,
           child: ClipRect(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
@@ -378,85 +378,57 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.symmetric(
                   horizontal: MediaQuery.of(context).size.width * 0.05,
                 ),
-                child: Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            DateFormat("EEEE, MMMM dd").format(now),
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          Text(
-                            DateFormat("hh:mm a").format(now),
-                            style: const TextStyle(
-                              fontSize: 28,
-                            ),
-                          ),
-                        ],
+                    Text(
+                      DateFormat("EEEE, MMMM dd").format(now),
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      DateFormat("hh:mm a").format(now),
+                      style: const TextStyle(
+                        fontSize: 18,
                       ),
                     ),
-                    SizedBox(width: 16), // Add some spacing between columns
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            _weather?.areaName ?? "No Area Name",
-                            style: const TextStyle(fontSize: 16),
+                    Text(
+                      _weather?.areaName ?? "No Area Name",
+                      style: const TextStyle(fontSize: 16),
+                    ), // Add some spacing between columns
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 226, 217, 241)
+                                .withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                          child: Column(
                             children: [
-                              Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 4),
-                                decoration: BoxDecoration(
-                                  color:
-                                      const Color.fromARGB(255, 226, 217, 241)
-                                          .withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Image.network(
-                                      "http://openweathermap.org/img/wn/${_weather?.weatherIcon}@4x.png",
-                                      width: 50,
-                                      height: 50,
-                                    ),
-                                    Text(
-                                      _weather?.weatherDescription ??
-                                          "No Description",
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                  ],
+                              Image.network(
+                                "http://openweathermap.org/img/wn/${_weather?.weatherIcon}@4x.png",
+                                width: 50,
+                                height: 50,
+                              ),
+                              Text(
+                                _weather?.weatherDescription ??
+                                    "No Description",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
-                              const SizedBox(width: 8),
                               Text(
                                 "${_weather?.temperature?.celsius?.toStringAsFixed(0)}°C",
-                                style: const TextStyle(fontSize: 28),
+                                style: const TextStyle(fontSize: 18),
                               ),
                             ],
                           ),
-                          Text(
-                            "Wind: ${_weather?.windSpeed?.toStringAsFixed(0)}m/s",
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          Text(
-                            "Humidity: ${_weather?.humidity?.toStringAsFixed(0)}%",
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
