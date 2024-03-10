@@ -745,7 +745,7 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
         response2: response2,
         response3: response3,
       );
-
+      //  print("form Data :" + formData.toJson().toString());
       // Envoyer les données au backend
       _postFormService.sendDataToBackend(formData);
     } catch (e, stackTrace) {

@@ -67,7 +67,7 @@ class PostCriseFormData {
   // Méthode pour sérialiser les données du formulaire
   Map<String, dynamic> toJson() {
     return {
-      'id': idCrise,
+      'criseId': idCrise,
       'selectedHours': selectedHours,
       'selectedMinutes': selectedMinutes,
       'response1': response1,
@@ -101,7 +101,7 @@ class PostCriseFormData {
   // Méthode pour désérialiser les données du formulaire
   factory PostCriseFormData.fromJson(Map<String, dynamic> json) {
     return PostCriseFormData(
-      idCrise: json['id'],
+      idCrise: json['criseId'],
       selectedHours: json['selectedHours'],
       selectedMinutes: json['selectedMinutes'],
       response1: json['response1'],
