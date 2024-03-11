@@ -1,11 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:epilepto_guard/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import './ChatPage.dart';
 import './DiscoveryPage.dart';
 
 class MainPageBluetooth extends StatefulWidget {
@@ -15,9 +17,6 @@ class MainPageBluetooth extends StatefulWidget {
 
 class _MainPageBluetooth extends State<MainPageBluetooth> {
   BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
-
-  String _address = "...";
-  String _name = "...";
 
   String BtWatchName = "DevDream-SmartWatch-BT";
 
@@ -32,22 +31,6 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
     FlutterBluetoothSerial.instance.state.then((state) {
       setState(() {
         _bluetoothState = state;
-      });
-    });
-
-    Future.doWhile(() async {
-      // Wait if adapter not enabled
-      if (await FlutterBluetoothSerial.instance.isEnabled ?? false) {
-        return false;
-      }
-      await Future.delayed(Duration(milliseconds: 0xDD));
-      return true;
-    }).then((_) {
-      // Update the address field
-      FlutterBluetoothSerial.instance.address.then((address) {
-        setState(() {
-          String? _address = "...";
-        });
       });
     });
 
@@ -149,7 +132,7 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
 
                     if (selectedDevice != null) {
                       print('Discovery -> selected ' + selectedDevice.address);
-                      _startChat(context, selectedDevice);
+                      _connectionSuccess(context, selectedDevice);
                     } else {
                       print('Discovery -> no device selected');
                     }
@@ -161,13 +144,14 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
     );
   }
 
-  void _startChat(BuildContext context, BluetoothDevice server) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) {
-          return ChatPage(server: server);
-        },
-      ),
+  // The code below will be executed after the connection to the bt device
+
+  void _connectionSuccess(
+      BuildContext context, BluetoothDevice selectedDevice) {
+    final snackBar = SnackBar(
+      content: Text("Successfully connected to ${selectedDevice.name}"),
+      duration: Duration(seconds: 3),
     );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
