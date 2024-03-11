@@ -1,6 +1,8 @@
 import 'package:epilepto_guard/Screens/MedicalSheet/medicalSheetFormScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
+
 
 class MedicalSheetScreen extends StatefulWidget {
   const MedicalSheetScreen({super.key});
@@ -70,7 +72,7 @@ class _MedicalSheetScreenState extends State<MedicalSheetScreen> {
                 children: [
                   _buildInfoRow('First Name', firstName ?? ''),
                   _buildInfoRow('Last Name', lastName ?? ''),
-                  _buildInfoRow('Birth Date', birthDate ?? ''),
+                  _buildInfoRow('Birth Date', DateFormat('y-MM-dd').format(DateTime.parse(DateTime.parse(birthDate!).toString())) ?? ''),
                   _buildInfoRow('Phone Number', phoneNumber ?? ''),
                   _buildInfoRow('Weight', '$weight kg' ?? ''),
                   _buildInfoRow('Height', '$height cm' ?? ''),

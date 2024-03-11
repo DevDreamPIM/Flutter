@@ -295,6 +295,7 @@ class UserWebService {
   }
 
   Future<void> updateMedicalFile(String birthDate, String weight, String height,String token, BuildContext context) async {
+    print("objext: "+birthDate + " " + weight + " " + height);
     final url = Uri.parse(
         '${Constantes.URL_API}${Constantes.URL_API_USER}/updateMedicalFile');
     final response = await http.put(
