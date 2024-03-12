@@ -52,10 +52,11 @@ android {
     }
     signingConfigs {
         debug {
-            keyAlias 'your_alias'
-            keyPassword '123456'
-            storeFile file('C:/Users/Mega-pc/Desktop/esprit/4SIM5/Semestre 2/PIM/Flutter/android/app/mykey.jks')
-            storePassword '123456'
+            storeFile file('mykey.jks')
+            storePassword 'android'
+            keyPassword 'android'
+            keyAlias 'androiddebugkey'
+
         }
     }
 
