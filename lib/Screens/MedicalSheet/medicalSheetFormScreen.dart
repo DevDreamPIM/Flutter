@@ -297,6 +297,7 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                                   ),
                                 );
                                 Navigator.of(context).pop(context);
+                                setState(() {});
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(

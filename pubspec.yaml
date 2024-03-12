@@ -53,9 +53,10 @@ dependencies:
   pie_chart: ^5.4.0
   flutter_picker: ^2.1.0
   google_sign_in: ^6.2.1
-  pdf: ^3.8.4
+  pdf: ^3.10.8
   path_provider: ^2.1.2
   html: ^0.15.0
+  open_file: ^3.3.2
   
   scoped_model: ^2.0.0
   image: ^4.1.7
