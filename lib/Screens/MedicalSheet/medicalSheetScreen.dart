@@ -1,6 +1,13 @@
 import 'package:epilepto_guard/Screens/MedicalSheet/medicalSheetFormScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'dart:io';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:open_file/open_file.dart';
+
 
 class MedicalSheetScreen extends StatefulWidget {
   const MedicalSheetScreen({super.key});
@@ -38,6 +45,177 @@ class _MedicalSheetScreenState extends State<MedicalSheetScreen> {
     setState(() {});
   }
 
+  
+Future<void> _exportToPdf() async {
+  final pdf = pw.Document();
+  final String patientName = '$firstName $lastName';
+
+  // Add content to the PDF document
+  pdf.addPage(
+    pw.Page(
+      build: (context) {
+        return pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            // Header with patient's name
+            pw.Container(
+              alignment: pw.Alignment.center,
+              margin: pw.EdgeInsets.only(bottom: 20.0),
+              child: pw.Text(
+                'Medical File',
+                style: pw.TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+            ),
+            pw.Container(
+              alignment: pw.Alignment.center,
+              margin: pw.EdgeInsets.only(bottom: 20.0),
+              child: pw.Text(
+                'Patient: $patientName',
+                style: pw.TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+            ),
+            // Patient's information
+            _buildPdfInfoRow('Birth Date', DateFormat('y-MM-dd').format(DateTime.parse(DateTime.parse(birthDate!).toString())) ?? ''),
+            _buildPdfInfoRow('Tel', phoneNumber ?? ''),
+            _buildPdfInfoRow('Weight', '$weight kg' ?? ''),
+            _buildPdfInfoRow('Height', '$height cm' ?? ''),
+            // Additional medical details
+          /*  pw.Container(
+              margin: pw.EdgeInsets.symmetric(vertical: 20.0),
+              child: pw.Text(
+                'Medical History:',
+                style: pw.TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+            ),
+            pw.Container(
+              margin: pw.EdgeInsets.only(bottom: 20.0),
+              child: pw.Text(
+                'Brief medical history summary goes here...',
+                style: pw.TextStyle(fontSize: 16.0),
+              ),
+            ),
+            pw.Container(
+              margin: pw.EdgeInsets.only(bottom: 20.0),
+              child: pw.Text(
+                'Diagnosis:',
+                style: pw.TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+            ),
+            pw.Container(
+              margin: pw.EdgeInsets.only(bottom: 20.0),
+              child: pw.Text(
+                'Diagnosis details go here...',
+                style: pw.TextStyle(fontSize: 16.0),
+              ),
+            ),
+            pw.Container(
+              margin: pw.EdgeInsets.only(bottom: 20.0),
+              child: pw.Text(
+                'Treatment Plan:',
+                style: pw.TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+            ),
+            pw.Container(
+              margin: pw.EdgeInsets.only(bottom: 20.0),
+              child: pw.Text(
+                'Treatment plan details go here...',
+                style: pw.TextStyle(fontSize: 16.0),
+              ),
+            ),
+            pw.Container(
+              margin: pw.EdgeInsets.only(bottom: 20.0),
+              child: pw.Text(
+                'Prescriptions:',
+                style: pw.TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+            ),
+            pw.Container(
+              margin: pw.EdgeInsets.only(bottom: 20.0),
+              child: pw.Text(
+                'Prescription details go here...',
+                style: pw.TextStyle(fontSize: 16.0),
+              ),
+            ),*/
+          ],
+        );
+      }
+    ),
+  );
+
+  // Get the directory for storing the PDF file
+  String path;
+  if (Platform.isAndroid) {
+    final String downloadsDirectoryPath = (await getExternalStorageDirectory())!.path;
+    path = '$downloadsDirectoryPath/medical_sheet_$firstName $lastName.pdf';
+  } else if (Platform.isIOS) {
+    final String documentsDirectoryPath = (await getApplicationDocumentsDirectory())!.path;
+    path = '$documentsDirectoryPath/medical_sheet_$firstName $lastName.pdf';
+  } else {
+    throw UnsupportedError('Unsupported platform');
+  }
+
+  // Save the PDF document to a file
+  final file = File(path);
+  await file.writeAsBytes(await pdf.save());
+  print(path);
+  await OpenFile.open(path);
+
+  // Show a message indicating the file export is complete
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('Medical file exported to PDF successfully.', style: TextStyle(color: Colors.white)),
+      backgroundColor: Colors.green,
+    ),
+  );
+}
+
+pw.Widget _buildPdfInfoRow(String label, String value) {
+  return pw.Container(
+    margin: pw.EdgeInsets.symmetric(vertical: 8.0),
+    child: pw.Row(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Container(
+          width: 100.0,
+          child: pw.Text(
+            label,
+            style: pw.TextStyle(
+              fontSize: 18.0,
+              fontWeight: pw.FontWeight.bold,
+            ),
+          ),
+        ),
+        pw.SizedBox(width: 10.0),
+        pw.Expanded(
+          child: pw.Text(
+            value,
+            style: pw.TextStyle(fontSize: 16.0),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +248,7 @@ class _MedicalSheetScreenState extends State<MedicalSheetScreen> {
                 children: [
                   _buildInfoRow('First Name', firstName ?? ''),
                   _buildInfoRow('Last Name', lastName ?? ''),
-                  _buildInfoRow('Birth Date', birthDate ?? ''),
+                  _buildInfoRow('Birth Date', DateFormat('y-MM-dd').format(DateTime.parse(DateTime.parse(birthDate!).toString())) ?? ''),
                   _buildInfoRow('Phone Number', phoneNumber ?? ''),
                   _buildInfoRow('Weight', '$weight kg' ?? ''),
                   _buildInfoRow('Height', '$height cm' ?? ''),
@@ -79,7 +257,7 @@ class _MedicalSheetScreenState extends State<MedicalSheetScreen> {
                     child: ElevatedButton.icon(
                       onPressed: () {
                         // Add your export functionality here
-                        //  _exportToPdf();
+                          _exportToPdf();
                       },
                       icon: Icon(
                         Icons.file_download,
