@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+import 'package:epilepto_guard/Screens/Crise/submittedForm.dart';
+import 'package:epilepto_guard/Services/postFormService.dart';
 import 'package:epilepto_guard/Models/postCriseForm.dart';
 import 'package:epilepto_guard/Screens/Crise/postCriseFormulaire.dart';
 import 'package:epilepto_guard/Utils/Constantes.dart';
@@ -11,8 +12,9 @@ import 'package:epilepto_guard/Utils/Constantes.dart';
 
 class CrisisDetailScreen extends StatefulWidget {
   final CriseModel.Crisis crisis;
+  final PostFormService _postFormService = PostFormService();
 
-  const CrisisDetailScreen({required this.crisis});
+  CrisisDetailScreen({required this.crisis});
 
   @override
   _CrisisDetailScreenState createState() => _CrisisDetailScreenState();
@@ -20,17 +22,25 @@ class CrisisDetailScreen extends StatefulWidget {
 
 class _CrisisDetailScreenState extends State<CrisisDetailScreen> {
   late List<PostCriseFormData> formData = [];
+  bool isFormSubmitted = false;
 
   @override
   void initState() {
     super.initState();
-    /* fetchFormData(widget.crisis.formDataId).then((data) {
+    _checkIfFormSubmitted();
+  }
+
+   Future<void> _checkIfFormSubmitted() async {
+    try {
+      // Récupérer le formulaire associé à la crise en utilisant l'ID de la crise
+      bool submitted = await widget._postFormService.checkIfFormSubmitted(widget.crisis.idCrise);
+
       setState(() {
-        formData = data;
+        isFormSubmitted = submitted;
       });
-    }).catchError((error) {
-      print('Error fetching form data: $error');
-    });*/
+    } catch (e) {
+      print('Error checking form submission: $e');
+    }
   }
 
   @override
@@ -98,14 +108,27 @@ class _CrisisDetailScreenState extends State<CrisisDetailScreen> {
               // Button to display associated form
               Center(
                 child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            PostCriseFormulaire(id: widget.crisis.idCrise),
-                      ),
-                    );
+                  onPressed: () async {
+                    // Vérifier si la crise a un formulaire associé soumis
+                    if (isFormSubmitted) {
+                      // Afficher une autre interface pour afficher les données du formulaire en mode lecture seule
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              SubmittedForm(id: widget.crisis.idCrise),
+                        ),
+                      );
+                    } else {
+                      // Afficher l'interface habituelle pour saisir de nouvelles données dans le formulaire
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PostCriseFormulaire(id: widget.crisis.idCrise),
+                        ),
+                      );
+                    }
                   },
                   child: Text(
                     'Seizure Form',
