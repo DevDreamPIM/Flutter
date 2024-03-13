@@ -36,10 +36,10 @@ class _MedicalSheetScreenState extends State<MedicalSheetScreen> {
     // Use await to wait for the completion of each read operation
     firstName = await storage.read(key: "firstName");
     lastName = await storage.read(key: "lastName");
-    birthDate = await storage.read(key: "birthDate");
+    birthDate = await storage.read(key: "birthDate")?? " ";
     phoneNumber = await storage.read(key: "phoneNumber");
-    weight = await storage.read(key: "weight");
-    height = await storage.read(key: "height");
+    weight = await storage.read(key: "weight")?? " ";
+    height = await storage.read(key: "height")?? " ";
 
     // Set state to reflect the changes
     setState(() {});
