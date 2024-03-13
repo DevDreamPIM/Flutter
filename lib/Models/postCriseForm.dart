@@ -33,6 +33,8 @@ class PostCriseFormData {
   bool advice;
   String? response3;
 
+  bool submitted;
+
   PostCriseFormData({
     required this.idCrise,
     required this.selectedHours,
@@ -62,6 +64,7 @@ class PostCriseFormData {
     required this.medicalCareRating,
     required this.advice,
     this.response3,
+    required this.submitted,
   });
 
   // Méthode pour sérialiser les données du formulaire
@@ -95,6 +98,7 @@ class PostCriseFormData {
       'medicalCareRating': medicalCareRating,
       'advice': advice,
       'response3': response3,
+      'submitted': submitted,
     };
   }
 
@@ -132,6 +136,7 @@ class PostCriseFormData {
       medicalCareRating: json['medicalCareRating'],
       advice: json['advice'],
       response3: json['response3'],
+      submitted: json['submitted'],
     );
   }
 }

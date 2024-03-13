@@ -15,16 +15,15 @@ class PostCriseFormulaire extends StatefulWidget {
 
 class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
   //** VARIABLES **//
+  bool _isFormSubmitted = false;
 
   late String _id;
 
   List<bool>? _triggerFactorsSelection = List.generate(11, (index) => false);
 
-  // Variables pour stocker les heures et les minutes sélectionnées
   int _selectedHours = 0;
   int _selectedMinutes = 0;
 
-  //  option de réponse pour les auras
   bool? _visualAuraChecked = false;
   bool? _sensoryAuraChecked = false;
   bool? _auditoryAuraChecked = false;
@@ -36,27 +35,13 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
   bool? _concentrationDifficultiesChecked = false;
   bool? _increasedSensitivityChecked = false;
 
-  //boolean variable medication
   bool _medicationIntake = false;
-
-  //boolean variable injured
   bool _injured = false;
-
-  //boolean variable conscious
   bool _conscious = false;
-
-  //boolean variable episodes
   bool _episodes = false;
-
-  //boolean variable memoryDisturbances
   bool _memoryDisturbances = false;
-
-  //boolean variable assistance
   bool _assistance = false;
-
-  //boolean variable advice
   bool _advice = false;
-
   // rate variable
   double _emotionalStateRating = 0;
   double _recoveryRating = 0;
@@ -137,7 +122,6 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                 ],
               ),
             ),
-
             //***********************2************************************** */
             _buildQuestionWithResponse(
               'When did you first feel the initial signs of the seizure?',
@@ -463,7 +447,6 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
               ),
             ),
 //****************************************************************************** */
-
             _buildQuestionWithResponse(
               'Were you conscious during the seizure, or did you lose consciousness?',
               Column(
@@ -491,7 +474,6 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                 ],
               ),
             ),
-
             //*********************************************** */
             _buildQuestionWithResponse(
               'Did the seizure involve repeated episodes without fully regaining consciousness in between?',
@@ -520,9 +502,7 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                 ],
               ),
             ),
-
             //*********************************************** */
-
             _buildQuestionWithResponse(
               'Did you experience any memory disturbances after the seizure?',
               Column(
@@ -586,7 +566,6 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
               ),
             ),
             //***************************************************** */
-
             _buildQuestionWithResponse(
               'Did you require medical assistance or emergency intervention?',
               Column(
@@ -614,7 +593,6 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                 ],
               ),
             ),
-
             //************************************************* */
             _buildQuestionWithResponse(
               'How do you assess the medical care or assistance you received during the seizure?',
@@ -636,9 +614,7 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                 },
               ),
             ),
-
             //*************************************************
-
             _buildQuestionWithResponse(
               'Do you want additional advice on managing your epilepsy?',
               Column(
@@ -666,7 +642,6 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
                 ],
               ),
             ),
-
             //***************************************************** */
             _buildQuestionWithResponse(
               'Do you have anything to add?',
@@ -682,10 +657,11 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
               ),
             ),
             //*****************************************************
-
             SizedBox(height: 20.0),
             ElevatedButton(
-              onPressed: _saveForm,
+              onPressed: () {
+                _showConfirmationDialog(context);
+              }, //_saveForm,
               style: ElevatedButton.styleFrom(
                 backgroundColor:
                     const Color(0xFF8A4FE9), // Set background color here
@@ -706,6 +682,41 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
     );
   }
 
+  // Méthode pour afficher la boîte de dialogue de confirmation
+  Future<void> _showConfirmationDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmation'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Are you sure you want to submit the form?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Confirm'),
+              onPressed: () {
+                _saveForm();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 // fonction pour gérer l'action lorsque le bouton "Save" est pressé
   void _saveForm() {
     try {
@@ -713,6 +724,9 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
       String response1 = _signsresponseController?.text ?? '';
       String response2 = _symptomsresponseController?.text ?? '';
       String response3 = _addresponseController?.text ?? '';
+
+      // Définir la valeur de submitted
+      bool submitted = true;
 
       // Créer une instance de PostCriseFormData
       PostCriseFormData formData = PostCriseFormData(
@@ -744,15 +758,14 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
         response1: response1,
         response2: response2,
         response3: response3,
+        submitted: submitted,
       );
       //  print("form Data :" + formData.toJson().toString());
-      // Envoyer les données au backend
       _postFormService.sendDataToBackend(formData);
     } catch (e, stackTrace) {
       // Gérer les erreurs
       print('Erreur lors de l\'enregistrement du formulaire: $e');
       print(stackTrace);
-      // Ajoutez ici toute logique de gestion des erreurs supplémentaire si nécessaire
     }
   }
 
