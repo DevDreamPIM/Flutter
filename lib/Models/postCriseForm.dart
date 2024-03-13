@@ -33,6 +33,8 @@ class PostCriseFormData {
   bool advice;
   String? response3;
 
+  bool submitted;
+
   PostCriseFormData({
     required this.idCrise,
     required this.selectedHours,
@@ -62,12 +64,13 @@ class PostCriseFormData {
     required this.medicalCareRating,
     required this.advice,
     this.response3,
+    required this.submitted,
   });
 
   // Méthode pour sérialiser les données du formulaire
   Map<String, dynamic> toJson() {
     return {
-      'id': idCrise,
+      'criseId': idCrise,
       'selectedHours': selectedHours,
       'selectedMinutes': selectedMinutes,
       'response1': response1,
@@ -95,13 +98,14 @@ class PostCriseFormData {
       'medicalCareRating': medicalCareRating,
       'advice': advice,
       'response3': response3,
+      'submitted': submitted,
     };
   }
 
   // Méthode pour désérialiser les données du formulaire
   factory PostCriseFormData.fromJson(Map<String, dynamic> json) {
     return PostCriseFormData(
-      idCrise: json['id'],
+      idCrise: json['criseId'],
       selectedHours: json['selectedHours'],
       selectedMinutes: json['selectedMinutes'],
       response1: json['response1'],
@@ -132,6 +136,7 @@ class PostCriseFormData {
       medicalCareRating: json['medicalCareRating'],
       advice: json['advice'],
       response3: json['response3'],
+      submitted: json['submitted'],
     );
   }
 }
