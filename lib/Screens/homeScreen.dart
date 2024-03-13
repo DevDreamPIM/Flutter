@@ -5,6 +5,7 @@ import 'package:epilepto_guard/Screens/Bluetooth/MainPageBluetooth.dart';
 import 'package:epilepto_guard/Screens/Crise/formulaireQuotidien.dart';
 import 'package:epilepto_guard/colors.dart';
 import 'package:epilepto_guard/consts.dart';
+import 'package:epilepto_guard/widgets/heartBeat.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:weather/weather.dart';
@@ -219,12 +220,17 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
-                  child: _buildClickableCard(
+                  child: _buildClickaaableCardWithBackgroundImage(
                     context,
-                    Colors.transparent,
-                    'Widget 4',
+                    'assets/images/background/Logo_Heartbeat_Technology.jpg',
+                    '',
                     () {
-                      // Action à effectuer lorsque le widget est cliqué
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HeartBeat(),
+                        ),
+                      );
                     },
                   ),
                 ),
@@ -280,6 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
 
   Widget _buildClickableCard(
       BuildContext context, Color color, String title, Function() onTap) {
@@ -349,6 +356,39 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+Widget _buildClickaaableCardWithBackgroundImage(BuildContext context, String imagePath, String cardText, VoidCallback onTap) {
+  return InkWell(
+    onTap: onTap,
+    child: Card(
+      clipBehavior: Clip.antiAlias, // Assurez-vous que l'image ne dépasse pas les bords arrondis
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0), // Bords arrondis pour la carte
+      ),
+      elevation: 5, // Ombre sous la carte pour un effet de profondeur
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(imagePath),
+            fit: BoxFit.cover, // Couvre tout l'espace disponible
+            colorFilter: ColorFilter.mode(
+              Colors.black.withOpacity(0.5), // Assombrir légèrement l'image pour améliorer la lisibilité du texte
+              BlendMode.dstATop,
+            ),
+          ),
+        ),
+        alignment: Alignment.center, // Centrer le texte sur la carte
+        child: Text(
+          cardText,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    ),
+  );
+}
 
   Widget _buildWeatherUI() {
     if (_weather == null) {
