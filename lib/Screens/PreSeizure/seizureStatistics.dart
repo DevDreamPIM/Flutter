@@ -1,7 +1,15 @@
+import 'package:epilepto_guard/Components/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
 
-class SeizureStatistics extends StatelessWidget {
+class SeizureStatistics extends StatefulWidget {
+  @override
+  State<SeizureStatistics> createState() => _SeizureStatisticsState();
+}
+
+class _SeizureStatisticsState extends State<SeizureStatistics> {
+  int _selectedIndex = 4;
+
   final Map<String, double> dataMap = {
     'January': 30.0,
     'December': 50.0,
@@ -17,14 +25,18 @@ class SeizureStatistics extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-        title: Text('Seizure Statistics',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-      backgroundColor: const Color(0xFFC987E1),
-    ),
+         appBar: AppBar(
+        title: const Text('Seizure Statistics', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xFFA99ADC),
+      ),
+      drawer: Drawers(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+      ),
     body: Container(
       decoration: const BoxDecoration(
         image: DecorationImage(

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:epilepto_guard/Components/drawer.dart';
 import 'package:epilepto_guard/Screens/Calendar/CalendarScreen.dart';
 import 'package:epilepto_guard/Screens/Crise/historiqueCrise.dart';
 import 'package:epilepto_guard/Screens/Drugs/ListDrug.dart';
@@ -29,6 +30,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  int _selectedIndex = 5;
   String? fullName;
   String? image;
   String? email;
@@ -67,21 +69,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor:
-            Colors.transparent, // Make AppBar background transparent
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(LineAwesomeIcons.angle_left),
-        ),
-        title: Text(
-          'Profile',
-          style: Theme.of(context).textTheme.headline4?.copyWith(
-              color: Colors
-                  .white), // Adjust text color for visibility on background
-        ),
+        title: const Text('Profile', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xFFA99ADC),
+      ),
+      drawer: Drawers(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
       ),
       body: RefreshIndicator(
         onRefresh: _loadUserData,

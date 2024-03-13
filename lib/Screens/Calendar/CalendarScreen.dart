@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:epilepto_guard/Components/drawer.dart';
 import 'package:epilepto_guard/models/drug.dart';
 import 'package:epilepto_guard/Screens/Drugs/ListDrug.dart';
 import 'package:epilepto_guard/consts.dart';
@@ -19,6 +20,7 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
+   int _selectedIndex = 1;
   final WeatherFactory _wf = WeatherFactory(OPENWEATHER_API_KEY);
 
   Weather? _weather;
@@ -79,14 +81,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Calendar',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: const Color(0xFFC987E1),
+       appBar: AppBar(
+        title: const Text('Calendar', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xFFA99ADC),
+      ),
+      drawer: Drawers(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
       ),
       body: Stack(
         children: [
