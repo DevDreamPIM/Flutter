@@ -82,7 +82,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title: const Text('Home', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xFFA99ADC),
       ),
       drawer: Drawers(
         selectedIndex: _selectedIndex,

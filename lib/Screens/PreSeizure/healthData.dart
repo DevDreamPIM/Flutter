@@ -1,3 +1,4 @@
+import 'package:epilepto_guard/Components/drawer.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -7,6 +8,7 @@ class HealthData extends StatefulWidget {
 }
 
 class _HealthDataState extends State<HealthData> {
+  int _selectedIndex = 3;
   String selectedFilter = 'Week';
 
   final List<double> heartRateData = [70, 75, 72, 68, 73, 77, 75, 72, 68, 73, 77, 80, 70, 75, 72, 68, 73, 77, 80];
@@ -16,20 +18,17 @@ class _HealthDataState extends State<HealthData> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text(
-          'Health Data',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: const Color(0xFFC987E1),
+       appBar: AppBar(
+        title: const Text('Health Data', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xFFA99ADC),
+      ),
+      drawer: Drawers(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
       ),
       body: SingleChildScrollView(
         child: Column(

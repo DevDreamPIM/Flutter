@@ -1,24 +1,28 @@
+import 'package:epilepto_guard/Components/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-class DetectedSigns extends StatelessWidget {
+class DetectedSigns extends StatefulWidget {
+  @override
+  State<DetectedSigns> createState() => _DetectedSignsState();
+}
+
+class _DetectedSignsState extends State<DetectedSigns> {
+   int _selectedIndex = 2;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text(
-          'Detected Signs Visualization',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: const Color(0xFFC987E1),
+       appBar: AppBar(
+        title: const Text('Detected Signs Visualization', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xFFA99ADC),
+      ),
+      drawer: Drawers(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
       ),
       body: Center(
         child: Container(
