@@ -8,6 +8,10 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'package:epilepto_guard/Services/criseService.dart';
+import 'package:http/http.dart' as http;
+import 'package:epilepto_guard/Models/seizure.dart';
+
 import './DiscoveryPage.dart';
 
 class MainPageBluetooth extends StatefulWidget {
@@ -15,13 +19,29 @@ class MainPageBluetooth extends StatefulWidget {
   _MainPageBluetooth createState() => new _MainPageBluetooth();
 }
 
+class _Message {
+  int whom;
+  String text;
+
+  _Message(this.whom, this.text);
+}
+
 class _MainPageBluetooth extends State<MainPageBluetooth> {
   BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
 
   String BtWatchName = "DevDream-SmartWatch-BT";
+  var connection; //BluetoothConnection
+  List<_Message> messages = [];
+  String _messageBuffer = '';
+
+  bool isConnecting = true;
+  bool isDisconnecting = false;
 
   bool liveMonitoringEnabled;
   _MainPageBluetooth() : liveMonitoringEnabled = true;
+
+  late Seizure _newCrise;
+  final storage = FlutterSecureStorage();
 
   @override
   void initState() {
@@ -56,6 +76,12 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
   @override
   void dispose() {
     FlutterBluetoothSerial.instance.setPairingRequestHandler(null);
+    // Avoid memory leak (`setState` after dispose) and disconnect
+    if (isConnected()) {
+      isDisconnecting = true;
+      connection.dispose();
+      connection = null;
+    }
     super.dispose();
   }
 
@@ -113,6 +139,7 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
               onChanged: (bool value) {
                 setState(() {
                   liveMonitoringEnabled = value;
+                  _sendMessage(value.toString());
                 });
               },
             ),
@@ -153,5 +180,85 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
       duration: Duration(seconds: 3),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+    BluetoothConnection.toAddress(selectedDevice.address).then((_connection) {
+      print('Connected to the device');
+      connection = _connection;
+      setState(() {
+        isConnecting = false;
+        isDisconnecting = false;
+      });
+
+      connection.input.listen(_onDataReceived).onDone(() {
+        if (isDisconnecting) {
+          print('Disconnecting locally!');
+        } else {
+          print('Disconnected remotely!');
+        }
+        if (this.mounted) {
+          setState(() {});
+        }
+      });
+    }).catchError((error) {
+      print('Cannot connect, exception occured');
+      print(error);
+    });
+
+    // Call the external method to send a message
+  }
+
+  void _onDataReceived(Uint8List data) {
+    String receivedData = utf8.decode(data);
+    print("Received data: $receivedData");
+
+    // Use switch-case to handle different types of messages
+    if (receivedData.startsWith("emg")) {
+      // Handle message starting with "emg"
+    } else if (receivedData.startsWith("bmp")) {
+      // Handle message starting with "bmp"
+    } else if (receivedData.startsWith("imu")) {
+      // Handle message starting with "imu"
+    } else if (receivedData.startsWith("cri")) {
+      // ajouter une crise
+      _addCrise();
+    } else {
+      print("message inconnu !");
+    }
+  }
+
+  void _sendMessage(String text) async {
+    try {
+      connection.output.add(utf8.encode("$text\r\n"));
+      await connection.output.allSent;
+    } catch (e) {
+      // Ignore error, but notify state
+      setState(() {});
+    }
+  }
+
+  bool isConnected() {
+    return connection != null && connection.isConnected;
+  }
+
+  Future<void> _addCrise() async {
+    try {
+      String? userId = await storage.read(key: 'id');
+      _newCrise = Seizure(
+        userId: userId ?? "",
+        date: DateTime.now().toString(),
+        startTime: DateTime.now().toString(),
+        endTime: DateTime.now().toString(),
+        duration: 30,
+        location: "Tunis",
+        type: "generalized",
+        emergencyServicesCalled: true,
+        medicalAssistance: true,
+        severity: "moderate",
+      );
+      print(_newCrise.toJson().toString());
+      await CriseService().createSeizure(_newCrise);
+    } catch (e) {
+      print('Failed to add drug: $e');
+    }
   }
 }
