@@ -2,6 +2,7 @@ import 'package:epilepto_guard/Services/userWebService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:intl/intl.dart';
 
 class MedicalSheetFormScreen extends StatefulWidget {
   const MedicalSheetFormScreen({super.key});
@@ -12,6 +13,7 @@ class MedicalSheetFormScreen extends StatefulWidget {
 
 class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
   DateTime? selectedDate; // Define a variable to store the selected date
+  String? dateOfBirth; // Define a variable to store the
   final _formKey = GlobalKey<FormBuilderState>();
 
   String? firstName;
@@ -25,7 +27,6 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
   void initState() {
     super.initState();
     _loadUserData();
-    print(firstName);
   }
 
   _loadUserData() async {
@@ -89,6 +90,7 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                         FormBuilderTextField(
                           name: 'firstName',
                           initialValue: firstName! ?? '',
+                          enabled: false, 
                           decoration: InputDecoration(
                             hintText: 'First Name',
                             border: OutlineInputBorder(
@@ -103,6 +105,7 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                         FormBuilderTextField(
                           name: 'lastName',
                           initialValue: lastName! ?? '',
+                          enabled: false, 
                           decoration: InputDecoration(
                             hintText: 'Last Name',
                             border: OutlineInputBorder(
@@ -116,6 +119,7 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                         FormBuilderTextField(
                           name: 'phoneNumber',
                           initialValue: phoneNumber! ?? '',
+                          enabled: false, 
                           decoration: InputDecoration(
                             hintText: 'Phone Number',
                             border: OutlineInputBorder(
@@ -130,11 +134,11 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                         // Email text field
                         TextFormField(
                           onTap: () async {
-                            final DateTime? pickedDate = await showDatePicker(
+                            DateTime initialDate = birthDate != null ? DateTime.parse(birthDate!) : DateTime.now();
+
+                            DateTime? pickedDate = await showDatePicker(
                               context: context,
-                              initialDate: birthDate! != null
-                                  ? DateTime.parse(birthDate!)
-                                  : DateTime.now(),
+                              initialDate: initialDate,
 
                               firstDate: DateTime(
                                   1900), // Set the first selectable date
@@ -165,6 +169,8 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                               if (pickedDate.isBefore(DateTime.now())) {
                                 setState(() {
                                   selectedDate = pickedDate;
+                                  dateOfBirth = DateFormat('y-MM-dd').format(
+                                      selectedDate!); // Format the picked date
                                 });
                               } else {
                                 // Show error message if picked date is in the future
@@ -175,6 +181,14 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                                   ),
                                 );
                               }
+                            } else {
+                              
+                                pickedDate = DateTime.parse(birthDate!);
+                                selectedDate = pickedDate;
+                                dateOfBirth = DateFormat('y-MM-dd').format(
+                                    DateTime.parse(
+                                        DateTime.parse(birthDate!).toString()));
+                              
                             }
                           },
                           decoration: InputDecoration(
@@ -191,7 +205,9 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                           controller: TextEditingController(
                             text: selectedDate != null
                                 ? '${selectedDate!.year}-${selectedDate!.month}-${selectedDate!.day}'
-                                : '', // Set the text field value to the selected date
+                                : DateFormat('y-MM-dd').format(DateTime.parse(
+                                    DateTime.parse(birthDate!)
+                                        .toString())), // Set the text field value to the selected date
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -219,7 +235,6 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                           },
                         ),
                         // Password text field
-
                         const SizedBox(height: 20),
                         FormBuilderTextField(
                           name: 'height',
@@ -254,30 +269,35 @@ class _MedicalSheetFormScreenState extends State<MedicalSheetFormScreen> {
                               _formKey.currentState!.save();
                               if (_formKey.currentState!.validate()) {
                                 print(_formKey.currentState!.value);
+                                print(dateOfBirth.toString());
+
+                                //print(selectedDate!.toString());
                                 const storage = FlutterSecureStorage();
                                 var token = await storage.read(key: "token");
                                 print(token);
-                                await UserWebService()
-                                    .updateMedicalFile(
-                                      _formKey.currentState!.fields['birthDate']!.value,
-                                              _formKey.currentState!.fields['weight']!.value
-                                                  .toString(),
-                                              _formKey.currentState!.fields['height']!.value,
-                                      token!, context);
-                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        const SnackBar(
-                                                          content: Text(
-                                                              'Medical file updated successfully',
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white)),
-                                                          backgroundColor:
-                                                              Colors.green,
-                                                        ),
-                                                      );
+                                await UserWebService().updateMedicalFile(
+                                    dateOfBirth!,
+                                    _formKey
+                                        .currentState!.fields['weight']!.value,
+                                    _formKey
+                                        .currentState!.fields['height']!.value,
+                                    token!,
+                                    context);
+                                    storage.write(key: "weight", value: _formKey
+                                        .currentState!.fields['weight']!.value);
+                                    storage.write(key: "height", value: _formKey
+                                        .currentState!.fields['height']!.value);
+                                    storage.write(key: "birthDate", value: DateTime.parse(dateOfBirth!).toString());
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Medical file updated successfully',
+                                        style: TextStyle(color: Colors.white)),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
                                 Navigator.of(context).pop(context);
+                                setState(() {});
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
