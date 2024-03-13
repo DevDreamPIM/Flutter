@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:epilepto_guard/Models/sensor.dart';
+import 'package:epilepto_guard/Services/sensorService.dart';
 import 'package:epilepto_guard/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
@@ -39,6 +41,11 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
 
   bool liveMonitoringEnabled;
   _MainPageBluetooth() : liveMonitoringEnabled = true;
+
+  List<int> bpm = [];
+  List<int> emg = [];
+  List<int> imu = [];
+  int counter = 0;
 
   late Seizure _newCrise;
   final storage = FlutterSecureStorage();
@@ -211,18 +218,40 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
     String receivedData = utf8.decode(data);
     print("Received data: $receivedData");
 
+    String dataWithoutPrefix = receivedData.substring(3);
+    List<String> values = dataWithoutPrefix.split(',');
     // Use switch-case to handle different types of messages
     if (receivedData.startsWith("emg")) {
-      // Handle message starting with "emg"
+      for (String value in values) {
+        // Parse the value to an integer and add it to the emg list
+        emg.add(int.tryParse(value) ??
+            0); // Use 0 as default value if parsing fails
+      }
     } else if (receivedData.startsWith("bmp")) {
-      // Handle message starting with "bmp"
+      for (String value in values) {
+        bpm.add(int.tryParse(value) ??
+            0); // Use 0 as default value if parsing fails
+      }
     } else if (receivedData.startsWith("imu")) {
-      // Handle message starting with "imu"
+      for (String value in values) {
+        imu.add(int.tryParse(value) ??
+            0); // Use 0 as default value if parsing fails
+      }
+      counter++;
     } else if (receivedData.startsWith("cri")) {
-      // ajouter une crise
       _addCrise();
     } else {
       print("message inconnu !");
+    }
+
+    if (counter > 5) {
+      _addSensor();
+
+      //reinitialise the values
+      counter = 0;
+      bpm = [];
+      emg = [];
+      imu = [];
     }
   }
 
@@ -259,6 +288,29 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
       await CriseService().createSeizure(_newCrise);
     } catch (e) {
       print('Failed to add drug: $e');
+    }
+  }
+
+  Future<void> _addSensor() async {
+    try {
+      // Retrieve user ID from storage
+      String? userId = await storage.read(key: 'id');
+
+      // Create a new Sensor object with sensor data
+      Sensor newSensor = Sensor(
+        userId: userId ?? "",
+        imu: imu, // Example imu data
+        emg: emg, // Example emg data
+        bmp: bpm, // Example bmp data
+      );
+
+      // Print the sensor data for debugging
+      print(newSensor.toJson());
+
+      // Call the CriseService to add the sensor data
+      await SensorService().postData(newSensor);
+    } catch (e) {
+      print('Failed to add sensor data: $e');
     }
   }
 }
