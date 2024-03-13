@@ -12,6 +12,7 @@ enum CrisisType {
 
 class Crisis {
   final String idCrise;
+  final String userId;
   final DateTime date;
   final TimeOfDay startTime;
   final TimeOfDay endTime;
@@ -25,6 +26,7 @@ class Crisis {
 
   Crisis({
     required this.idCrise,
+    required this.userId,
     required this.date,
     required this.startTime,
     required this.endTime,
@@ -41,6 +43,7 @@ class Crisis {
   factory Crisis.fromJson(Map<String, dynamic> json) {
     return Crisis(
       idCrise: json['_id'] ?? '',
+      userId: json['userId'] ?? '',
       date: DateTime.parse(json['date'] ?? ''),
       startTime: _parseTimeOfDay(json['startTime'] ?? ''),
       endTime: _parseTimeOfDay(json['endTime'] ?? ''),
