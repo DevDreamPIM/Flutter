@@ -57,7 +57,8 @@ dependencies:
   path_provider: ^2.1.2
   html: ^0.15.0
   open_file: ^3.3.2
-  
+  shared_preferences: ^2.0.8
+  connectivity: ^3.0.6
   scoped_model: ^2.0.0
   image: ^4.1.7
   network_image: ^0.1.1
@@ -71,6 +72,8 @@ dependency_overrides:
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  flutter_localizations:
     sdk: flutter
   permission_handler: ^11.3.0
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -99,6 +102,9 @@ flutter:
     - assets/images/logo/
     - assets/images/icons/
     - assets/images/user/
+    - lib/Lang/en.json
+    - lib/Lang/fr.json
+    - lib/Lang/ko.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
