@@ -2,6 +2,9 @@ import 'package:epilepto_guard/Components/drawer.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
+import '../../Models/sensorModel.dart';
+import '../../Services/doctorService.dart';
+
 class HealthData extends StatefulWidget {
   @override
   _HealthDataState createState() => _HealthDataState();
@@ -10,15 +13,51 @@ class HealthData extends StatefulWidget {
 class _HealthDataState extends State<HealthData> {
   int _selectedIndex = 3;
   String selectedFilter = 'Week';
+  List<SensorModel> patientsData = [];
 
-  final List<double> heartRateData = [70, 75, 72, 68, 73, 77, 75, 72, 68, 73, 77, 80, 70, 75, 72, 68, 73, 77, 80];
-  final List<double> movementData = [200, 300, 250, 280, 320, 290, 310, 280, 320, 290, 310, 200, 300, 250, 280, 320, 290, 310];
-  final List<double> temperatureData = [36.5, 36.4, 36.6, 36.7, 36.8, 36.5, 36.4, 36.6, 36.7, 36.8, 36.5, 36.6, 36.5, 36.4, 36.6, 36.7, 36.8, 36.5, 36.6];
+  @override
+  void initState() {
+    super.initState();
+    fetchPatients();
+  }
+
+  Future<void> fetchPatients() async {
+    try {
+      var patients = await doctorService().getSensorData();
+      setState(() {
+        patientsData = patients;
+      });
+
+    } catch (error) {
+      print('Error getting sensor data: $error');
+      // Handle error: show a message or take appropriate action
+    }
+  }
+
+  List<FlSpot> getFilteredData() {
+    List<FlSpot> filteredData = [];
+
+    if (selectedFilter == 'Week') {
+      for (int i = 0; i < patientsData.length && i < 7; i++) {
+        filteredData.add(FlSpot(i.toDouble(), patientsData[i].bmp.toDouble()));
+      }
+    } else if (selectedFilter == 'Month') {
+      for (int i = 0; i < patientsData.length && i < 30; i++) {
+        filteredData.add(FlSpot(i.toDouble(), patientsData[i].bmp.toDouble()));
+      }
+    } else {
+      for (int i = 0; i < patientsData.length; i++) {
+        filteredData.add(FlSpot(i.toDouble(), patientsData[i].bmp.toDouble()));
+      }
+    }
+
+    return filteredData;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       appBar: AppBar(
+      appBar: AppBar(
         title: const Text('Health Data', style: TextStyle(color: Colors.white)),
         backgroundColor: Color(0xFFA99ADC),
       ),
@@ -30,120 +69,193 @@ class _HealthDataState extends State<HealthData> {
           });
         },
       ),
-      body: SingleChildScrollView(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/background/splash_screen.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
         child: Column(
           children: [
             DropdownButton<String>(
               value: selectedFilter,
-              onChanged: (String? newValue) {
+              onChanged: (value) {
                 setState(() {
-                  selectedFilter = newValue!;
+                  selectedFilter = value!;
                 });
               },
-              items: <String>['Week', 'Month'].map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+              items: [
+                DropdownMenuItem(
+                  value: 'Week',
+                  child: Text('Week'),
+                ),
+                DropdownMenuItem(
+                  value: 'Month',
+                  child: Text('Month'),
+                ),
+              ],
             ),
-            LineChartWidget(
-              data: selectedFilter == 'Week' ? heartRateData.sublist(0, 7) :
-              selectedFilter == 'Month' ? heartRateData.sublist(0, heartRateData.length >= 30 ? 30 : heartRateData.length) : [],
-              title: 'Heart Rate',
-              legend: 'BPM',
-              selectedFilter: selectedFilter,
-            ),
-            LineChartWidget(
-              data: selectedFilter == 'Week' ? movementData.sublist(0, 7) :
-              selectedFilter == 'Month' ? movementData.sublist(0, movementData.length >= 30 ? 30 : movementData.length) : [],
-              title: 'Movements',
-              legend: 'Gyroscope Data',
-              selectedFilter: selectedFilter,
-            ),
-            LineChartWidget(
-              data: selectedFilter == 'Week' ? temperatureData.sublist(0, 7) :
-              selectedFilter == 'Month' ? temperatureData.sublist(0, temperatureData.length >= 30 ? 30 : temperatureData.length) : [],
-              title: 'Body Temperature',
-              legend: '°C',
-              selectedFilter: selectedFilter,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-
-class LineChartWidget extends StatelessWidget {
-  final List<double> data;
-  final String title;
-  final String legend;
-  final String selectedFilter;
-
-  LineChartWidget({required this.data, required this.title, required this.legend, required this.selectedFilter});
-
-  @override
-  Widget build(BuildContext context) {
-    int dataLength = selectedFilter == 'Week' ? 7 : (selectedFilter == 'Month' ? data.length : 0);
-    return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/background/splash_screen.png'),
-          fit: BoxFit.cover,
-        ),
-      ),
-      padding: EdgeInsets.all(16.0),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Text(
-              title,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
-            ),
-            SizedBox(height: 8.0),
-            AspectRatio(
-              aspectRatio: 1.7,
-              child: LineChart(
-                LineChartData(
-                  lineTouchData: LineTouchData(enabled: true),
-                  gridData: FlGridData(show: false),
-                  titlesData: FlTitlesData(
-                    show: true,
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true),
+            SizedBox(height: 18.0),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: LineChart(
+                  LineChartData(
+                    titlesData: FlTitlesData(
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: true),
+                      ),
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: true),
+                      ),
                     ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true),
-                    ),
+                    borderData: FlBorderData(show: true),
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: getFilteredData(),
+                        isCurved: true,
+                        color: Color(0xFFEE83A3),
+                        dotData: FlDotData(show: true),
+                        belowBarData: BarAreaData(show: false),
+                      ),
+                    ],
                   ),
-                  borderData: FlBorderData(show: true),
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: [
-                        for (int i = 0; i < dataLength; i++)
-                          FlSpot(i.toDouble(), data[i]),
-                      ],
-                      isCurved: true,
-                      color: Color(0xFFEE83A3),
-                      dotData: FlDotData(show: true),
-                      belowBarData: BarAreaData(show: true, color: Color(0x15000000)),
-                    ),
-                  ],
                 ),
               ),
             ),
             SizedBox(height: 28.0),
             Text(
-              legend,
-              style: TextStyle(fontSize: 15, color: Color(0x88000000), fontWeight: FontWeight.bold
-              ),
+              "Highest BPM recorded",
+              style: TextStyle(fontSize: 15, color: Color(0xFF000000), fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 18.0),
           ],
         ),
       ),
     );
   }
 }
+//   List<int> getFilteredData(List<int> data) {
+//     if (selectedFilter == 'Week') {
+//       return data.sublist(0, data.length > 7 ? 7 : data.length);
+//     } else if (selectedFilter == 'Month') {
+//       return data.sublist(0, data.length > 30 ? 30 : data.length);
+//     } else {
+//       return [];
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     List<int> bpmData = patientsData.map((patient) => patient.bmp).toList();
+//     List<int> filteredBPMData = getFilteredData(bpmData);
+//
+//     return Scaffold(
+//       appBar: AppBar(
+//         leading: IconButton(
+//           icon: Icon(Icons.arrow_back),
+//           onPressed: () {
+//             Navigator.pop(context);
+//           },
+//         ),
+//         title: const Text(
+//           'Health Data',
+//           style: TextStyle(
+//             color: Colors.white,
+//           ),
+//         ),
+//         backgroundColor: const Color(0xFFC987E1),
+//       ),
+//       body: SingleChildScrollView(
+//         child: Column(
+//           children: [
+//             DropdownButton<String>(
+//               value: selectedFilter,
+//               onChanged: (String? newValue) {
+//                 setState(() {
+//                   selectedFilter = newValue!;
+//                 });
+//               },
+//               items: <String>['Week', 'Month'].map((String value) {
+//                 return DropdownMenuItem<String>(
+//                   value: value,
+//                   child: Text(value),
+//                 );
+//               }).toList(),
+//             ),
+//             LineChartWidget(
+//               data: filteredBPMData,
+//               title: 'Heart Rate',
+//               legend: 'BPM',
+//               selectedFilter: selectedFilter,
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class LineChartWidget extends StatelessWidget {
+//   final List<int> data;
+//   final String title;
+//   final String legend;
+//   final String selectedFilter;
+//
+//   LineChartWidget({required this.data, required this.title, required this.legend, required this.selectedFilter});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     int dataLength = selectedFilter == 'Week' ? 7 : (selectedFilter == 'Month' ? 30 : 0);
+//     List<int> repeatedData = List<int>.generate(dataLength, (index) => data[data.length - 1 - index % data.length]);
+//
+//     return Container(
+//       padding: const EdgeInsets.all(16.0),
+//       child: Column(
+//         children: [
+//           Text(
+//             title,
+//             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+//           ),
+//           const SizedBox(height: 8.0),
+//           AspectRatio(
+//             aspectRatio: 1.7,
+//             child: LineChart(
+//               LineChartData(
+//                 lineTouchData: LineTouchData(enabled: true),
+//                 gridData: FlGridData(show: false),
+//                 titlesData: FlTitlesData(
+//                   show: true,
+//                   bottomTitles: AxisTitles(
+//                     sideTitles: SideTitles(showTitles: true),
+//                   ),
+//                   leftTitles: AxisTitles(
+//                     sideTitles: SideTitles(showTitles: true),
+//                   ),),
+//                 borderData: FlBorderData(show: true),
+//                 lineBarsData: [
+//                   LineChartBarData(
+//                     spots: [
+//                       for (int i = 0; i < dataLength; i++)
+//                         FlSpot(i.toDouble(), repeatedData[i].toDouble()),
+//                     ],
+//                     isCurved: true,
+//                     color: Color(0xFFEE83A3),
+//                     dotData: FlDotData(show: true),
+//                     belowBarData: BarAreaData(show: true, color: Color(0x15000000)),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//           SizedBox(height: 28.0),
+//           Text(
+//             legend,
+//             style: TextStyle(fontSize: 15, color: Color(0x88000000), fontWeight: FontWeight.bold),
+//           ),
+//           SizedBox(height: 18.0),
+//         ],
+//       ),
+//     );
+//   }
+// }

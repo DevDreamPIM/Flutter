@@ -23,14 +23,14 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
   final _googleSignIn = GoogleSignIn(
     clientId:
-        '485905293101-t2vlph7ob8tpotsmnofgo1qi19dusi58.apps.googleusercontent.com',
+    '485905293101-t2vlph7ob8tpotsmnofgo1qi19dusi58.apps.googleusercontent.com',
     scopes: <String>['email', 'profile', 'openid'],
   );
   @override
   void initState() {
     final _googleSignIn = GoogleSignIn(
       clientId:
-          '485905293101-aah8f4uhq456u7aqdl2s7gmbuq7lo32s.apps.googleusercontent.com',
+      '485905293101-aah8f4uhq456u7aqdl2s7gmbuq7lo32s.apps.googleusercontent.com',
       scopes: <String>['email', 'profile', 'openid'],
     );
 
@@ -57,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Center(
                 child: Padding(
                   padding:
-                      EdgeInsets.all(MediaQuery.of(context).size.width * 0.1),
+                  EdgeInsets.all(MediaQuery.of(context).size.width * 0.1),
                   child: FormBuilder(
                     key: _formKey,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your email';
                             } else if (!RegExp(
-                                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
                                 .hasMatch(value)) {
                               return 'Please enter a valid email';
                             }
@@ -135,8 +135,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                               // Customize the color of the checkbox
                               fillColor:
-                                  MaterialStateProperty.resolveWith<Color?>(
-                                (Set<MaterialState> states) {
+                              MaterialStateProperty.resolveWith<Color?>(
+                                    (Set<MaterialState> states) {
                                   if (states.contains(MaterialState.selected)) {
                                     return const Color(
                                         0xFF8A4FE9); // Selected color
@@ -165,9 +165,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               // Add login functionality
                               if (_formKey.currentState!.saveAndValidate()) {
                                 final email =
-                                    _formKey.currentState!.value['email'];
+                                _formKey.currentState!.value['email'];
                                 final password =
-                                    _formKey.currentState!.value['password'];
+                                _formKey.currentState!.value['password'];
 
                                 // Check the state of the "Remember Me" checkbox
                                 if (_rememberMe) {
@@ -188,21 +188,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                 UserWebService()
                                     .login(context, email, password)
                                     .then((value) async {
-                                      print(value);
+                                  print(value);
                                   if (value == 'patient') {
                                     // Navigate to home screen after successful login
-                                    Navigator.of(context).push(
+                                    Navigator.of(context).pushReplacement(
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 HomeScreen()));
                                   }
-                                  else
-                                    {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  PatientsList()));
-                                    }
+                                  else if (value == 'doctor')
+                                  {
+                                    Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                PatientsList()));
+                                  }
                                 });
                               }
                             },
@@ -213,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: Padding(
                               padding: EdgeInsets.symmetric(
                                   vertical:
-                                      16.0), // Adjust button height as needed
+                                  16.0), // Adjust button height as needed
                               child: Text('Log in',
                                   style: TextStyle(
                                       fontSize: 18.0, color: Colors.white)),
@@ -261,7 +261,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   final fullName = creds
                                       .displayName; // Assuming creds is the GoogleSignInAccount
                                   final List<String> parts =
-                                      fullName!.split(' ');
+                                  fullName!.split(' ');
                                   String firstName = '';
                                   String lastName = '';
 
@@ -291,7 +291,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
                                     vertical:
-                                        16.0), // Adjust button height as needed
+                                    16.0), // Adjust button height as needed
                                 child: Image.asset(
                                     'assets/images/logo/Google.png',
                                     width: 30.0,
@@ -307,7 +307,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
                                     vertical:
-                                        16.0), // Adjust button height as needed
+                                    16.0), // Adjust button height as needed
                                 child: Image.asset(
                                     'assets/images/logo/Facebook.png',
                                     width: 30.0,
@@ -323,7 +323,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
                                     vertical:
-                                        16.0), // Adjust button height as needed
+                                    16.0), // Adjust button height as needed
                                 child: Image.asset(
                                     'assets/images/logo/Apple.png',
                                     width: 30.0,
