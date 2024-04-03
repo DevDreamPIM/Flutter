@@ -32,10 +32,14 @@ class AdminService{
     }
   }
 
-  Future<List<FeedbacksModel>> getFeedback(String? id) async {
+  Future<List<FeedbacksModel>> getFeedback(String? id,String token) async {
 
     final response = await http.get(
       Uri.parse('${Constantes.URL_API}/admin/getFeedback/$id'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
     );
 
     if (response?.statusCode == 200) {
