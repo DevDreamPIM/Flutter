@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../Models/UserModel.dart';
 import '../../Services/adminService.dart';
@@ -15,6 +16,7 @@ class UserDetail extends StatefulWidget {
 
 class _UserDetailState extends State<UserDetail> {
   List<FeedbacksModel> feedbacksArray = [];
+  String selectedRole = '';
 
   @override
   void initState() {
@@ -25,8 +27,11 @@ class _UserDetailState extends State<UserDetail> {
   Future<void> fetchData() async {
     try {
       var feedbacks = await AdminService().getFeedback(widget.user.id);
+     
       setState(() {
+
         feedbacksArray = feedbacks;
+        selectedRole= widget.user.role ?? '';
         print(feedbacks);
       });
     } catch (error) {
@@ -124,6 +129,25 @@ class _UserDetailState extends State<UserDetail> {
                     fontSize: 20.0,
                   ),
                 ),
+                ElevatedButton(onPressed:() async {
+                   
+       String? selectedRole = await _showSelectionPopup(context, widget.user.role ?? 'patient');
+    if (selectedRole != null) {
+      // Handle the selected role here, e.g., make API call to update user role
+      print('Selected role: $selectedRole');
+    }
+  
+   
+                  
+                },
+                style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(
+                                  0xFF8A4FE9), // Set background color here
+                            ),
+                child: 
+                  Text('Modify Role')
+                ),
+
                 if (widget.user.role == 'doctor') ...[
                   const SizedBox(height: 20),
                   Text(
@@ -159,4 +183,71 @@ class _UserDetailState extends State<UserDetail> {
       ),
     );
   }
+
+Future<String?> _showSelectionPopup(BuildContext context, String selectedRole ) async {
+  return await showModalBottomSheet<String>(
+    context: context,
+    builder: (BuildContext context) {
+      return Container(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text('Select Role'),
+              trailing: DropdownButton<String>(
+                value: selectedRole,
+                onChanged: (newValue) {
+                  setState(() {
+                    selectedRole = newValue!;
+                  });
+                },
+                items: <String>['patient', 'doctor', 'admin']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ),
+            ButtonBar(
+              alignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () async{
+                    // Handle confirm button action
+                     final storage = FlutterSecureStorage();
+
+    String? token = await storage.read(key: "token");
+                    AdminService().updateUserRoleAndNotify(widget.user.id!, selectedRole, token!,context);
+                    Navigator.of(context).pop(selectedRole);
+                    
+                     // Return selected role
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green, // Confirm button color
+                  ),
+                  child: Text('Confirm'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Handle cancel button action
+                    Navigator.of(context).pop(); // Close the bottom sheet without returning anything
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red, // Cancel button color
+                  ),
+                  child: Text('Cancel'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+
 }

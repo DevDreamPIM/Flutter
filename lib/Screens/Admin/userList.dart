@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:epilepto_guard/Screens/Admin/userDetail.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 import '../../Models/UserModel.dart';
@@ -26,7 +27,10 @@ class _UserListState extends State<UserList> {
 
   Future<void> fetchData() async {
     try {
-      var users = await AdminService().getUsers();
+        final storage = FlutterSecureStorage();
+
+    String? token = await storage.read(key: "token");
+      var users = await AdminService().getUsers(token!);
       setState(() {
         usersArray = users;
       });
