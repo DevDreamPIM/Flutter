@@ -23,7 +23,7 @@ class _HealthDataState extends State<HealthData> {
 
   Future<void> fetchPatients() async {
     try {
-      var patients = await doctorService().getSensorData();
+      var patients = await DoctorService().getSensorData();
       setState(() {
         patientsData = patients;
       });

@@ -5,9 +5,11 @@ import '../../Models/UserModel.dart';
 import '../../Services/adminService.dart';
 import 'package:epilepto_guard/Models/UserModel.dart';
 import '../../Models/feedbacksModel.dart';
+import '../../Utils/Constantes.dart';
 
 class UserDetail extends StatefulWidget {
   final UserModel user;
+
   const UserDetail({Key? key, required this.user});
 
   @override
@@ -26,12 +28,13 @@ class _UserDetailState extends State<UserDetail> {
 
   Future<void> fetchData() async {
     try {
-      var feedbacks = await AdminService().getFeedback(widget.user.id);
-     
-      setState(() {
+      final storage = FlutterSecureStorage();
+      String? token = await storage.read(key: "token");
+      var feedbacks = await AdminService().getFeedback(widget.user.id,token!);
 
+      setState(() {
         feedbacksArray = feedbacks;
-        selectedRole= widget.user.role ?? '';
+        selectedRole = widget.user.role ?? '';
         print(feedbacks);
       });
     } catch (error) {
@@ -114,50 +117,107 @@ class _UserDetailState extends State<UserDetail> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Name: ${widget.user.firstName} ${widget.user.lastName}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0,
-                  ),
+                CircleAvatar(
+                  radius: 60,
+                  backgroundImage: NetworkImage(
+                      '${Constantes.USER_IMAGE_URL}/${widget.user.image}'),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  children: [
+                    const Text(
+                      'Name: ',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    Text(
+                      '${widget.user.firstName} ${widget.user.lastName}',
+                      style: const TextStyle(
+                        fontSize: 20.0,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  'Email: ${widget.user.email ?? ''}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0,
-                  ),
+                Row(
+                  children: [
+                    const Text(
+                      'Email: ',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    Text(
+                      widget.user.email ?? '',
+                      style: const TextStyle(
+                        fontSize: 20.0,
+                      ),
+                    ),
+                  ],
                 ),
-                ElevatedButton(onPressed:() async {
-                   
-       String? selectedRole = await _showSelectionPopup(context, widget.user.role ?? 'patient');
-    if (selectedRole != null) {
-      // Handle the selected role here, e.g., make API call to update user role
-      print('Selected role: $selectedRole');
-    }
-  
-   
-                  
-                },
-                style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(
-                                  0xFF8A4FE9), // Set background color here
-                            ),
-                child: 
-                  Text('Modify Role')
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    const Text(
+                      'Phone Number: ',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    Text(
+                      widget.user.phoneNumber.toString(),
+                      style: const TextStyle(
+                        fontSize: 20.0,
+                      ),
+                    ),
+                  ],
                 ),
-
+                const SizedBox(height: 10),
+                ElevatedButton(
+                    onPressed: () async {
+                      String? selectedRole = await _showSelectionPopup(
+                          context, widget.user.role ?? 'patient');
+                      if (selectedRole != null) {
+                        // Handle the selected role here, e.g., make API call to update user role
+                        print('Selected role: $selectedRole');
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          const Color(0xFF9B6BEE), // Set background color here
+                    ),
+                    child: Text('Modify Role')),
                 if (widget.user.role == 'doctor') ...[
                   const SizedBox(height: 20),
-                  Text(
-                    'Doctor Feedback',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.0,
+                  Stack(children: [
+                    Row(
+                      children: [
+                        const Text(
+                          'Feedback and suggestions',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Positioned(
+                          left: 0,
+                          top: 0,
+                          child: Image.asset(
+                            'assets/images/background/thinking_cloud.png',
+                            width: 90,
+                            height: 90,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 10),
+                  ]),
                   Expanded(
                     child: ListView.builder(
                       itemCount: feedbacksArray.length,
@@ -165,12 +225,11 @@ class _UserDetailState extends State<UserDetail> {
                         final feedback = feedbacksArray[index];
                         return ListTile(
                           title: Text(
-                            '${feedback}',
+                            '${feedback.feedback}',
                             style: const TextStyle(
-                              fontWeight: FontWeight.bold,
+                              fontSize: 20.0,
                             ),
                           ),
-                          // subtitle: Text('${feedback.description}'),
                         );
                       },
                     ),
@@ -184,70 +243,71 @@ class _UserDetailState extends State<UserDetail> {
     );
   }
 
-Future<String?> _showSelectionPopup(BuildContext context, String selectedRole ) async {
-  return await showModalBottomSheet<String>(
-    context: context,
-    builder: (BuildContext context) {
-      return Container(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: Text('Select Role'),
-              trailing: DropdownButton<String>(
-                value: selectedRole,
-                onChanged: (newValue) {
-                  setState(() {
-                    selectedRole = newValue!;
-                  });
-                },
-                items: <String>['patient', 'doctor', 'admin']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
+  Future<String?> _showSelectionPopup(
+      BuildContext context, String selectedRole) async {
+    return await showModalBottomSheet<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text('Select Role'),
+                trailing: DropdownButton<String>(
+                  value: selectedRole,
+                  onChanged: (newValue) {
+                    setState(() {
+                      selectedRole = newValue!;
+                    });
+                  },
+                  items: <String>['patient', 'doctor', 'admin']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
               ),
-            ),
-            ButtonBar(
-              alignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () async{
-                    // Handle confirm button action
-                     final storage = FlutterSecureStorage();
+              ButtonBar(
+                alignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      // Handle confirm button action
+                      final storage = FlutterSecureStorage();
 
-    String? token = await storage.read(key: "token");
-                    AdminService().updateUserRoleAndNotify(widget.user.id!, selectedRole, token!,context);
-                    Navigator.of(context).pop(selectedRole);
-                    
-                     // Return selected role
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green, // Confirm button color
+                      String? token = await storage.read(key: "token");
+                      AdminService().updateUserRoleAndNotify(
+                          widget.user.id!, selectedRole, token!, context);
+                      Navigator.of(context).pop(selectedRole);
+
+                      // Return selected role
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green, // Confirm button color
+                    ),
+                    child: Text('Confirm'),
                   ),
-                  child: Text('Confirm'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Handle cancel button action
-                    Navigator.of(context).pop(); // Close the bottom sheet without returning anything
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red, // Cancel button color
+                  ElevatedButton(
+                    onPressed: () {
+                      // Handle cancel button action
+                      Navigator.of(context)
+                          .pop(); // Close the bottom sheet without returning anything
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red, // Cancel button color
+                    ),
+                    child: Text('Cancel'),
                   ),
-                  child: Text('Cancel'),
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
-
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }

@@ -32,7 +32,7 @@ class _PatientsListState extends State<PatientsList> {
   Future<void> fetchData() async {
     image = await storage.read(key: "image");
     try {
-      var patients = await doctorService().getPatients();
+      var patients = await DoctorService().getPatients();
       setState(() {
         patientsArray = patients;
       });
