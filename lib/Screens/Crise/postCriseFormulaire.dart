@@ -7,13 +7,18 @@ import 'package:http/http.dart' as http;
 
 class PostCriseFormulaire extends StatefulWidget {
   final String id;
-  const PostCriseFormulaire({Key? key, required this.id}) : super(key: key);
+   final PostFormService postFormService;
+  const PostCriseFormulaire({Key? key, required this.id, required this.postFormService}) : super(key: key);
+  
 
   @override
   _PostCriseFormulaireState createState() => _PostCriseFormulaireState();
 }
 
 class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
+// Ajoutez une clé globale pour accéder au Scaffold depuis la méthode _saveForm
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   //** VARIABLES **//
   bool _isFormSubmitted = false;
 
@@ -70,10 +75,24 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
     _addresponseController = TextEditingController();
   }
 
+
+    Future<void> _checkIfFormSubmitted() async {
+    try {
+      bool submitted = await widget.postFormService.checkIfFormSubmitted(widget.id);
+
+      setState(() {
+        _isFormSubmitted = submitted;
+      });
+    } catch (e) {
+      print('Error checking form submission: $e');
+    }
+  }
+
 //*********************************************************** */
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           'Post Seizure Form',
@@ -762,6 +781,24 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
       );
       //  print("form Data :" + formData.toJson().toString());
       _postFormService.sendDataToBackend(formData);
+      // Mise à jour de isFormSubmitted après l'envoi du formulaire
+    _checkIfFormSubmitted();
+
+      // Afficher le SnackBar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Your form is successfully saved, you can review it by clicking on the form button',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Color(0xFF8A4FE9),
+          duration: Duration(seconds: 5),
+        ),
+      );
+
+      // Revenir à la page précédente
+      Navigator.of(context).pop();
     } catch (e, stackTrace) {
       // Gérer les erreurs
       print('Erreur lors de l\'enregistrement du formulaire: $e');

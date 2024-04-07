@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 class PostFormService {
   static const String baseURL = Constantes.URL_API;
+  static const String Token = Constantes.TOKEN;
 
   Future<String?> sendDataToBackend(PostCriseFormData formData) async {
     final url = baseURL + '/postCriseForm';
@@ -36,7 +37,7 @@ class PostFormService {
 
   Future<PostCriseFormData?> getFormData(String id) async {
     final url = baseURL +
-        '/postCriseForm'; // L'URL pour récupérer les données du formulaire
+        '/postCriseForm/getPostCriseFormDataByCriseId'; // L'URL pour récupérer les données du formulaire
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -56,16 +57,20 @@ class PostFormService {
   }
 
   Future<bool> checkIfFormSubmitted(String crisisId) async {
-    final url =
-        '$baseURL/seizures/$crisisId/formData'; // URL pour vérifier si un formulaire est soumis
-
+    final url = '$baseURL/seizures/$crisisId/formData';
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': Token,
+          // Assurez-vous de modifier cela en fonction de vos besoins
+          'Content-Type': 'application/json',
+        },
+      );
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
-        // Vérifiez si des données de formulaire sont renvoyées
-        // Si des données sont renvoyées, cela signifie qu'un formulaire est soumis
+
         return jsonData != null;
       } else {
         print(

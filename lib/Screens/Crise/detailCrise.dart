@@ -30,10 +30,11 @@ class _CrisisDetailScreenState extends State<CrisisDetailScreen> {
     _checkIfFormSubmitted();
   }
 
-   Future<void> _checkIfFormSubmitted() async {
+  Future<void> _checkIfFormSubmitted() async {
     try {
       // Récupérer le formulaire associé à la crise en utilisant l'ID de la crise
-      bool submitted = await widget._postFormService.checkIfFormSubmitted(widget.crisis.idCrise);
+      bool submitted = await widget._postFormService
+          .checkIfFormSubmitted(widget.crisis.idCrise);
 
       setState(() {
         isFormSubmitted = submitted;
@@ -124,8 +125,10 @@ class _CrisisDetailScreenState extends State<CrisisDetailScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              PostCriseFormulaire(id: widget.crisis.idCrise),
+                          builder: (context) => PostCriseFormulaire(
+                            id: widget.crisis.idCrise,
+                            postFormService: widget._postFormService,
+                          ),
                         ),
                       );
                     }
