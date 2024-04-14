@@ -1,20 +1,29 @@
 import 'dart:convert';
 import 'package:epilepto_guard/Models/postCriseForm.dart';
 import 'package:epilepto_guard/Utils/Constantes.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class PostFormService {
   static const String baseURL = Constantes.URL_API;
-  static const String Token = Constantes.TOKEN;
+
+  Future<String?> getToken() async {
+    final storage = const FlutterSecureStorage();
+
+    return await storage.read(key: 'token');
+  }
 
   Future<String?> sendDataToBackend(PostCriseFormData formData) async {
     final url = baseURL + '/postCriseForm';
+    final token = await getToken();
+    print(token);
 
     try {
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
         },
         body: jsonEncode(formData.toJson()),
       );
@@ -35,9 +44,9 @@ class PostFormService {
     }
   }
 
-  Future<PostCriseFormData?> getFormData(String id) async {
-    final url = baseURL +
-        '/postCriseForm/getPostCriseFormDataByCriseId'; // L'URL pour récupérer les données du formulaire
+  Future<PostCriseFormData?> getFormData(String crisisId) async {
+    final url = '$baseURL/seizures/$crisisId';
+    // '/postCriseForm/getPostCriseFormDataByCriseId'; // L'URL pour récupérer les données du formulaire
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -57,29 +66,29 @@ class PostFormService {
   }
 
   Future<bool> checkIfFormSubmitted(String crisisId) async {
-    final url = '$baseURL/seizures/$crisisId/formData';
+    final url = '$baseURL/seizures/$crisisId';
+    final token = await getToken();
     try {
       final response = await http.get(
         Uri.parse(url),
         headers: {
-          'Authorization': Token,
-          // Assurez-vous de modifier cela en fonction de vos besoins
+          'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final jsonData = jsonDecode(response.body);
 
         return jsonData != null;
       } else {
         print(
-            'Erreur lors de la vérification de la soumission du formulaire : ${response.statusCode}');
+            'Erreur lors de la vérification de la soumission du formulaire 1 : ${response.statusCode}');
         return false;
       }
     } catch (e) {
       print(
-          'Erreur lors de la vérification de la soumission du formulaire : $e');
+          'Erreur lors de la vérification de la soumission du formulaire 2 : $e');
       return false;
     }
   }
