@@ -12,7 +12,7 @@ class DailyForm {
   double? flashingLights;
   double? exercise;
   String mealSleepNoValue;
-  String recentChanges;
+  String? recentChanges;
   bool visualAuraChecked;
   bool sensoryAuraChecked;
   bool auditoryAuraChecked;
@@ -93,7 +93,7 @@ class DailyForm {
       flashingLights: json['flashingLights'],
       exercise: json['exercise'],
       mealSleepNoValue: json['mealSleepNoValue'],
-      recentChanges: json['recentChanges'],
+     recentChanges: json['recentChanges'],
       visualAuraChecked: json['visualAuraChecked'],
       sensoryAuraChecked: json['sensoryAuraChecked'],
       auditoryAuraChecked: json['auditoryAuraChecked'],
