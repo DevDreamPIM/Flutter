@@ -192,7 +192,7 @@ class _UserDetailState extends State<UserDetail> {
                       backgroundColor:
                           const Color(0xFF9B6BEE), // Set background color here
                     ),
-                    child: Text('Modify Role')),
+                    child: Text('Modify Role',style: TextStyle(color: Colors.white))),
                 if (widget.user.role == 'doctor') ...[
                   const SizedBox(height: 20),
                   Stack(children: [
@@ -289,7 +289,7 @@ class _UserDetailState extends State<UserDetail> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green, // Confirm button color
                     ),
-                    child: Text('Confirm'),
+                    child: Text('Confirm', style: TextStyle(color: Colors.white)),
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -300,7 +300,7 @@ class _UserDetailState extends State<UserDetail> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red, // Cancel button color
                     ),
-                    child: Text('Cancel'),
+                    child: Text('Cancel',style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),
