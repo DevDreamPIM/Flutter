@@ -28,7 +28,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late Locale _locale;
+  late Locale _locale = Locale('en', 'US'); // Provide a default locale
 
   setLocale(Locale locale) {
     setState(() {
@@ -46,7 +46,6 @@ class _MyAppState extends State<MyApp> {
     super.didChangeDependencies();
   }
 
-
   @override
   Widget build(BuildContext context) {
     if (this._locale == null) {
@@ -57,38 +56,36 @@ class _MyAppState extends State<MyApp> {
         ),
       );
     } else {
-
       return MaterialApp(
-        title: 'Epilepto Guard',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff00689B)),
-          useMaterial3: true,
-        ),
-        locale: _locale,
-        localizationsDelegates: [
-          DemoLocalization.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate
-        ],
-        supportedLocales: [
-          Locale('en', 'US'),
-          Locale('fr', 'FR'),
-          Locale('ko', 'KR'),
-        ],
-
-        localeResolutionCallback: (
-            locale, supportedLocales){
-          for (var supportedLocale in supportedLocales) {
-            if (supportedLocale.languageCode == locale?.languageCode &&
-                supportedLocale.countryCode == locale?.countryCode) {
-              return supportedLocale;
-            }}
-          return supportedLocales.first;
-        },
-
-
-        home: SplashScreen());}
+          title: 'Epilepto Guard',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            colorScheme:
+                ColorScheme.fromSeed(seedColor: const Color(0xff00689B)),
+            useMaterial3: true,
+          ),
+          locale: _locale,
+          localizationsDelegates: [
+            DemoLocalization.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate
+          ],
+          supportedLocales: [
+            Locale('en', 'US'),
+            Locale('fr', 'FR'),
+            Locale('ko', 'KR'),
+          ],
+          localeResolutionCallback: (locale, supportedLocales) {
+            for (var supportedLocale in supportedLocales) {
+              if (supportedLocale.languageCode == locale?.languageCode &&
+                  supportedLocale.countryCode == locale?.countryCode) {
+                return supportedLocale;
+              }
+            }
+            return supportedLocales.first;
+          },
+          home: SplashScreen());
+    }
   }
 }
