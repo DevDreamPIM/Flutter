@@ -329,38 +329,38 @@ class _DoctorProfileState extends State<DoctorProfile> {
                     ),
                   ),
 
+                  // ListTile(
+                  //   title: Text(
+                  //     getTranslated(context, 'Notification Preferences'),
+                  //     style: TextStyle(
+                  //         fontSize:
+                  //             _displayPreference == 'Compact' ? 16.0 : 18.0,
+                  //         color: _darkMode ? Colors.white : Colors.black),
+                  //   ),
+                  //   subtitle: DropdownButton<String>(
+                  //     value: _notificationPreferences,
+                  //     onChanged: (String? newValue) {
+                  //       setState(() {
+                  //         _notificationPreferences = newValue!;
+                  //       });
+                  //     },
+                  //     dropdownColor:
+                  //         _darkMode ? Color(0xFF301148) : Colors.white,
+                  //     items: <String>['All', 'Only Important', 'None']
+                  //         .map<DropdownMenuItem<String>>((String value) {
+                  //       return DropdownMenuItem<String>(
+                  //         value: value,
+                  //         child: Text(getTranslated(context, value),
+                  //             style: TextStyle(
+                  //               color: _darkMode ? Colors.white : Colors.black,
+                  //             )),
+                  //       );
+                  //     }).toList(),
+                  //   ),
+                  // ),
                   ListTile(
                     title: Text(
-                      getTranslated(context, 'Notification Preferences'),
-                      style: TextStyle(
-                          fontSize:
-                              _displayPreference == 'Compact' ? 16.0 : 18.0,
-                          color: _darkMode ? Colors.white : Colors.black),
-                    ),
-                    subtitle: DropdownButton<String>(
-                      value: _notificationPreferences,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _notificationPreferences = newValue!;
-                        });
-                      },
-                      dropdownColor:
-                          _darkMode ? Color(0xFF301148) : Colors.white,
-                      items: <String>['All', 'Only Important', 'None']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(getTranslated(context, value),
-                              style: TextStyle(
-                                color: _darkMode ? Colors.white : Colors.black,
-                              )),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  ListTile(
-                    title: Text(
-                      getTranslated(context, 'Data Display Preferences'),
+                      getTranslated(context, 'Display Preferences'),
                       style: TextStyle(
                           fontSize:
                               _displayPreference == 'Compact' ? 16.0 : 18.0,

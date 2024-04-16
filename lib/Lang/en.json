@@ -5,7 +5,7 @@
   "Preferences": "Preferences",
   "Preferred Language": "Preferred Language",
   "Notification Preferences": "Notification Preferences",
-  "Data Display Preferences": "Data Display Preferences",
+  "Display Preferences": "Display Preferences",
   "Logout": "Logout",
   "Feedback and Suggestions": "Feedback and Suggestions",
   "Data Backup and Recovery": "Data Backup and Recovery",
@@ -25,5 +25,6 @@
   "Patient Name": "Patient Name",
   "Height": "Height",
   "Weight": "Weight",
-  "EMG Signals Chart": "EMG Signals Chart"
+  "EMG Signals Chart": "EMG Signals Chart",
+  "Patient's detail": "Patient's detail"
 }
