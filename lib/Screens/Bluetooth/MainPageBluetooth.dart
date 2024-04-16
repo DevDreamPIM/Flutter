@@ -275,7 +275,7 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
 
   void _sendMessage(String text) async {
     try {
-      connection.output.add(utf8.encode("$text\r\n"));
+      connection.output.add(utf8.encode(text));
       await connection.output.allSent;
     } catch (e) {
       // Ignore error, but notify state
