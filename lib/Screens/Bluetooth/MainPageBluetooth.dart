@@ -39,6 +39,8 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
   bool isConnecting = true;
   bool isDisconnecting = false;
 
+  bool isTrueSeizure = true; //False if false Seizure (if User swipe false)
+
   bool liveMonitoringEnabled;
   _MainPageBluetooth() : liveMonitoringEnabled = true;
 
@@ -239,7 +241,10 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
       }
       counter++;
     } else if (receivedData.startsWith("cri")) {
-      _addCrise();
+      _alertCrise(context);
+      if (isTrueSeizure) {
+        _addCrise();
+      }
     } else {
       print("message inconnu !");
     }
@@ -269,6 +274,27 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
     return connection != null && connection.isConnected;
   }
 
+  void _alertCrise(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('We detected a Seizure'),
+          content: Text('Close if false'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                isTrueSeizure = false;
+                Navigator.of(context).pop();
+              },
+              child: Text('Swipe'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _addCrise() async {
     try {
       String? userId = await storage.read(key: 'id');
@@ -287,7 +313,7 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
       print(_newCrise.toJson().toString());
       await CriseService().createSeizure(_newCrise);
     } catch (e) {
-      print('Failed to add drug: $e');
+      print('Failed to add Seizure: $e');
     }
   }
 
