@@ -40,6 +40,8 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
   bool isDisconnecting = false;
 
   bool isTrueSeizure = true; //False if false Seizure (if User swipe false)
+  int seizureAlertCount = 0;
+  BuildContext? _dialogContext;
 
   bool liveMonitoringEnabled;
   _MainPageBluetooth() : liveMonitoringEnabled = true;
@@ -241,10 +243,21 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
       }
       counter++;
     } else if (receivedData.startsWith("cri")) {
-      _alertCrise(context);
-      if (isTrueSeizure) {
-        _addCrise();
+      if (seizureAlertCount == 0) {
+        seizureAlertCount = 1;
+        _alertCrise(context);
       }
+      if (isTrueSeizure) {
+        Future.delayed(Duration(seconds: 10), () {
+          Navigator.of(_dialogContext!).pop(); // Close the dialog
+          seizureAlertCount = 0;
+          _addCrise();
+        });
+      }
+      Future.delayed(Duration(seconds: 11), () {
+        seizureAlertCount = 0;
+        isTrueSeizure = true;
+      });
     } else {
       print("message inconnu !");
     }
@@ -278,18 +291,20 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        _dialogContext = context;
         return AlertDialog(
           title: Text('We detected a Seizure'),
-          content: Text('Close if false'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                isTrueSeizure = false;
-                Navigator.of(context).pop();
-              },
-              child: Text('Swipe'),
-            ),
-          ],
+          content: Dismissible(
+            key: UniqueKey(),
+            direction: DismissDirection.up, // Allow swiping up to dismiss
+            onDismissed: (_) {
+              // Handle swipe dismiss action
+              isTrueSeizure = false;
+              seizureAlertCount = 0;
+              Navigator.of(context).pop();
+            },
+            child: const Text('Swipe up to dismiss if false detection'),
+          ),
         );
       },
     );
