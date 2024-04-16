@@ -275,7 +275,7 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
 
   void _sendMessage(String text) async {
     try {
-      connection.output.add(utf8.encode("$text\r\n"));
+      connection.output.add(utf8.encode(text));
       await connection.output.allSent;
     } catch (e) {
       // Ignore error, but notify state
@@ -294,16 +294,27 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
         _dialogContext = context;
         return AlertDialog(
           title: Text('We detected a Seizure'),
-          content: Dismissible(
-            key: UniqueKey(),
-            direction: DismissDirection.up, // Allow swiping up to dismiss
-            onDismissed: (_) {
-              // Handle swipe dismiss action
-              isTrueSeizure = false;
-              seizureAlertCount = 0;
-              Navigator.of(context).pop();
-            },
-            child: const Text('Swipe up to dismiss if false detection'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Add the image here
+              Image.asset(
+                'assets/images/pls.gif',
+                width: 300, // Adjust the width as needed
+              ),
+              const SizedBox(height: 16), // Add some spacing
+              Dismissible(
+                key: UniqueKey(),
+                direction: DismissDirection.up, // Allow swiping up to dismiss
+                onDismissed: (_) {
+                  // Handle swipe dismiss action
+                  isTrueSeizure = false;
+                  seizureAlertCount = 0;
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Swipe up to dismiss if false detection'),
+              ),
+            ],
           ),
         );
       },
