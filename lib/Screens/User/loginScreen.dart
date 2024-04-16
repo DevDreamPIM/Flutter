@@ -1,3 +1,4 @@
+import 'package:epilepto_guard/Screens/Admin/userList.dart';
 import 'package:epilepto_guard/Screens/Doctor/patientDetail.dart';
 import 'package:epilepto_guard/Screens/Doctor/patientsList.dart';
 import 'package:epilepto_guard/Screens/User/registerScreen.dart';
@@ -26,6 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
         '485905293101-t2vlph7ob8tpotsmnofgo1qi19dusi58.apps.googleusercontent.com',
     scopes: <String>['email', 'profile', 'openid'],
   );
+
   @override
   void initState() {
     final _googleSignIn = GoogleSignIn(
@@ -49,7 +51,8 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             // Background image
             Image.asset(
-              'assets/images/background/login.png', // Replace 'background_image.jpg' with your actual image asset
+              'assets/images/background/login.png',
+              // Replace 'background_image.jpg' with your actual image asset
               fit: BoxFit.cover,
             ),
             // Centered logo
@@ -65,7 +68,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
-                          'assets/images/logo/epilepto_guard.png', // Replace 'logo.png' with your actual logo asset
+                          'assets/images/logo/epilepto_guard.png',
+                          // Replace 'logo.png' with your actual logo asset
                           width: MediaQuery.of(context).size.width * 0.6,
                           height: MediaQuery.of(context).size.width * 0.6,
                         ),
@@ -188,21 +192,24 @@ class _LoginScreenState extends State<LoginScreen> {
                                 UserWebService()
                                     .login(context, email, password)
                                     .then((value) async {
-                                      print(value);
+                                  print(value);
                                   if (value == 'patient') {
                                     // Navigate to home screen after successful login
-                                    Navigator.of(context).push(
+                                    Navigator.of(context).pushReplacement(
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 HomeScreen()));
+                                  } else if (value == 'doctor') {
+                                    Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                PatientsList()));
+                                  } else if (value == 'admin') {
+                                    Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                UserList()));
                                   }
-                                  else
-                                    {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  PatientsList()));
-                                    }
                                 });
                               }
                             },
@@ -285,7 +292,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 }
                                 // Add Google sign in functionality
                                 /*UserWebService().handleGoogleSignIn().then((value) async {
-                                 
+
                                 });*/
                               },
                               child: Padding(

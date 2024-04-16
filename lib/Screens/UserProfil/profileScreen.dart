@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:epilepto_guard/Components/drawer.dart';
 import 'package:epilepto_guard/Screens/Calendar/CalendarScreen.dart';
 import 'package:epilepto_guard/Screens/Crise/historiqueCrise.dart';
+import 'package:epilepto_guard/Screens/Crise/historiqueDailyForm.dart';
 import 'package:epilepto_guard/Screens/Drugs/ListDrug.dart';
 import 'package:epilepto_guard/Screens/MedicalSheet/medicalSheetScreen.dart';
 import 'package:epilepto_guard/Screens/User/loginScreen.dart';
@@ -189,6 +190,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     builder: (context) =>
                                         CrisisHistoryScreen()));
                               }),
+
+                            ProfileMenuWidget(
+                              title: "Daily forms history",
+                              icon: LineAwesomeIcons.history,
+                              onPress: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        DailyFormHistoryScreen()));
+                              }),
+
                           ProfileMenuWidget(
                               title: "Drugs",
                               icon: LineAwesomeIcons.history,
@@ -204,7 +215,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   return AlertDialog(
                                     title: const Text('Confirmation'),
                                     content: const Text(
-                                        'Are you sure you want to deactivate your account?'),
+                                        'Are you sure you want to desactivate your account?'),
                                     actions: <Widget>[
                                       TextButton(
                                         onPressed: () {
@@ -301,7 +312,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                             title: const Text(
-                              'Deactivate Account',
+                              'Desactivate Account',
                               style: TextStyle(color: Color(0xFFEF5259)),
                             ),
                           ),

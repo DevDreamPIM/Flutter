@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(10),
                       child: Stack(
                         fit: StackFit
-                            .expand, // Ajustement pour que les enfants occupent tout l'espace disponible
+                            .expand, 
                         children: [
                           // Image de fond
                           _weather != null
