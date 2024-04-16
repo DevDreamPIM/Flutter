@@ -39,7 +39,6 @@ class _DoctorProfileState extends State<DoctorProfile> {
 
   TextEditingController feedbackController = TextEditingController();
 
-
   @override
   void initState() {
     super.initState();
@@ -96,7 +95,10 @@ class _DoctorProfileState extends State<DoctorProfile> {
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white,),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
           onPressed: () {
             Navigator.pushReplacement(
               context,
@@ -497,7 +499,6 @@ class _DoctorProfileState extends State<DoctorProfile> {
   }
 
   void _showFeedbackDialog(BuildContext context) {
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -514,7 +515,8 @@ class _DoctorProfileState extends State<DoctorProfile> {
             GestureDetector(
               child: ElevatedButton(
                 onPressed: () async {
-                  await DoctorService().addFeedback(id!,feedbackController.text);
+                  await DoctorService()
+                      .addFeedback(id!, feedbackController.text);
                   Navigator.of(context).pop();
                 },
                 child: Text(getTranslated(context, 'Submit')),
