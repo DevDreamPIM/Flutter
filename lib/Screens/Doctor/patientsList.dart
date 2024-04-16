@@ -25,8 +25,8 @@ class _PatientsListState extends State<PatientsList> {
   @override
   void initState() {
     super.initState();
-    fetchData();
     _initPreferences();
+    fetchData();
   }
 
   Future<void> fetchData() async {
@@ -198,7 +198,7 @@ class _PatientsListState extends State<PatientsList> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => PatientDetail()));
+                              builder: (context) => PatientDetail(patient: patient)));
                     },
                   ),
                 ),

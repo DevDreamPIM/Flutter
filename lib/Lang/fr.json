@@ -5,7 +5,7 @@
   "Preferences": "Préférences",
   "Preferred Language": "Langue préférée",
   "Notification Preferences": "Préférences de notification",
-  "Data Display Preferences": "Préférences d'affichage des données",
+  "Display Preferences": "Préférences d'affichage",
   "Logout": "Se déconnecter",
   "Feedback and Suggestions": "Avis et suggestions",
   "Data Backup and Recovery": "Sauvegarde et récupération des données",
@@ -25,6 +25,7 @@
   "Patient Name": "Nom du patient",
   "Height": "Taille",
   "Weight": "Poids",
-  "EMG Signals Chart": "Graphique des signaux EMG"
+  "EMG Signals Chart": "Graphique des signaux EMG",
+  "Patient's detail": "Détail du patient"
 
 }

@@ -5,7 +5,7 @@
   "Preferences": "설정",
   "Preferred Language": "선호하는 언어",
   "Notification Preferences": "알림 설정",
-  "Data Display Preferences": "데이터 표시 설정",
+  "Display Preferences": "화면 설정",
   "Logout": "로그아웃",
   "Feedback and Suggestions": "피드백 및 제안",
   "Data Backup and Recovery": "데이터 백업 및 복구",
@@ -25,6 +25,8 @@
   "Patient Name": "환자 이름",
   "Height": "신장",
   "Weight": "체중",
-  "EMG Signals Chart": "EMG 신호 차트"
+  "EMG Signals Chart": "EMG 신호 차트",
+  "Patient's detail": "환자 세부 정보"
+
 
 }
