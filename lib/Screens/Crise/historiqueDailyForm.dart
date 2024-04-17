@@ -1,10 +1,10 @@
-import 'package:epilepto_guard/Screens/Crise/detailCrise.dart';
+import 'package:epilepto_guard/Screens/Crise/detailDailyForm.dart';
 import 'package:flutter/material.dart';
-import 'package:epilepto_guard/Models/crise.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:epilepto_guard/Models/dailyForm.dart';
 import 'package:epilepto_guard/Utils/Constantes.dart';
 
 class DailyFormHistoryScreen extends StatefulWidget {
@@ -13,17 +13,15 @@ class DailyFormHistoryScreen extends StatefulWidget {
 }
 
 class _DailyFormHistoryScreenState extends State<DailyFormHistoryScreen> {
-   List<Crisis> crises = [];
+  List<DailyForm> dailyForms =
+      []; // Utiliser la liste de DailyForm au lieu de Crise
 
-
-
-
-  Future<void> fetchCrises() async {
+  Future<void> fetchDailyForms() async {
     const storage = FlutterSecureStorage();
     final String? token = await storage.read(key: "token");
 
     final response = await http.get(
-      Uri.parse('${Constantes.URL_API}/seizures/'),
+      Uri.parse('${Constantes.URL_API}/dailyForm/'),
       headers: <String, String>{
         'Authorization': 'Bearer $token',
       },
@@ -32,17 +30,19 @@ class _DailyFormHistoryScreenState extends State<DailyFormHistoryScreen> {
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);
       setState(() {
-        crises = data.map((item) => Crisis.fromJson(item)).toList();
+        dailyForms = data
+            .map((item) => DailyForm.fromJson(item))
+            .toList(); // Convertir les données JSON en objets DailyForm
       });
     } else {
-      throw Exception('Failed to load seizures');
+      throw Exception('Failed to load Forms');
     }
   }
 
   @override
   void initState() {
     super.initState();
-    fetchCrises();
+    fetchDailyForms();
   }
 
   @override
@@ -67,18 +67,20 @@ class _DailyFormHistoryScreenState extends State<DailyFormHistoryScreen> {
           ),
         ),
         child: ListView.builder(
-          itemCount: crises.length,
+          itemCount: dailyForms.length,
           itemBuilder: (BuildContext context, int index) {
             return Card(
               elevation: 4,
               margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: ListTile(
                 title: Text(
-                  DateFormat.yMMMd().format(crises[index].date),
+                  // Utiliser les attributs du DailyForm pour afficher les détails
+                  'Bed Time: ${dailyForms[index].bedTime.hour}:${dailyForms[index].bedTime.minute}',
                   style: TextStyle(fontSize: 18.0),
                 ),
                 subtitle: Text(
-                  crises[index].type.toString().split('.')[1],
+                  // Utiliser les autres attributs du DailyForm pour afficher les détails
+                  'Stress: ${dailyForms[index].stress}, Mood Changes: ${dailyForms[index].moodchanges}',
                   style: TextStyle(fontSize: 16.0),
                 ),
                 onTap: () {
@@ -86,7 +88,7 @@ class _DailyFormHistoryScreenState extends State<DailyFormHistoryScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          CrisisDetailScreen(crisis: crises[index]),
+                          DailyFormDetailScreen(dailyForm: dailyForms[index]),
                     ),
                   );
                 },

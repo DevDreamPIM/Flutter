@@ -7,9 +7,10 @@ import 'package:http/http.dart' as http;
 
 class PostCriseFormulaire extends StatefulWidget {
   final String id;
-   final PostFormService postFormService;
-  const PostCriseFormulaire({Key? key, required this.id, required this.postFormService}) : super(key: key);
-  
+  final PostFormService postFormService;
+  const PostCriseFormulaire(
+      {Key? key, required this.id, required this.postFormService})
+      : super(key: key);
 
   @override
   _PostCriseFormulaireState createState() => _PostCriseFormulaireState();
@@ -75,10 +76,10 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
     _addresponseController = TextEditingController();
   }
 
-
-    Future<void> _checkIfFormSubmitted() async {
+  Future<void> _checkIfFormSubmitted() async {
     try {
-      bool submitted = await widget.postFormService.checkIfFormSubmitted(widget.id);
+      bool submitted =
+          await widget.postFormService.checkIfFormSubmitted(widget.id);
 
       setState(() {
         _isFormSubmitted = submitted;
@@ -782,7 +783,7 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
       //  print("form Data :" + formData.toJson().toString());
       _postFormService.sendDataToBackend(formData);
       // Mise à jour de isFormSubmitted après l'envoi du formulaire
-    _checkIfFormSubmitted();
+      _checkIfFormSubmitted();
 
       // Afficher le SnackBar
       ScaffoldMessenger.of(context).showSnackBar(

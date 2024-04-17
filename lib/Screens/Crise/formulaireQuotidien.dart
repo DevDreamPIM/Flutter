@@ -1,16 +1,25 @@
+import 'package:epilepto_guard/Models/dailyForm.dart';
+import 'package:epilepto_guard/Models/postCriseForm.dart';
+import 'package:epilepto_guard/Services/dailyFormService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class FormulaireQuotidien extends StatefulWidget {
+  //final String id;
+  //final dailyFormService dailyFormService;
   const FormulaireQuotidien({Key? key}) : super(key: key);
   @override
   _FormulaireQuotidienState createState() => _FormulaireQuotidienState();
 }
 
 class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
+  // Ajoutez une clé globale pour accéder au Scaffold depuis la méthode _saveForm
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  TimeOfDay _bedTime = TimeOfDay.now(); // Pour stocker l'heure du coucher
-  TimeOfDay _wakeUpTime = TimeOfDay.now(); // Pour stocker l'heure du réveil
+  late String _id;
+
+  TimeOfDay _bedTime = TimeOfDay.now(); 
+  TimeOfDay _wakeUpTime = TimeOfDay.now(); 
 
   // rate variable
   double _stressRating = 0;
@@ -33,7 +42,25 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
   bool _concentrationDifficultiesChecked = false;
   bool _increasedSensitivityChecked = false;
 
-  
+  //text field area
+  TextEditingController? _recentChangesController;
+
+  // Déclarez une instance du service dailyFormService
+  final dailyFormService _dailyFormService = dailyFormService();
+
+  @override
+  void initState() {
+    super.initState();
+    _stressRating = 0;
+    _alcoholDrugRating = 0;
+    _moodchangesRating = 0;
+    _sleepingRating = 0;
+    _flashingLightsRating = 0;
+    _exerciseRating = 0;
+
+    _recentChangesController = TextEditingController();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -496,6 +523,8 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
                   TextFormField(
+                    controller: _recentChangesController,
+                    maxLines: null,
                     decoration: InputDecoration(
                       hintText: 'Answer...',
                       border: OutlineInputBorder(
@@ -889,9 +918,9 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
             SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
-                // Ajouter la logique pour enregistrer les réponses ici
-                print(
-                    'Took medications as prescribed: $_takenMedicationsAsPrescribed');
+                _showConfirmationDialog(context);
+                // print(
+                // 'Took medications as prescribed: $_takenMedicationsAsPrescribed');
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor:
@@ -911,6 +940,102 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
         ),
       ),
     );
+  }
+
+// Méthode pour afficher la boîte de dialogue de confirmation
+  Future<void> _showConfirmationDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmation'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Are you sure you want to save the form?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Confirm'),
+              onPressed: () {
+                _saveForm();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+// fonction pour gérer l'action lorsque le bouton "Save" est pressé
+  void _saveForm() {
+    try {
+      // Récupérer les valeurs des champs texte de manière sécurisée
+      String recentChanges = _recentChangesController?.text ?? '';
+      // Définir la valeur de submitted
+      bool submitted = true;
+
+      // Créer une instance de PostCriseFormData
+      DailyForm formData = DailyForm(
+        bedTime: _bedTime,
+        wakeUpTime: _wakeUpTime,
+        stress: _stressRating,
+        alcoholDrug: _alcoholDrugRating,
+        medication: _takenMedicationsAsPrescribed,
+        moodchanges: _moodchangesRating,
+        sleeping: _sleepingRating,
+        flashingLights: _flashingLightsRating,
+        exercise: _exerciseRating,
+        mealSleepNoValue: _mealSleepNoValue,
+        recentChanges: recentChanges,
+
+        //a chocher
+        visualAuraChecked: _visualAuraChecked,
+        sensoryAuraChecked: _sensoryAuraChecked,
+        auditoryAuraChecked: _auditoryAuraChecked,
+        gustatoryOrOlfactoryAuraChecked: _gustatoryOrOlfactoryAuraChecked,
+        headachesChecked: _headachesChecked,
+        excessiveFatigueChecked: _excessiveFatigueChecked,
+        abnormalMoodChecked: _abnormalMoodChecked,
+        sleepDisturbancesChecked: _sleepDisturbancesChecked,
+        concentrationDifficultiesChecked: _concentrationDifficultiesChecked,
+        increasedSensitivityChecked: _increasedSensitivityChecked,
+      );
+      //  print("form Data :" + formData.toJson().toString());
+      _dailyFormService.sendDataToBackend2(formData);
+      // Mise à jour de isFormSubmitted après l'envoi du formulaire
+      // _checkIfFormSubmitted();
+
+      // Afficher le SnackBar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Your form is successfully saved, you can review it by clicking on the form button',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Color(0xFF8A4FE9),
+          duration: Duration(seconds: 5),
+        ),
+      );
+
+      // Revenir à la page précédente
+      Navigator.of(context).pop();
+    } catch (e, stackTrace) {
+      // Gérer les erreurs
+      print('Erreur lors de l\'enregistrement du formulaire: $e');
+      print(stackTrace);
+    }
   }
 
   // Méthode pour sélectionner l'heure avec le widget TimePicker
