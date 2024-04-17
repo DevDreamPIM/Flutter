@@ -18,8 +18,8 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
 
   late String _id;
 
-  TimeOfDay _bedTime = TimeOfDay.now(); // Pour stocker l'heure du coucher
-  TimeOfDay _wakeUpTime = TimeOfDay.now(); // Pour stocker l'heure du réveil
+  TimeOfDay _bedTime = TimeOfDay.now(); 
+  TimeOfDay _wakeUpTime = TimeOfDay.now(); 
 
   // rate variable
   double _stressRating = 0;

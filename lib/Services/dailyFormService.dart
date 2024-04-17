@@ -31,7 +31,7 @@ class dailyFormService {
       if (response.statusCode == 200) {
         // La requête a réussi, traitez la réponse si nécessaire
         final responseData = jsonDecode(response.body);
-       // return responseData['formId']; // Récupérer l'ID du formulaire en question
+        // return responseData['formId']; // Récupérer l'ID du formulaire en question
       } else {
         // La requête a échoué, affichez le code d'erreur
         print('Erreur lors de la requête : ${response.statusCode}');
@@ -40,6 +40,33 @@ class dailyFormService {
     } catch (e) {
       // Gérer les erreurs de connexion ou de traitement
       print('Erreur lors de l\'envoi des données au backend : $e');
+      return null;
+    }
+  }
+
+  Future<DailyForm?> fetchFormData(String formDataId) async {
+    final url = '$baseURL/dailyForm/$formDataId';
+    final token = await getToken();
+
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        return DailyForm.fromJson(jsonData);
+      } else {
+        print(
+            'Erreur lors de la récupération des données du formulaire (1) : ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération des données du formulaire (2) : $e');
       return null;
     }
   }
@@ -64,7 +91,7 @@ class dailyFormService {
     }
   }*/
 
- /* Future<bool> checkIfFormSubmitted(String crisisId) async {
+  /* Future<bool> checkIfFormSubmitted(String crisisId) async {
     final url = '$baseURL/seizures/$crisisId';
     final token = await getToken();
     try {
