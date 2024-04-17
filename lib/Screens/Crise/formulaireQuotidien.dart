@@ -3,6 +3,7 @@ import 'package:epilepto_guard/Models/postCriseForm.dart';
 import 'package:epilepto_guard/Services/dailyFormService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class FormulaireQuotidien extends StatefulWidget {
   //final String id;
@@ -18,8 +19,8 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
 
   late String _id;
 
-  TimeOfDay _bedTime = TimeOfDay.now(); 
-  TimeOfDay _wakeUpTime = TimeOfDay.now(); 
+  TimeOfDay _bedTime = TimeOfDay.now();
+  TimeOfDay _wakeUpTime = TimeOfDay.now();
 
   // rate variable
   double _stressRating = 0;
@@ -189,7 +190,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
                   RatingBar.builder(
-                    initialRating: 0,
+                    initialRating: _stressRating,
                     minRating: 0,
                     direction: Axis.horizontal,
                     allowHalfRating: true,
@@ -225,7 +226,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
                   RatingBar.builder(
-                    initialRating: 0,
+                    initialRating: _alcoholDrugRating,
                     minRating: 0,
                     direction: Axis.horizontal,
                     allowHalfRating: true,
@@ -313,7 +314,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
                   RatingBar.builder(
-                    initialRating: 0,
+                    initialRating: _moodchangesRating,
                     minRating: 0,
                     direction: Axis.horizontal,
                     allowHalfRating: true,
@@ -349,7 +350,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
                   RatingBar.builder(
-                    initialRating: 0,
+                    initialRating: _sleepingRating,
                     minRating: 0,
                     direction: Axis.horizontal,
                     allowHalfRating: true,
@@ -385,7 +386,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
                   RatingBar.builder(
-                    initialRating: 0,
+                    initialRating: _flashingLightsRating,
                     minRating: 0,
                     direction: Axis.horizontal,
                     allowHalfRating: true,
@@ -421,7 +422,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
                   RatingBar.builder(
-                    initialRating: 0,
+                    initialRating: _exerciseRating,
                     minRating: 0,
                     direction: Axis.horizontal,
                     allowHalfRating: true,
@@ -978,15 +979,19 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
   }
 
 // fonction pour gérer l'action lorsque le bouton "Save" est pressé
-  void _saveForm() {
+  void _saveForm() async {
     try {
       // Récupérer les valeurs des champs texte de manière sécurisée
       String recentChanges = _recentChangesController?.text ?? '';
       // Définir la valeur de submitted
       bool submitted = true;
+      final storage = FlutterSecureStorage();
+
+      String? loadedid = await storage.read(key: "id");
 
       // Créer une instance de PostCriseFormData
       DailyForm formData = DailyForm(
+        userId: loadedid!,
         bedTime: _bedTime,
         wakeUpTime: _wakeUpTime,
         stress: _stressRating,
