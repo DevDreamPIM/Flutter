@@ -8,7 +8,6 @@ class DemoLocalization {
 
   DemoLocalization(this.locale);
 
-
   static DemoLocalization? of(BuildContext context) {
     return Localizations.of<DemoLocalization>(context, DemoLocalization);
   }
@@ -16,21 +15,20 @@ class DemoLocalization {
   late Map<String, String> _localizedValues;
 
   Future<void> load() async {
-
     String jsonStringValues =
-
-    await rootBundle.loadString('lib/lang/${locale.languageCode}.json');
+        await rootBundle.loadString('lib/Lang/${locale.languageCode}.json');
     Map<String, dynamic> mappedJson = json.decode(jsonStringValues);
 
     _localizedValues =
         mappedJson.map((key, value) => MapEntry(key, value.toString()));
   }
+
   String? translate(String key) {
     return _localizedValues[key];
-
   }
+
   static const LocalizationsDelegate<DemoLocalization> delegate =
-  _DemoLocalizationsDelegate();
+      _DemoLocalizationsDelegate();
 }
 
 class _DemoLocalizationsDelegate
@@ -56,5 +54,3 @@ class _DemoLocalizationsDelegate
   @override
   bool shouldReload(LocalizationsDelegate<DemoLocalization> old) => false;
 }
-
-

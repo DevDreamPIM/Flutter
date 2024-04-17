@@ -1,5 +1,6 @@
 import 'package:epilepto_guard/Screens/Doctor/patientDetail.dart';
 import 'package:epilepto_guard/Screens/Doctor/patientsList.dart';
+import 'package:epilepto_guard/Services/adminService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 // import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../Lang/language.dart';
 import '../../Localization/language_constants.dart';
+import '../../Services/doctorService.dart';
 import '../../Utils/Constantes.dart';
 import '../../main.dart';
 import '../User/loginScreen.dart';
@@ -27,12 +29,15 @@ class _DoctorProfileState extends State<DoctorProfile> {
   String? lastName;
   String? email;
   String? image;
+  String? id;
 
   bool _darkMode = false;
   bool _offlineMode = false;
   String _preferredLanguage = 'English';
   String _notificationPreferences = 'All';
   String _displayPreference = 'Standard';
+
+  TextEditingController feedbackController = TextEditingController();
 
   @override
   void initState() {
@@ -55,6 +60,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
       "lastName": await _storage.read(key: "lastName"),
       "email": await _storage.read(key: "email"),
       "image": await _storage.read(key: "image"),
+      "id": await _storage.read(key: "id"),
     };
 
     setState(() {
@@ -62,6 +68,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
       lastName = data["lastName"];
       email = data["email"];
       image = data["image"];
+      id = data["id"];
     });
   }
 
@@ -88,7 +95,10 @@ class _DoctorProfileState extends State<DoctorProfile> {
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white,),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
           onPressed: () {
             Navigator.pushReplacement(
               context,
@@ -319,38 +329,38 @@ class _DoctorProfileState extends State<DoctorProfile> {
                     ),
                   ),
 
+                  // ListTile(
+                  //   title: Text(
+                  //     getTranslated(context, 'Notification Preferences'),
+                  //     style: TextStyle(
+                  //         fontSize:
+                  //             _displayPreference == 'Compact' ? 16.0 : 18.0,
+                  //         color: _darkMode ? Colors.white : Colors.black),
+                  //   ),
+                  //   subtitle: DropdownButton<String>(
+                  //     value: _notificationPreferences,
+                  //     onChanged: (String? newValue) {
+                  //       setState(() {
+                  //         _notificationPreferences = newValue!;
+                  //       });
+                  //     },
+                  //     dropdownColor:
+                  //         _darkMode ? Color(0xFF301148) : Colors.white,
+                  //     items: <String>['All', 'Only Important', 'None']
+                  //         .map<DropdownMenuItem<String>>((String value) {
+                  //       return DropdownMenuItem<String>(
+                  //         value: value,
+                  //         child: Text(getTranslated(context, value),
+                  //             style: TextStyle(
+                  //               color: _darkMode ? Colors.white : Colors.black,
+                  //             )),
+                  //       );
+                  //     }).toList(),
+                  //   ),
+                  // ),
                   ListTile(
                     title: Text(
-                      getTranslated(context, 'Notification Preferences'),
-                      style: TextStyle(
-                          fontSize:
-                              _displayPreference == 'Compact' ? 16.0 : 18.0,
-                          color: _darkMode ? Colors.white : Colors.black),
-                    ),
-                    subtitle: DropdownButton<String>(
-                      value: _notificationPreferences,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _notificationPreferences = newValue!;
-                        });
-                      },
-                      dropdownColor:
-                          _darkMode ? Color(0xFF301148) : Colors.white,
-                      items: <String>['All', 'Only Important', 'None']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(getTranslated(context, value),
-                              style: TextStyle(
-                                color: _darkMode ? Colors.white : Colors.black,
-                              )),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  ListTile(
-                    title: Text(
-                      getTranslated(context, 'Data Display Preferences'),
+                      getTranslated(context, 'Display Preferences'),
                       style: TextStyle(
                           fontSize:
                               _displayPreference == 'Compact' ? 16.0 : 18.0,
@@ -489,24 +499,28 @@ class _DoctorProfileState extends State<DoctorProfile> {
   }
 
   void _showFeedbackDialog(BuildContext context) {
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(getTranslated(context, 'Feedback and Suggestions')),
           content: TextField(
+            controller: feedbackController,
             decoration: InputDecoration(
               hintText: getTranslated(context, 'Enter your feedback here'),
             ),
             maxLines: 3,
           ),
           actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(getTranslated(context, 'Submit')),
+            GestureDetector(
+              child: ElevatedButton(
+                onPressed: () async {
+                  await DoctorService()
+                      .addFeedback(id!, feedbackController.text);
+                  Navigator.of(context).pop();
+                },
+                child: Text(getTranslated(context, 'Submit')),
+              ),
             ),
             ElevatedButton(
               onPressed: () {

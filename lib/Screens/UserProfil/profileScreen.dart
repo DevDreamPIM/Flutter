@@ -71,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile', style: TextStyle(color: Colors.white)),
-        backgroundColor: Color(0xFFA99ADC),
+        backgroundColor: Color(0xFFC987E1),
       ),
       drawer: Drawers(
         selectedIndex: _selectedIndex,
