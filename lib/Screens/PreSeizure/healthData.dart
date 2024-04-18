@@ -154,7 +154,7 @@ class _HealthDataState extends State<HealthData> {
               children: <Widget>[
                 const SizedBox(height: 20),
                 SizedBox(
-                  height: MediaQuery.of(context).size.width * .17,
+                  height: MediaQuery.of(context).size.width * .35,
                   child: LineChart(
                     LineChartData(
                       gridData: const FlGridData(show: false),
@@ -171,7 +171,7 @@ class _HealthDataState extends State<HealthData> {
                         ),
                         leftTitles: AxisTitles(
                           sideTitles:
-                          SideTitles(showTitles: true, reservedSize: 30),
+                              SideTitles(showTitles: true, reservedSize: 30),
                         ),
                         rightTitles: AxisTitles(
                           sideTitles: SideTitles(
@@ -190,7 +190,7 @@ class _HealthDataState extends State<HealthData> {
                 ),
                 const SizedBox(height: 60),
                 SizedBox(
-                  height: MediaQuery.of(context).size.width * .25,
+                  height: MediaQuery.of(context).size.width * .35,
                   child: LineChart(
                     LineChartData(
                       gridData: const FlGridData(show: true),
@@ -198,14 +198,14 @@ class _HealthDataState extends State<HealthData> {
                       titlesData: const FlTitlesData(
                         bottomTitles: AxisTitles(
                           sideTitles:
-                          SideTitles(showTitles: true, reservedSize: 30),
+                              SideTitles(showTitles: true, reservedSize: 30),
                         ),
                         topTitles: AxisTitles(
                           sideTitles: SideTitles(showTitles: false),
                         ),
                         leftTitles: AxisTitles(
                           sideTitles:
-                          SideTitles(showTitles: true, reservedSize: 30),
+                              SideTitles(showTitles: true, reservedSize: 30),
                         ),
                         rightTitles: AxisTitles(
                           sideTitles: SideTitles(showTitles: false),
