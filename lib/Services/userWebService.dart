@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:path/path.dart' as path;
 
-
 class UserWebService {
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
@@ -294,14 +293,15 @@ class UserWebService {
     }
   }
 
-  Future<void> updateMedicalFile(String birthDate, String weight, String height,String token, BuildContext context) async {
-    print("objext: "+birthDate + " " + weight + " " + height);
+  Future<void> updateMedicalFile(String birthDate, String weight, String height,
+      String token, BuildContext context) async {
+    print("objext: " + birthDate + " " + weight + " " + height);
     final url = Uri.parse(
         '${Constantes.URL_API}${Constantes.URL_API_USER}/updateMedicalFile');
     final response = await http.put(
       url,
-      body:
-          jsonEncode({"birthDate": birthDate, "weight": weight, "height": height}),
+      body: jsonEncode(
+          {"birthDate": birthDate, "weight": weight, "height": height}),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -397,7 +397,7 @@ class UserWebService {
     );
   }
 
-   Future<String?> updateProfile({
+  Future<String?> updateProfile({
     required String firstName,
     required String lastName,
     required String phoneNumber,
@@ -405,7 +405,8 @@ class UserWebService {
     File? imageFile,
     String? token, // Assuming token authentication
   }) async {
-    var uri = Uri.parse('${Constantes.URL_API}${Constantes.URL_API_USER}/updateProfile'); // Adjust the path as needed
+    var uri = Uri.parse(
+        '${Constantes.URL_API}${Constantes.URL_API_USER}/updateProfile'); // Adjust the path as needed
     var request = http.MultipartRequest('PUT', uri);
 
     // Add headers for authorization if necessary
@@ -422,35 +423,37 @@ class UserWebService {
     // Handling the image file
     if (imageFile != null) {
       // Directly add the file to the request
-      request.files.add(
-        http.MultipartFile(
-          'image', 
-          imageFile.readAsBytes().asStream(), 
-          await imageFile.length(),
-          filename: path.basename(imageFile.path),
-          contentType: MediaType('image', path.extension(imageFile.path).replaceAll('.', '')), // Dynamically get the file extension
-        )
-      );
+      request.files.add(http.MultipartFile(
+        'image',
+        imageFile.readAsBytes().asStream(),
+        await imageFile.length(),
+        filename: path.basename(imageFile.path),
+        contentType: MediaType(
+            'image',
+            path
+                .extension(imageFile.path)
+                .replaceAll('.', '')), // Dynamically get the file extension
+      ));
     }
 
-  // Add headers and fields as in your snippet...
+    // Add headers and fields as in your snippet...
 
-  var streamedResponse = await request.send();
+    var streamedResponse = await request.send();
 
-  if (streamedResponse.statusCode == 200) {
-    // Parse the response body
-    final response = await http.Response.fromStream(streamedResponse);
-    final responseData = json.decode(response.body);
+    if (streamedResponse.statusCode == 200) {
+      // Parse the response body
+      final response = await http.Response.fromStream(streamedResponse);
+      final responseData = json.decode(response.body);
 
-    // Assuming the server response includes an 'image' field with the URL
-    String? updatedImageUrl = responseData['image'];
+      // Assuming the server response includes an 'image' field with the URL
+      String? updatedImageUrl = responseData['image'];
 
-    print('Profile updated successfully. New image URL: $updatedImageUrl');
-    return updatedImageUrl; // Return the new image URL
-  } else {
-    // Log error and possibly parse the error message
-    print('Failed to update profile: ${streamedResponse.reasonPhrase}');
-    return null; // Return null to indicate failure or absence of the image URL
-  }
+      print('Profile updated successfully. New image URL: $updatedImageUrl');
+      return updatedImageUrl; // Return the new image URL
+    } else {
+      // Log error and possibly parse the error message
+      print('Failed to update profile: ${streamedResponse.reasonPhrase}');
+      return null; // Return null to indicate failure or absence of the image URL
+    }
   }
 }
