@@ -10,10 +10,8 @@ import '../Utils/Constantes.dart';
 
 import 'package:http/http.dart' as http;
 
-
-class DoctorService{
+class DoctorService {
   Future<List<PatientsModel>> getPatients() async {
-
     final response = await http.get(
       Uri.parse('${Constantes.URL_API}/doctor/getPatients'),
     );
@@ -29,10 +27,8 @@ class DoctorService{
   }
 
   Future<List<SensorModel>> getSensorData() async {
-
     final response = await http.get(
       Uri.parse('${Constantes.URL_API}/sensors/609f1519c33d2d001d45e888'),
-
     );
     print(json.decode(response.body));
     if (response?.statusCode == 200) {
@@ -46,16 +42,17 @@ class DoctorService{
     }
   }
 
-  Future<Response?> addFeedback(String id, String feedback) async {
+  Future<Response?> addFeedback(
+      String id, String feedback, String token) async {
     print("-----------------------");
     print(feedback);
-    final url = Uri.parse(
-        '${Constantes.URL_API}/admin/addFeedback');
+    final url = Uri.parse('${Constantes.URL_API}/admin/addFeedback');
     final response = await http.post(
       url,
-      body: jsonEncode({'id': id, 'feedback':feedback}),
+      body: jsonEncode({'id': id, 'feedback': feedback}),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
       },
     );
     return response;

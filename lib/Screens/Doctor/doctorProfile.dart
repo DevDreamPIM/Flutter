@@ -30,6 +30,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
   String? email;
   String? image;
   String? id;
+  String? token;
 
   bool _darkMode = false;
   bool _offlineMode = false;
@@ -56,6 +57,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
 
   Future<void> fetchData() async {
     final Map<String, String?> data = {
+      "token": await _storage.read(key: "token"),
       "firstName": await _storage.read(key: "firstName"),
       "lastName": await _storage.read(key: "lastName"),
       "email": await _storage.read(key: "email"),
@@ -69,6 +71,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
       email = data["email"];
       image = data["image"];
       id = data["id"];
+      token = data["token"];
     });
   }
 
@@ -516,7 +519,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
               child: ElevatedButton(
                 onPressed: () async {
                   await DoctorService()
-                      .addFeedback(id!, feedbackController.text);
+                      .addFeedback(id!, feedbackController.text, token!);
                   Navigator.of(context).pop();
                 },
                 child: Text(getTranslated(context, 'Submit')),
