@@ -1,5 +1,9 @@
+import 'package:epilepto_guard/Components/drawer.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+
+import '../../Models/sensorModel.dart';
+import '../../Services/doctorService.dart';
 
 class HealthData extends StatefulWidget {
   @override
@@ -7,144 +11,220 @@ class HealthData extends StatefulWidget {
 }
 
 class _HealthDataState extends State<HealthData> {
+  int _selectedIndex = 3;
   String selectedFilter = 'Week';
+  List<SensorModel> patientsData = [];
 
-  final List<double> heartRateData = [70, 75, 72, 68, 73, 77, 75, 72, 68, 73, 77, 80, 70, 75, 72, 68, 73, 77, 80];
-  final List<double> movementData = [200, 300, 250, 280, 320, 290, 310, 280, 320, 290, 310, 200, 300, 250, 280, 320, 290, 310];
-  final List<double> temperatureData = [36.5, 36.4, 36.6, 36.7, 36.8, 36.5, 36.4, 36.6, 36.7, 36.8, 36.5, 36.6, 36.5, 36.4, 36.6, 36.7, 36.8, 36.5, 36.6];
+  @override
+  void initState() {
+    super.initState();
+    fetchPatients();
+  }
+
+  Future<void> fetchPatients() async {
+    try {
+      var patients = await DoctorService().getSensorData();
+      setState(() {
+        patientsData = patients;
+      });
+    } catch (error) {
+      print('Error getting sensor data: $error');
+    }
+  }
+
+  List<LineChartBarData> heartBeatData() {
+    List<LineChartBarData> lineChartData = [];
+
+    if (patientsData.isNotEmpty) {
+      lineChartData.add(_buildLineChartBarData(
+          data: patientsData
+              .expand((e) => e.bmp!)
+              .map((e) => e.toDouble())
+              .toList(),
+          color: Color(0xFFEE83A3)));
+    }
+    return lineChartData;
+  }
+
+  List<LineChartBarData> emgData() {
+    List<LineChartBarData> lineChartData = [];
+
+    if (patientsData.isNotEmpty) {
+      lineChartData.add(_buildLineChartBarData(
+          data: patientsData
+              .expand((e) => e.emg!)
+              .map((e) => e.toDouble())
+              .toList(),
+          color: Color(0xFFC987E1)));
+    }
+    return lineChartData;
+  }
+
+  LineChartBarData _buildLineChartBarData(
+      {required List<double> data, required Color color}) {
+    return LineChartBarData(
+      spots: data
+          .asMap()
+          .entries
+          .map((entry) => FlSpot(entry.key.toDouble(), entry.value))
+          .toList(),
+      isCurved: true,
+      color: color,
+      barWidth: 4,
+      isStrokeCapRound: true,
+      dotData: FlDotData(show: true),
+      belowBarData: BarAreaData(show: false),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text(
-          'Health Data',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
+        title: const Text('Health Data', style: TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xFFC987E1),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            DropdownButton<String>(
-              value: selectedFilter,
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedFilter = newValue!;
-                });
-              },
-              items: <String>['Week', 'Month'].map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-            LineChartWidget(
-              data: selectedFilter == 'Week' ? heartRateData.sublist(0, 7) :
-              selectedFilter == 'Month' ? heartRateData.sublist(0, heartRateData.length >= 30 ? 30 : heartRateData.length) : [],
-              title: 'Heart Rate',
-              legend: 'BPM',
-              selectedFilter: selectedFilter,
-            ),
-            LineChartWidget(
-              data: selectedFilter == 'Week' ? movementData.sublist(0, 7) :
-              selectedFilter == 'Month' ? movementData.sublist(0, movementData.length >= 30 ? 30 : movementData.length) : [],
-              title: 'Movements',
-              legend: 'Gyroscope Data',
-              selectedFilter: selectedFilter,
-            ),
-            LineChartWidget(
-              data: selectedFilter == 'Week' ? temperatureData.sublist(0, 7) :
-              selectedFilter == 'Month' ? temperatureData.sublist(0, temperatureData.length >= 30 ? 30 : temperatureData.length) : [],
-              title: 'Temperature',
-              legend: '°C',
-              selectedFilter: selectedFilter,
-            ),
-          ],
-        ),
+      drawer: Drawers(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
       ),
-    );
-  }
-}
-
-
-class LineChartWidget extends StatelessWidget {
-  final List<double> data;
-  final String title;
-  final String legend;
-  final String selectedFilter;
-
-  LineChartWidget({required this.data, required this.title, required this.legend, required this.selectedFilter});
-
-  @override
-  Widget build(BuildContext context) {
-    int dataLength = selectedFilter == 'Week' ? 7 : (selectedFilter == 'Month' ? data.length : 0);
-    return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/background/splash_screen.png'),
-          fit: BoxFit.cover,
-        ),
-      ),
-      padding: EdgeInsets.all(16.0),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Text(
-              title,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+      body: Stack(children: [
+        Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFFC2A3F7), Color(0xFFFFFFFF)],
             ),
-            SizedBox(height: 8.0),
-            AspectRatio(
-              aspectRatio: 1.7,
-              child: LineChart(
-                LineChartData(
-                  lineTouchData: LineTouchData(enabled: true),
-                  gridData: FlGridData(show: false),
-                  titlesData: FlTitlesData(
-                    show: true,
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true),
+          ),
+          width: double.infinity,
+          height: double.infinity,
+        ),
+        Positioned(
+          top: 0,
+          left: 0,
+          child: Container(
+            width: MediaQuery.of(context).size.width * .3,
+            height: MediaQuery.of(context).size.height * .3,
+            child: Opacity(
+              opacity: 0.5,
+              child: Image.asset(
+                "assets/images/background/drug.png",
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 150,
+          right: 0,
+          child: Container(
+            width: MediaQuery.of(context).size.width * .3,
+            height: MediaQuery.of(context).size.height * .3,
+            child: Opacity(
+              opacity: 0.5,
+              child: Image.asset(
+                "assets/images/background/drug.png",
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          left: 140,
+          child: Container(
+            width: MediaQuery.of(context).size.width * .3,
+            height: MediaQuery.of(context).size.height * .3,
+            child: Opacity(
+              opacity: 0.5,
+              child: Image.asset(
+                "assets/images/background/drug.png",
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(26.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                const SizedBox(height: 20),
+                SizedBox(
+                  height: MediaQuery.of(context).size.width * .35,
+                  child: LineChart(
+                    LineChartData(
+                      gridData: const FlGridData(show: false),
+                      lineBarsData: heartBeatData(),
+                      titlesData: const FlTitlesData(
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 30,
+                          ),
+                        ),
+                        topTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        leftTitles: AxisTitles(
+                          sideTitles:
+                              SideTitles(showTitles: true, reservedSize: 30),
+                        ),
+                        rightTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: false,
+                            reservedSize: 30,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                  borderData: FlBorderData(show: true),
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: [
-                        for (int i = 0; i < dataLength; i++)
-                          FlSpot(i.toDouble(), data[i]),
-                      ],
-                      isCurved: true,
-                      color: Color(0xFFEE83A3),
-                      dotData: FlDotData(show: true),
-                      belowBarData: BarAreaData(show: true, color: Color(0x15000000)),
-                    ),
-                  ],
                 ),
-              ),
+                const SizedBox(height: 20),
+                const Text(
+                  "Highest BPM recorded",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 60),
+                SizedBox(
+                  height: MediaQuery.of(context).size.width * .35,
+                  child: LineChart(
+                    LineChartData(
+                      gridData: const FlGridData(show: true),
+                      lineBarsData: emgData(),
+                      titlesData: const FlTitlesData(
+                        bottomTitles: AxisTitles(
+                          sideTitles:
+                              SideTitles(showTitles: true, reservedSize: 30),
+                        ),
+                        topTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        leftTitles: AxisTitles(
+                          sideTitles:
+                              SideTitles(showTitles: true, reservedSize: 30),
+                        ),
+                        rightTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'EMG Data',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+              ],
             ),
-            SizedBox(height: 28.0),
-            Text(
-              legend,
-              style: TextStyle(fontSize: 15, color: Color(0x88000000), fontWeight: FontWeight.bold
-              ),
-            ),
-            SizedBox(height: 18.0),
-          ],
+          ),
         ),
-      ),
+      ]),
     );
   }
 }

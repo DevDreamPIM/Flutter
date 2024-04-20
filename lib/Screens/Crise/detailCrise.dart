@@ -1,18 +1,55 @@
+import 'dart:convert';
+import 'package:epilepto_guard/Screens/Crise/submittedForm.dart';
+import 'package:epilepto_guard/Services/postFormService.dart';
+import 'package:epilepto_guard/Models/postCriseForm.dart';
 import 'package:epilepto_guard/Screens/Crise/postCriseFormulaire.dart';
+import 'package:epilepto_guard/Utils/Constantes.dart';
 import 'package:flutter/material.dart';
 import 'package:epilepto_guard/Models/crise.dart' as CriseModel;
+import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'package:epilepto_guard/Utils/Constantes.dart';
 
-class CrisisDetailScreen extends StatelessWidget {
+class CrisisDetailScreen extends StatefulWidget {
   final CriseModel.Crisis crisis;
+  final PostFormService _postFormService = PostFormService();
 
-  const CrisisDetailScreen(this.crisis);
+  CrisisDetailScreen({required this.crisis});
+
+  @override
+  _CrisisDetailScreenState createState() => _CrisisDetailScreenState();
+}
+
+class _CrisisDetailScreenState extends State<CrisisDetailScreen> {
+  late List<PostCriseFormData> formData = [];
+  bool isFormSubmitted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfFormSubmitted();
+  }
+
+  Future<void> _checkIfFormSubmitted() async {
+    try {
+      // Récupérer le formulaire associé à la crise en utilisant l'ID de la crise
+      bool submitted = await widget._postFormService
+          .checkIfFormSubmitted(widget.crisis.idCrise);
+
+      setState(() {
+        isFormSubmitted = submitted;
+      });
+    } catch (e) {
+      print('Error checking form submission: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Crisis Detail',
+          'Seizure Details',
           style: TextStyle(
             color: const Color(0xFF8A4FE9),
             fontSize: 24.0,
@@ -34,25 +71,70 @@ class CrisisDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildDetailItem('Date of Crisis:', crisis.date),
-              _buildDetailItem('Start Time:', crisis.startTime),
-              _buildDetailItem('End Time:', crisis.endTime),
-              _buildDetailItem('Duration:', crisis.duration),
-              _buildDetailItem('Type of Crisis:', crisis.type),
-              _buildDetailItem('Location:', crisis.location),
+              _buildDetailItem(
+                'Date of Seizure:',
+                // Format the date to year, month, and day format
+                DateFormat.yMMMd().format(widget.crisis.date),
+              ),
+              _buildDetailItem(
+                'Start Time:',
+                '${widget.crisis.startTime.hour}:${widget.crisis.startTime.minute}',
+              ),
+              _buildDetailItem(
+                'End Time:',
+                '${widget.crisis.endTime.hour}:${widget.crisis.endTime.minute}',
+              ),
+              _buildDetailItem(
+                'Duration:',
+                widget.crisis.duration.toString(),
+              ),
+              _buildDetailItem(
+                'Type of Seizure:',
+                widget.crisis.type.toString().split('.').last,
+              ),
+              _buildDetailItem('Location:', widget.crisis.location),
+              _buildDetailItem(
+                'Emergency Services Called:',
+                widget.crisis.emergencyServicesCalled ? 'Yes' : 'No',
+              ),
+              _buildDetailItem(
+                'Medical Assistance:',
+                widget.crisis.medicalAssistance ? 'Yes' : 'No',
+              ),
+              _buildDetailItem(
+                'Severity:',
+                widget.crisis.severity,
+              ),
               SizedBox(height: 20),
+              // Button to display associated form
               Center(
                 child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PostCriseFormulaire(),
-                      ),
-                    );
+                  onPressed: () async {
+                    // Vérifier si la crise a un formulaire associé soumis
+                    if (isFormSubmitted) {
+                      // Afficher une autre interface pour afficher les données du formulaire en mode lecture seule
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              SubmittedForm(id: widget.crisis.idCrise),
+                        ),
+                      );
+                    } else {
+                      // Afficher l'interface habituelle pour saisir de nouvelles données dans le formulaire
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PostCriseFormulaire(
+                            id: widget.crisis.idCrise,
+                            postFormService: widget._postFormService,
+                          ),
+                        ),
+                      );
+                    }
                   },
                   child: Text(
-                    'Crisis Form',
+                    'Seizure Form',
                     style:
                         TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
@@ -64,6 +146,20 @@ class CrisisDetailScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<List<PostCriseFormData>> fetchFormData(String formDataId) async {
+    final response =
+        await http.get(Uri.parse('${Constantes.URL_API}/seizures/$formDataId'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response!.body);
+      print("list dataaaaaaaaaaaaaaaaaaaaa");
+      print(data.map((json) => PostCriseFormData.fromJson(json)).toList());
+      return data.map((json) => PostCriseFormData.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load form data');
+    }
   }
 
   Widget _buildDetailItem(String label, String value) {
@@ -85,7 +181,7 @@ class CrisisDetailScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 120.0, // Largeur maximale du label
+            width: 120.0, // Maximum width of the label
             padding: EdgeInsets.all(10.0),
             child: Text(
               label,

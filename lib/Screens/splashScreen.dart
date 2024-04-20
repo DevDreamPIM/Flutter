@@ -5,8 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
-
+import 'Doctor/patientsList.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,21 +14,20 @@ class SplashScreen extends StatefulWidget {
   State<StatefulWidget> createState() => SplashScreenState();
 }
 
-class SplashScreenState extends State<SplashScreen>{
+class SplashScreenState extends State<SplashScreen> {
   @override
-  void initState(){
+  void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
-    Future.delayed(Duration(seconds: 2),(){
+    Future.delayed(Duration(seconds: 2), () {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-       // builder: (context) => PostCriseFormulaire(),
-     builder: (context) => LoginScreen(),
-     // builder: (context)=> CrisisHistoryScreen(),
+        // builder: (context) => PostCriseFormulaire(),
+        builder: (context) => LoginScreen(),
+        // builder: (context)=> CrisisHistoryScreen(),
       ));
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +49,4 @@ class SplashScreenState extends State<SplashScreen>{
       ),
     );
   }
-
-
 }

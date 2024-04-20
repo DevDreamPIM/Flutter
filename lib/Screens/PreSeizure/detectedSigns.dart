@@ -1,37 +1,41 @@
+import 'package:epilepto_guard/Components/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-class DetectedSigns extends StatelessWidget {
+class DetectedSigns extends StatefulWidget {
+  @override
+  State<DetectedSigns> createState() => _DetectedSignsState();
+}
+
+class _DetectedSignsState extends State<DetectedSigns> {
+  int _selectedIndex = 2;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: const Text(
-            'Detected Signs Visualization',
-            style: TextStyle(
-              color: Colors.white,
+      appBar: AppBar(
+        title: const Text('Detected Signs Visualization', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xFFC987E1),
+      ),
+      drawer: Drawers(
+        selectedIndex: _selectedIndex,
+        onItemTapped: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+      ),
+      body: Center(
+        child: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/background/splash_screen.png'),
+              fit: BoxFit.cover,
             ),
           ),
-          backgroundColor: const Color(0xFFC987E1),
+          child: LineChartWidget(),
         ),
-        body: Center(
-          child: Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/background/splash_screen.png'),
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: LineChartWidget(),
-          ),
-        ),
-      );
+      ),
+    );
   }
 }
 
@@ -51,7 +55,10 @@ class LineChartWidget extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width * 0.8,
               height: 300, // Specify a fixed height
               child: LineChart(
                 LineChartData(
@@ -80,6 +87,14 @@ class LineChartWidget extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 50),
+            Text(
+              'Detected Signs Visualization',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20
+              ),),
           ],
         ),
       ),

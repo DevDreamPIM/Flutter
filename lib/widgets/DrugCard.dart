@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:epilepto_guard/models/drug.dart';
-import 'package:epilepto_guard/Screens/Drugs/detail.dart'; // Importez la vue de détail
+import 'package:epilepto_guard/Screens/Drugs/detail.dart';
+import 'package:epilepto_guard/services/drugService.dart';
+
 
 class DrugCard extends StatelessWidget {
   final Drug drug;
+  final DrugService drugService;
 
-  DrugCard({required this.drug});
+  DrugCard({required this.drug, required this.drugService});
 
   @override
   Widget build(BuildContext context) {
@@ -14,11 +17,12 @@ class DrugCard extends StatelessWidget {
         // Navigation vers la vue de détail lorsqu'on appuie sur la carte
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => DetailDrug(drug: drug)),
+          MaterialPageRoute(builder: (context) => DrugDetailScreen(drug: drug, drugService: drugService,)),
         );
       },
+  
       child: Container(
-        width: 200, 
+        width: 200,
         child: Card(
           margin: EdgeInsets.all(8.0),
           elevation: 5,
@@ -32,7 +36,8 @@ class DrugCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
                   image: DecorationImage(
-                    image: AssetImage('/images/background/parkizol.png'), // Image de fond
+                    image: AssetImage(
+                        '/images/background/parkizol.png'), // Image de fond
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -51,7 +56,7 @@ class DrugCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      'Name : ${drug.title}', // Affichage du titre avec "Titre :"
+                      'Name : ${drug.name}', // Affichage du titre avec "Titre :"
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 18,
@@ -60,7 +65,7 @@ class DrugCard extends StatelessWidget {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'Frequency : ${drug.frequencyOfIntake}', // Affichage de la fréquence avec "Fréquence :"
+                      'Frequency : ${drug.numberOfTimeADay}', // Affichage de la fréquence avec "Fréquence :"
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 14,

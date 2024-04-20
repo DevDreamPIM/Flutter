@@ -31,9 +31,9 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_rating_bar: ^4.0.0
-  pie_chart: ^5.1.0
-  fl_chart: ^0.66.2
-
+  flutter_map: ^6.1.0
+  http: ^1.2.0
+  
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -41,12 +41,41 @@ dependencies:
   weather: ^3.1.1
   intl: ^0.19.0
   table_calendar: ^3.1.0
+  calendar_view: ^1.1.0
+  flutter_form_builder: ^9.2.1
+  flutter_secure_storage: ^9.0.0
   line_awesome_flutter: ^2.0.0
+  flutter_bluetooth_serial: ^0.4.0
+  permission_handler: ^11.3.0
+  image_picker: ^1.0.7
+  weather_icons: ^3.0.0
+  fl_chart: ^0.66.2
+  pie_chart: ^5.4.0
+  flutter_picker: ^2.1.0
+  google_sign_in: ^6.2.1
+  pdf: ^3.10.8
+  path_provider: ^2.1.2
+  html: ^0.15.0
+  open_file: ^3.3.2
+  shared_preferences: ^2.0.8
+  connectivity: ^3.0.6
+  scoped_model: ^2.0.0
+  image: ^4.1.7
+  network_image: ^0.1.1
+  cached_network_image: ^3.3.0
+  image_cropper: ^5.0.1
+  
+  heart_bpm: ^2.0.0+0
+
+dependency_overrides:
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  flutter_localizations:
+    sdk: flutter
+  permission_handler: ^11.3.0
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
@@ -69,15 +98,20 @@ flutter:
     - assets/
     - assets/images/
     - assets/images/background/
+    - assets/images/background/weather/
     - assets/images/logo/
     - assets/images/icons/
     - assets/images/user/
+    - lib/Lang/en.json
+    - lib/Lang/fr.json
+    - lib/Lang/ko.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
+
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
