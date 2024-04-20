@@ -1,12 +1,18 @@
 import 'dart:convert';
 
+import 'package:epilepto_guard/Localization/language_constants.dart';
 import 'package:epilepto_guard/Screens/Admin/userDetail.dart';
+import 'package:epilepto_guard/Screens/User/loginScreen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 import '../../Models/UserModel.dart';
 import '../../Services/adminService.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class UserList extends StatefulWidget {
   const UserList({Key? key}) : super(key: key);
@@ -19,6 +25,7 @@ class _UserListState extends State<UserList> {
   List<UserModel> usersArray = [];
   bool showPatients = false;
   bool isLoading = true; // Added a isLoading flag
+  final FlutterSecureStorage _storage = FlutterSecureStorage();
 
   @override
   void initState() {
@@ -61,6 +68,48 @@ class _UserListState extends State<UserList> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          ElevatedButton(
+              onPressed: () async {
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text(getTranslated(context, 'Logout')),
+                      content: Text(getTranslated(
+                          context, 'Are you sure you want to logout?')),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                          child: Text(getTranslated(context, 'No')),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                          child: Text(getTranslated(context, 'Yes')),
+                        ),
+                      ],
+                    );
+                  },
+                );
+                if (confirmed != null && confirmed) {
+                  await _storage.delete(key: "token").then((_) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LoginScreen(),
+                      ),
+                    );
+                  }).catchError((error) {
+                    print("Error logging out: $error");
+                  });
+                }
+              },
+              child: Icon(Icons.logout)),
+        ],
         backgroundColor: const Color(0xFF3B3DE5),
       ),
       body: Stack(
