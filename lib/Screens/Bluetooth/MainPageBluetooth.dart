@@ -105,13 +105,14 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(
-                'assets/images/background/login.png'), // Replace 'background.jpg' with your image path
+            image: AssetImage('assets/images/background/login.png'),
             fit: BoxFit.cover,
           ),
         ),
         child: ListView(
           children: <Widget>[
+            Divider(),
+            Image.asset('assets/images/band.PNG'),
             Divider(),
             const ListTile(
               title: Text(
