@@ -24,7 +24,6 @@ class UserList extends StatefulWidget {
 class _UserListState extends State<UserList> {
   List<UserModel> usersArray = [];
   bool showPatients = false;
-  bool isLoading = true; // Added a isLoading flag
   final FlutterSecureStorage _storage = FlutterSecureStorage();
 
   @override
@@ -41,7 +40,6 @@ class _UserListState extends State<UserList> {
       var users = await AdminService().getUsers(token!);
       setState(() {
         usersArray = users;
-        isLoading = false; // Update isLoading to false after data is fetched
       });
     } catch (error) {
       print('Error getting users: $error');
@@ -70,6 +68,11 @@ class _UserListState extends State<UserList> {
         ),
         actions: [
           ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
+              ),
               onPressed: () async {
                 final confirmed = await showDialog<bool>(
                   context: context,
@@ -108,7 +111,7 @@ class _UserListState extends State<UserList> {
                   });
                 }
               },
-              child: Icon(Icons.logout)),
+              child: Icon(Icons.logout,color: Colors.white,)),
         ],
         backgroundColor: const Color(0xFF3B3DE5),
       ),
@@ -125,51 +128,121 @@ class _UserListState extends State<UserList> {
             width: double.infinity,
             height: double.infinity,
           ),
-          isLoading
-              ? Center(
-                  child:
-                      CircularProgressIndicator()) // Added a loading indicator
-              : Positioned.fill(
-                  top: 100,
-                  child: ListView.builder(
-                    itemCount: showPatients
-                        ? getPatients().length
-                        : getDoctors().length,
-                    itemBuilder: (context, index) {
-                      final user = showPatients
-                          ? getPatients()[index]
-                          : getDoctors()[index];
-                      return Card(
+          Positioned(
+            top: 0,
+            left: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width * .3,
+              height: MediaQuery.of(context).size.height * .3,
+              child: Opacity(
+                opacity: 0.5,
+                child: Image.asset(
+                  "assets/images/background/drug.png",
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 150,
+            right: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width * .3,
+              height: MediaQuery.of(context).size.height * .3,
+              child: Opacity(
+                opacity: 0.5,
+                child: Image.asset(
+                  "assets/images/background/drug.png",
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            right: 250,
+            child: Container(
+              width: MediaQuery.of(context).size.width * .3,
+              height: MediaQuery.of(context).size.height * .3,
+              child: Opacity(
+                opacity: 0.5,
+                child: Image.asset(
+                  "assets/images/background/drug.png",
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 20,
+            left: 20,
+            child: Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      showPatients = true;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: !showPatients ? Colors.white : Colors.lightBlue,
+                  ),
+                  child: const Text(
+                    'Patients',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      showPatients = false;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: showPatients ? Colors.white : Colors.lightBlue,
+                  ),
+                  child: const Text(
+                    'Doctors',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Positioned.fill(
+              top: 100,
+              child: ListView.builder(
+                  itemCount:
+                      showPatients ? getPatients().length : getDoctors().length,
+                  itemBuilder: (context, index) {
+                    final user = showPatients
+                        ? getPatients()[index]
+                        : getDoctors()[index];
+                    return Card(
                         elevation: 3,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                         child: ListTile(
-                          title: Text(
-                            '${user.firstName} ${user.lastName}',
-                            style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18.0),
-                          ),
-                          subtitle: Text(user.email ?? ''),
-                          trailing: Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.grey[700],
-                            size: 30.0,
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => UserDetail(user: user)),
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                            title: Text(
+                              '${user.firstName} ${user.lastName}',
+                              style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18.0),
+                            ),
+                            subtitle: Text(user.email ?? ''),
+                            trailing: Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.grey[700],
+                              size: 30.0,
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          UserDetail(user: user)));
+                            }));
+                  })),
         ],
       ),
     );
