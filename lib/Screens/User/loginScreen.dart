@@ -207,8 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   } else if (value == 'admin') {
                                     Navigator.of(context).pushReplacement(
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                UserList()));
+                                            builder: (context) => UserList()));
                                   }
                                 });
                               }
@@ -250,9 +249,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Google sign in button
-                            InkWell(
-                              onTap: () async {
+                            TextButton(
+                              onPressed: () async {
                                 final creds = await _googleSignIn.signIn();
                                 if (creds == null) {
                                   debugPrint('Could not Sign in');
@@ -262,21 +260,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                   final googleKey = await creds.authentication;
 
                                   FlutterSecureStorage().write(
-                                      key: 'token',
-                                      value: googleKey.accessToken);
+                                    key: 'token',
+                                    value: googleKey.accessToken,
+                                  );
 
-                                  final fullName = creds
-                                      .displayName; // Assuming creds is the GoogleSignInAccount
+                                  final fullName = creds.displayName;
                                   final List<String> parts =
                                       fullName!.split(' ');
                                   String firstName = '';
                                   String lastName = '';
 
                                   if (parts.isNotEmpty) {
-                                    // First part is the first name
                                     firstName = parts.first;
 
-                                    // Last part (if exists) and everything after it is the last name
                                     if (parts.length > 1) {
                                       lastName = parts.sublist(1).join(' ');
                                     }
@@ -287,56 +283,28 @@ class _LoginScreenState extends State<LoginScreen> {
                                       key: 'firstName', value: firstName);
                                   FlutterSecureStorage()
                                       .write(key: 'lastName', value: lastName);
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => HomeScreen()));
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) => HomeScreen()),
+                                  );
                                 }
-                                // Add Google sign in functionality
-                                /*UserWebService().handleGoogleSignIn().then((value) async {
-
-                                });*/
                               },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical:
-                                        16.0), // Adjust button height as needed
-                                child: Image.asset(
-                                    'assets/images/logo/Google.png',
-                                    width: 30.0,
-                                    height: 30.0),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 16.0),
+                                    child: Image.asset(
+                                      'assets/images/logo/Google.png',
+                                      width: 30.0,
+                                      height: 30.0,
+                                    ),
+                                  ),
+                                  SizedBox(width: 5),
+                                  Text("Sign In with Google"),
+                                ],
                               ),
-                            ),
-                            SizedBox(width: 40),
-                            // Facebook sign in button
-                            InkWell(
-                              onTap: () {
-                                // Add Facebook sign in functionality
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical:
-                                        16.0), // Adjust button height as needed
-                                child: Image.asset(
-                                    'assets/images/logo/Facebook.png',
-                                    width: 30.0,
-                                    height: 30.0),
-                              ),
-                            ),
-                            SizedBox(width: 40),
-                            // Apple sign in button
-                            InkWell(
-                              onTap: () {
-                                // Add Apple sign in functionality
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical:
-                                        16.0), // Adjust button height as needed
-                                child: Image.asset(
-                                    'assets/images/logo/Apple.png',
-                                    width: 30.0,
-                                    height: 30.0),
-                              ),
-                            ),
+                            )
                           ],
                         ),
                         SizedBox(height: 10),

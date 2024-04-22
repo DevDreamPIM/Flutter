@@ -105,13 +105,14 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(
-                'assets/images/background/login.png'), // Replace 'background.jpg' with your image path
+            image: AssetImage('assets/images/background/login.png'),
             fit: BoxFit.cover,
           ),
         ),
         child: ListView(
           children: <Widget>[
+            Divider(),
+            Image.asset('assets/images/band.PNG'),
             Divider(),
             const ListTile(
               title: Text(
@@ -220,27 +221,37 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
 
   void _onDataReceived(Uint8List data) {
     String receivedData = utf8.decode(data);
-    print("Received data: $receivedData");
 
     String dataWithoutPrefix = receivedData.substring(3);
-    List<String> values = dataWithoutPrefix.split(',');
+    print("----------------------------");
+    print("receivedData");
+    print(receivedData);
+    // print("counter");
+    // print(counter);
+    // print("bpm");
+    // print(bpm);
+    // print("emg");
+    // print(emg);
+    // print("imu");
+    // print(imu);
+    print("----------------------------");
     // Use switch-case to handle different types of messages
     if (receivedData.startsWith("emg")) {
-      for (String value in values) {
-        // Parse the value to an integer and add it to the emg list
-        emg.add(int.tryParse(value) ??
-            0); // Use 0 as default value if parsing fails
-      }
+      // for (String value in values) {
+      //   // Parse the value to an integer and add it to the emg list
+      //   emg.add(int.tryParse(value) ??
+      //       0); // Use 0 as default value if parsing fails
+      // }
     } else if (receivedData.startsWith("bmp")) {
-      for (String value in values) {
-        bpm.add(int.tryParse(value) ??
-            0); // Use 0 as default value if parsing fails
-      }
+      // for (String value in values) {
+      //   bpm.add(int.tryParse(value) ??
+      //       0); // Use 0 as default value if parsing fails
+      // }
     } else if (receivedData.startsWith("imu")) {
-      for (String value in values) {
-        imu.add(int.tryParse(value) ??
-            0); // Use 0 as default value if parsing fails
-      }
+      // for (String value in values) {
+      //   imu.add(int.tryParse(value) ??
+      //       0); // Use 0 as default value if parsing fails
+      // }
       counter++;
     } else if (receivedData.startsWith("cri")) {
       if (seizureAlertCount == 0) {
@@ -351,9 +362,9 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
       // Create a new Sensor object with sensor data
       Sensor newSensor = Sensor(
         userId: userId ?? "",
-        imu: imu, // Example imu data
-        emg: emg, // Example emg data
-        bmp: bpm, // Example bmp data
+        imu: imu,
+        emg: emg,
+        bmp: bpm,
       );
 
       // Print the sensor data for debugging

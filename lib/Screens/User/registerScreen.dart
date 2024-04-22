@@ -67,7 +67,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               return 'Please enter your first name';
                             } else if (value.length < 2) {
                               return 'First name must be at least 2 characters long';
-                            } else if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+                            } else if (!RegExp(r'^[a-zA-Z\s]+$')
+                                .hasMatch(value)) {
                               return 'First name can only contain letters and spaces';
                             }
                             return null;
@@ -90,7 +91,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               return 'Please enter your last name';
                             } else if (value.length < 2) {
                               return 'First name must be at least 2 characters long';
-                            } else if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+                            } else if (!RegExp(r'^[a-zA-Z\s]+$')
+                                .hasMatch(value)) {
                               return 'First name can only contain letters and spaces';
                             }
                             return null;
@@ -269,69 +271,75 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           onPressed: () {
                                             Navigator.of(context)
                                                 .pop(); // Close the dialog
-                                            // Proceed with registration 
-                                            UserWebService().registerUser(
-                                              _formKey.currentState!
-                                                  .fields['firstName']!.value
-                                                  .toString(),
-                                              _formKey.currentState!
-                                                  .fields['lastName']!.value
-                                                  .toString(),
-                                              _formKey.currentState!
-                                                  .fields['email']!.value
-                                                  .toString(),
-                                              _formKey.currentState!
-                                                  .fields['phoneNumber']!.value
-                                                  .toString(),
-                                              _formKey.currentState!
-                                                  .fields['password']!.value
-                                                  .toString(),
-                                              _selectedRole
-                                                  .toString()
-                                                  .split('.')
-                                                  .last,
-                                              context,
-                                            ).then((value) => {
-                                                  if (value)
-                                                    {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        const SnackBar(
-                                                          content: Text(
-                                                              'Account created successfully',
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white)),
-                                                          backgroundColor:
-                                                              Colors.green,
-                                                        ),
-                                                      ),
-                                                      
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const LoginScreen())),
-                                                    }
-                                                  else
-                                                    {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        const SnackBar(
-                                                          content: Text(
-                                                              'Please correct the errors in the form.',
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white)),
-                                                          backgroundColor:
-                                                              Colors.red,
-                                                        ),
-                                                      ),
-                                                    }
-                                                
-                                            });
-
+                                            // Proceed with registration
+                                            UserWebService()
+                                                .registerUser(
+                                                  _formKey
+                                                      .currentState!
+                                                      .fields['firstName']!
+                                                      .value
+                                                      .toString(),
+                                                  _formKey.currentState!
+                                                      .fields['lastName']!.value
+                                                      .toString(),
+                                                  _formKey.currentState!
+                                                      .fields['email']!.value
+                                                      .toString(),
+                                                  _formKey
+                                                      .currentState!
+                                                      .fields['phoneNumber']!
+                                                      .value
+                                                      .toString(),
+                                                  _formKey.currentState!
+                                                      .fields['password']!.value
+                                                      .toString(),
+                                                  _selectedRole
+                                                      .toString()
+                                                      .split('.')
+                                                      .last,
+                                                  context,
+                                                )
+                                                .then((value) => {
+                                                      print("in then"),
+                                                      print(value),
+                                                      if (value)
+                                                        {
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            const SnackBar(
+                                                              content: Text(
+                                                                  'Account created successfully',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white)),
+                                                              backgroundColor:
+                                                                  Colors.green,
+                                                            ),
+                                                          ),
+                                                          Navigator.of(context).push(
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          const LoginScreen())),
+                                                        }
+                                                      else
+                                                        {
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            const SnackBar(
+                                                              content: Text(
+                                                                  'Please correct the errors in the form.',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white)),
+                                                              backgroundColor:
+                                                                  Colors.red,
+                                                            ),
+                                                          ),
+                                                        }
+                                                    });
                                           },
                                           child: const Text('Yes',
                                               style: TextStyle(

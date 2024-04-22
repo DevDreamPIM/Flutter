@@ -114,8 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Stack(
-                        fit: StackFit
-                            .expand, 
+                        fit: StackFit.expand,
                         children: [
                           // Image de fond
                           _weather != null
@@ -166,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage(
                               'assets/images/background/pairdevice.jpg',
@@ -175,20 +174,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                 .cover, // Pour que l'image occupe tout le conteneur
                           ),
                         ),
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SizedBox(
-                                height:
-                                    10), // Espacement entre l'image et le titre
+                            SizedBox(height: 10),
+                            Icon(
+                              Icons.phonelink_ring,
+                              size: 40,
+                              color: Colors.blueGrey,
+                            ),
+                            SizedBox(height: 10),
                             Text(
                               'Pair to Device',
                               style: TextStyle(
-                                fontSize:
-                                    20, // Ajustez la taille de la police selon vos besoins
-                                fontWeight: FontWeight
-                                    .bold, // Vous pouvez modifier le style du texte ici
-                                color: Colors.blueGrey, // Couleur du texte
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueGrey,
                               ),
                             ),
                           ],
@@ -288,7 +289,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
   Widget _buildClickableCard(
       BuildContext context, Color color, String title, Function() onTap) {
     return InkWell(
@@ -357,39 +357,44 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-Widget _buildClickaaableCardWithBackgroundImage(BuildContext context, String imagePath, String cardText, VoidCallback onTap) {
-  return InkWell(
-    onTap: onTap,
-    child: Card(
-      clipBehavior: Clip.antiAlias, // Assurez-vous que l'image ne dépasse pas les bords arrondis
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0), // Bords arrondis pour la carte
-      ),
-      elevation: 5, // Ombre sous la carte pour un effet de profondeur
-      child: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(imagePath),
-            fit: BoxFit.cover, // Couvre tout l'espace disponible
-            colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.5), // Assombrir légèrement l'image pour améliorer la lisibilité du texte
-              BlendMode.dstATop,
+
+  Widget _buildClickaaableCardWithBackgroundImage(BuildContext context,
+      String imagePath, String cardText, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Card(
+        clipBehavior: Clip
+            .antiAlias, // Assurez-vous que l'image ne dépasse pas les bords arrondis
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(10.0), // Bords arrondis pour la carte
+        ),
+        elevation: 5, // Ombre sous la carte pour un effet de profondeur
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(imagePath),
+              fit: BoxFit.cover, // Couvre tout l'espace disponible
+              colorFilter: ColorFilter.mode(
+                Colors.black.withOpacity(
+                    0.5), // Assombrir légèrement l'image pour améliorer la lisibilité du texte
+                BlendMode.dstATop,
+              ),
+            ),
+          ),
+          alignment: Alignment.center, // Centrer le texte sur la carte
+          child: Text(
+            cardText,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
-        alignment: Alignment.center, // Centrer le texte sur la carte
-        child: Text(
-          cardText,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildWeatherUI() {
     if (_weather == null) {
