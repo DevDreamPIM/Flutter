@@ -36,6 +36,8 @@ class _CrisisDetailScreenState extends State<CrisisDetailScreen> {
       bool submitted = await widget._postFormService
           .checkIfFormSubmitted(widget.crisis.idCrise);
 
+      print("submitted");
+      print(submitted);
       setState(() {
         isFormSubmitted = submitted;
       });

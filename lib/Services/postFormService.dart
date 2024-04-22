@@ -47,9 +47,15 @@ class PostFormService {
   Future<PostCriseFormData?> getFormData(String crisisId) async {
     final url = '$baseURL/seizures/$crisisId';
     // '/postCriseForm/getPostCriseFormDataByCriseId'; // L'URL pour récupérer les données du formulaire
-
+    final token = await getToken();
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+      );
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
@@ -77,7 +83,7 @@ class PostFormService {
         },
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
 
         return jsonData != null;
