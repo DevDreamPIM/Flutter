@@ -75,7 +75,7 @@ class _DailyFormHistoryScreenState extends State<DailyFormHistoryScreen> {
               child: ListTile(
                 title: Text(
                   // Utiliser les attributs du DailyForm pour afficher les détails
-                  'Bed Time: ${dailyForms[index].bedTime.hour}:${dailyForms[index].bedTime.minute}',
+                  'Bed Time: ${dailyForms[index].bedTime}',
                   style: TextStyle(fontSize: 18.0),
                 ),
                 subtitle: Text(
