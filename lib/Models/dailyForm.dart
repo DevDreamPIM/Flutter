@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class DailyForm {
-   String userId;
-  TimeOfDay bedTime;
-  TimeOfDay wakeUpTime;
+  String userId;
+  Map<String, int> bedTime;
+  Map<String, int> wakeUpTime;
   double stress;
   double alcoholDrug;
   bool? medication;
@@ -25,7 +25,7 @@ class DailyForm {
   bool increasedSensitivityChecked;
 
   DailyForm({
-     required this.userId,
+    required this.userId,
     required this.bedTime,
     required this.wakeUpTime,
     required this.stress,
@@ -52,11 +52,12 @@ class DailyForm {
   // Méthode pour sérialiser les données du formulaire
   Map<String, dynamic> toJson() {
     return {
-       'userId': userId,
-      'bedTime':
-          '${bedTime.hour}:${bedTime.minute}', // Convertir TimeOfDay en String
-      'wakeUpTime':
-          '${wakeUpTime.hour}:${wakeUpTime.minute}', // Convertir TimeOfDay en String
+      'userId': userId,
+      'bedTime': {'hour': bedTime['hour'], 'minute': bedTime['minute']},
+      'wakeUpTime': {
+        'hour': wakeUpTime['hour'],
+        'minute': wakeUpTime['minute']
+      },
       'stress': stress,
       'alcoholDrug': alcoholDrug,
       'medication': medication,
@@ -82,9 +83,15 @@ class DailyForm {
   // Méthode pour désérialiser les données du formulaire
   factory DailyForm.fromJson(Map<String, dynamic> json) {
     return DailyForm(
-       userId: json['userId'],
-      bedTime: _parseTime(json['bedTime']),
-      wakeUpTime: _parseTime(json['wakeUpTime']),
+      userId: json['userId'],
+      bedTime: {
+        'hour': json['bedTime']['hour'],
+        'minute': json['bedTime']['minute']
+      },
+      wakeUpTime: {
+        'hour': json['wakeUpTime']['hour'],
+        'minute': json['wakeUpTime']['minute']
+      },
       stress: json['stress'],
       alcoholDrug: json['alcoholDrug'],
       medication: json['medication'],
@@ -93,7 +100,7 @@ class DailyForm {
       flashingLights: json['flashingLights'],
       exercise: json['exercise'],
       mealSleepNoValue: json['mealSleepNoValue'],
-     recentChanges: json['recentChanges'],
+      recentChanges: json['recentChanges'],
       visualAuraChecked: json['visualAuraChecked'],
       sensoryAuraChecked: json['sensoryAuraChecked'],
       auditoryAuraChecked: json['auditoryAuraChecked'],

@@ -992,8 +992,14 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
       // Créer une instance de PostCriseFormData
       DailyForm formData = DailyForm(
         userId: loadedid!,
-        bedTime: _bedTime,
-        wakeUpTime: _wakeUpTime,
+        bedTime: {
+          'hour': _bedTime.hour,
+          'minute': _bedTime.minute,
+        },
+        wakeUpTime: {
+          'hour': _wakeUpTime.hour,
+          'minute': _wakeUpTime.minute,
+        },
         stress: _stressRating,
         alcoholDrug: _alcoholDrugRating,
         medication: _takenMedicationsAsPrescribed,
