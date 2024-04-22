@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DailyForm {
-  // String userId;
+   String userId;
   TimeOfDay bedTime;
   TimeOfDay wakeUpTime;
   double stress;
@@ -25,7 +25,7 @@ class DailyForm {
   bool increasedSensitivityChecked;
 
   DailyForm({
-    // required this.userId,
+     required this.userId,
     required this.bedTime,
     required this.wakeUpTime,
     required this.stress,
@@ -52,7 +52,7 @@ class DailyForm {
   // Méthode pour sérialiser les données du formulaire
   Map<String, dynamic> toJson() {
     return {
-      // 'userId': userId,
+       'userId': userId,
       'bedTime':
           '${bedTime.hour}:${bedTime.minute}', // Convertir TimeOfDay en String
       'wakeUpTime':
@@ -82,7 +82,7 @@ class DailyForm {
   // Méthode pour désérialiser les données du formulaire
   factory DailyForm.fromJson(Map<String, dynamic> json) {
     return DailyForm(
-      // userId: json['userId'],
+       userId: json['userId'],
       bedTime: _parseTime(json['bedTime']),
       wakeUpTime: _parseTime(json['wakeUpTime']),
       stress: json['stress'],

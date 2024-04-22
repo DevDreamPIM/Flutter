@@ -13,8 +13,7 @@ class DailyFormHistoryScreen extends StatefulWidget {
 }
 
 class _DailyFormHistoryScreenState extends State<DailyFormHistoryScreen> {
-  List<DailyForm> dailyForms =
-      []; // Utiliser la liste de DailyForm au lieu de Crise
+  List<DailyForm> dailyForms = [];
 
   Future<void> fetchDailyForms() async {
     const storage = FlutterSecureStorage();
@@ -33,6 +32,7 @@ class _DailyFormHistoryScreenState extends State<DailyFormHistoryScreen> {
         dailyForms = data
             .map((item) => DailyForm.fromJson(item))
             .toList(); // Convertir les données JSON en objets DailyForm
+        print("doneeeeeeeeeeeeeee");
       });
     } else {
       throw Exception('Failed to load Forms');
