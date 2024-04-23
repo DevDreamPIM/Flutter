@@ -120,10 +120,7 @@ class PostFormService {
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
 
-        print("jsonData");
-        print(jsonData);
-
-        return jsonData.formData != null;
+        return jsonData['formData'] != null;
       } else {
         print(
             'Erreur lors de la vérification de la soumission du formulaire 1 : ${response.statusCode}');
