@@ -214,21 +214,25 @@ class _UserDetailState extends State<UserDetail> {
                     Stack(children: [
                       Row(
                         children: [
-                          const Text(
-                            'Feedback and suggestions',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18.0,
+                          const Flexible(
+                            child: Text(
+                              'Feedback and suggestions',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18.0,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 8),
-                          Positioned(
-                            left: 0,
-                            top: 0,
-                            child: Image.asset(
-                              'assets/images/background/thinking_cloud.png',
-                              width: 90,
-                              height: 90,
+                          Flexible(
+                            child: Positioned(
+                              left: 0,
+                              top: 0,
+                              child: Image.asset(
+                                'assets/images/background/thinking_cloud.png',
+                                width: 90,
+                                height: 90,
+                              ),
                             ),
                           ),
                         ],
@@ -242,11 +246,23 @@ class _UserDetailState extends State<UserDetail> {
                           itemBuilder: (context, index) {
                             final feedback = feedbacksArray[index];
                             return ListTile(
-                              title: Text(
-                                '${feedback.feedback}',
-                                style: const TextStyle(
-                                  fontSize: 20.0,
-                                ),
+                              title: Row(
+                                children: [
+                                  const Text(
+                                    '\u2022',
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    '${feedback.feedback}',
+                                    style: const TextStyle(
+                                      fontSize: 20.0,
+                                    ),
+                                  ),
+                                ],
                               ),
                             );
                           },
