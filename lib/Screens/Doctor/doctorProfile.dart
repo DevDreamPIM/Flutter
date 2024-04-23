@@ -99,7 +99,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
           ),
         ),
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back,
             color: Colors.white,
           ),
@@ -111,7 +111,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
           },
         ),
         // iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: _darkMode ? Color(0xFF301148) : Color(0xFFC987E1),
+        backgroundColor: _darkMode ? const Color(0xFF301148) : const Color(0xFFC987E1),
       ),
       body: Stack(
         children: [
@@ -121,8 +121,8 @@ class _DoctorProfileState extends State<DoctorProfile> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: _darkMode
-                    ? [Color(0xFF4B0082), Color(0xFF202020)]
-                    : [Color(0xFFC2A3F7), Color(0xFFFFFFFF)],
+                    ? const [Color(0xFF4B0082), Color(0xFF202020)]
+                    : const [Color(0xFFC2A3F7), Color(0xFFFFFFFF)],
               ),
             ),
             width: double.infinity,
@@ -293,12 +293,12 @@ class _DoctorProfileState extends State<DoctorProfile> {
                             ),
                           ),
                         ),
-                        SizedBox(width: 20),
+                        const SizedBox(width: 20),
                         Icon(
                           Icons.g_translate,
                           color: _darkMode ? Colors.white : Colors.black,
                         ),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         DropdownButtonHideUnderline(
                           child: DropdownButton<Language>(
                             onChanged: (Language? language) {
@@ -311,15 +311,15 @@ class _DoctorProfileState extends State<DoctorProfile> {
                                   children: <Widget>[
                                     Text(
                                       e.flag,
-                                      style: TextStyle(fontSize: 30),
+                                      style: const TextStyle(fontSize: 30),
                                     ),
-                                    SizedBox(width: 10),
+                                    const SizedBox(width: 10),
                                     Text(e.name),
                                   ],
                                 ),
                               ),
                             ).toList(),
-                            dropdownColor: _darkMode ? Color(0xFF602F8D) : Colors.white,
+                            dropdownColor: _darkMode ? const Color(0xFF602F8D) : Colors.white,
                           ),
                         ),
                       ],
@@ -372,7 +372,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
                         });
                       },
                       dropdownColor:
-                          _darkMode ? Color(0xFF301148) : Colors.white,
+                          _darkMode ? const Color(0xFF301148) : Colors.white,
                       items: <String>['Standard', 'Compact', 'Detailed']
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
@@ -398,7 +398,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
                                 color: _darkMode ? Colors.white : Colors.black,
                               ),
                             ),
-                            backgroundColor: _darkMode ? Color(0xFF301148) : Colors.white,
+                            backgroundColor: _darkMode ? const Color(0xFF301148) : Colors.white,
                             content: Text(
                               getTranslated(context, 'Are you sure you want to logout?'),
                               style: TextStyle(
@@ -446,12 +446,12 @@ class _DoctorProfileState extends State<DoctorProfile> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: _darkMode ? Color(0xFF8A4FE9) : Colors.white,
+                      primary: _darkMode ? const Color(0xFF8A4FE9) : Colors.white,
                     ),
                     child: Text(
                       getTranslated(context, 'Logout'),
                       style: TextStyle(
-                        color: _darkMode ? Colors.white : Color(0xFF8A4FE9),
+                        color: _darkMode ? Colors.white : const Color(0xFF8A4FE9),
                         fontWeight: FontWeight.bold,
                         fontSize: _displayPreference == 'Compact' ? 15.0 : 17.0,
                       ),
@@ -463,12 +463,12 @@ class _DoctorProfileState extends State<DoctorProfile> {
                       _showFeedbackDialog(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: _darkMode ? Color(0xFF8A4FE9) : Colors.white,
+                      primary: _darkMode ? const Color(0xFF8A4FE9) : Colors.white,
                     ),
                     child: Text(
                       getTranslated(context, 'Feedback and Suggestions'),
                       style: TextStyle(
-                        color: _darkMode ? Colors.white : Color(0xFF8A4FE9),
+                        color: _darkMode ? Colors.white : const Color(0xFF8A4FE9),
                         fontWeight: FontWeight.bold,
                         fontSize: _displayPreference == 'Compact' ? 15.0 : 17.0,
                       ),
@@ -567,7 +567,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                primary: _darkMode ? Color(0xFF8A4FE9) : Colors.white,
+                primary: _darkMode ? const Color(0xFF8A4FE9) : Colors.white,
               ),
               child: Text(
                 getTranslated(context, 'Submit'),
@@ -582,7 +582,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                primary: _darkMode ? Color(0xFF8A4FE9) : Colors.white,
+                primary: _darkMode ? const Color(0xFF8A4FE9) : Colors.white,
               ),
               child: Text(
                 getTranslated(context, 'Cancel'),
