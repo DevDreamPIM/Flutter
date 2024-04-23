@@ -35,12 +35,15 @@ class _UserListState extends State<UserList> {
   Future<void> fetchData() async {
     try {
       final storage = FlutterSecureStorage();
-
       String? token = await storage.read(key: "token");
-      var users = await AdminService().getUsers(token!);
-      setState(() {
-        usersArray = users;
-      });
+      if (token != null) {
+        var users = await AdminService().getUsers(token);
+        setState(() {
+          usersArray = users;
+        });
+      } else {
+        print('Token is null');
+      }
     } catch (error) {
       print('Error getting users: $error');
     }
