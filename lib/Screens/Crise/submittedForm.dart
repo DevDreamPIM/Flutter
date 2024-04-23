@@ -10,6 +10,10 @@ class SubmittedForm extends StatelessWidget {
 
   SubmittedForm({required this.id});
 
+  void _dummyFunction(bool? value) {
+    // Cette fonction ne fait rien
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -66,54 +70,54 @@ class SubmittedForm extends StatelessWidget {
                         children: [
                           _buildCheckboxQuestionForNullableBool(
                             'Visual Aura',
-                            formData.visualAuraChecked ??
-                                false, // Affiche comme non cochée si null
-                            (value) {}, // Fonction vide onChanged
+                            formData?.visualAuraChecked ?? false,
+                            _dummyFunction, // Passer null pour la fonction onChanged
                           ),
                           _buildCheckboxQuestionForNullableBool(
                             'Sensory Aura',
                             formData.sensoryAuraChecked ?? false,
-                            (value) {},
+                            //(value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestionForNullableBool(
                             'Auditory Aura',
                             formData.auditoryAuraChecked ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestionForNullableBool(
                             'Gustatory or Olfactory Aura',
                             formData.gustatoryOrOlfactoryAuraChecked ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestionForNullableBool(
                             'Headaches',
                             formData.headachesChecked ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestionForNullableBool(
                             'Excessive Fatigue',
                             formData.excessiveFatigueChecked ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestionForNullableBool(
                             'Abnormal Mood',
                             formData.abnormalMoodChecked ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestionForNullableBool(
                             'Sleep Disturbances',
                             formData.sleepDisturbancesChecked ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestionForNullableBool(
                             'Concentration Difficulties',
                             formData.concentrationDifficultiesChecked ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestionForNullableBool(
                             'Increased Sensitivity',
                             formData.increasedSensitivityChecked ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                         ],
                       ),
@@ -125,57 +129,58 @@ class SubmittedForm extends StatelessWidget {
                           _buildCheckboxQuestion(
                             'Emotional or psychological stress, such as anxiety or fear, or physical stress',
                             formData.triggerFactorsSelection?[0] ?? false,
-                            (value) {},
+                            //(value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestion(
                             'Lack of sleep or sleep disruption',
                             formData.triggerFactorsSelection?[1] ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestion(
                             'Excessive alcohol or drug consumption',
                             formData.triggerFactorsSelection?[2] ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestion(
                             'Bright flashes or stroboscopic lights',
                             formData.triggerFactorsSelection?[3] ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestion(
                             'Omission or interruption of anticonvulsant medication',
                             formData.triggerFactorsSelection?[4] ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestion(
                             'Hormones',
                             formData.triggerFactorsSelection?[5] ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestion(
                             'Extreme fatigue or lack of rest',
                             formData.triggerFactorsSelection?[6] ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestion(
                             'Consumption of certain foods or drinks (caffeine, aspartame, certain food additives)',
                             formData.triggerFactorsSelection?[7] ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestion(
                             'Changes in body temperature',
                             formData.triggerFactorsSelection?[8] ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestion(
                             'Certain physical activities or specific sports',
                             formData.triggerFactorsSelection?[9] ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                           _buildCheckboxQuestion(
                             'Illness',
                             formData.triggerFactorsSelection?[10] ?? false,
-                            (value) {},
+                            _dummyFunction,
                           ),
                         ],
                       ),
@@ -232,13 +237,13 @@ class SubmittedForm extends StatelessWidget {
                             title: Text('Yes'),
                             value: true,
                             groupValue: formData.medicationIntake ?? false,
-                            onChanged: null, // Rendre non interactif
+                            onChanged: _dummyFunction, // Rendre non interactif
                           ),
                           RadioListTile<bool>(
                             title: Text('No'),
                             value: false,
                             groupValue: formData.medicationIntake ?? false,
-                            onChanged: null, // Rendre non interactif
+                            onChanged: _dummyFunction,// null, // Rendre non interactif
                           ),
                         ],
                       ),
@@ -251,13 +256,14 @@ class SubmittedForm extends StatelessWidget {
                             title: Text('Yes'),
                             value: true,
                             groupValue: formData.conscious ?? false,
-                            onChanged: null,
+                           // onChanged: null,
+                           onChanged: _dummyFunction,
                           ),
                           RadioListTile<bool>(
                             title: Text('No'),
                             value: false,
                             groupValue: formData.conscious ?? false,
-                            onChanged: null,
+                            onChanged: _dummyFunction,
                           ),
                         ],
                       ),
@@ -270,13 +276,13 @@ class SubmittedForm extends StatelessWidget {
                             title: Text('Yes'),
                             value: true,
                             groupValue: formData.episodes ?? false,
-                            onChanged: null,
+                            onChanged: _dummyFunction,
                           ),
                           RadioListTile<bool>(
                             title: Text('No'),
                             value: false,
                             groupValue: formData.episodes ?? false,
-                            onChanged: null,
+                            onChanged: _dummyFunction,
                           ),
                         ],
                       ),
@@ -289,13 +295,13 @@ class SubmittedForm extends StatelessWidget {
                             title: Text('Yes'),
                             value: true,
                             groupValue: formData.memoryDisturbances ?? false,
-                            onChanged: null,
+                            onChanged: _dummyFunction,
                           ),
                           RadioListTile<bool>(
                             title: Text('No'),
                             value: false,
                             groupValue: formData.memoryDisturbances ?? false,
-                            onChanged: null,
+                            onChanged: _dummyFunction,
                           ),
                         ],
                       ),
@@ -336,13 +342,13 @@ class SubmittedForm extends StatelessWidget {
                             title: Text('Yes'),
                             value: true,
                             groupValue: formData.assistance ?? false,
-                            onChanged: null,
+                            onChanged: _dummyFunction,
                           ),
                           RadioListTile<bool>(
                             title: Text('No'),
                             value: false,
                             groupValue: formData.assistance ?? false,
-                            onChanged: null,
+                            onChanged: _dummyFunction,
                           ),
                         ],
                       ),
@@ -371,13 +377,13 @@ class SubmittedForm extends StatelessWidget {
                             title: Text('Yes'),
                             value: true,
                             groupValue: formData.advice ?? false,
-                            onChanged: null,
+                            onChanged: _dummyFunction,
                           ),
                           RadioListTile<bool>(
                             title: Text('No'),
                             value: false,
                             groupValue: formData.advice ?? false,
-                            onChanged: null,
+                            onChanged: _dummyFunction,
                           ),
                         ],
                       ),

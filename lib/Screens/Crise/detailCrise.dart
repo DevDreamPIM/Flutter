@@ -21,7 +21,7 @@ class CrisisDetailScreen extends StatefulWidget {
 }
 
 class _CrisisDetailScreenState extends State<CrisisDetailScreen> {
-  late List<PostCriseFormData> formData = [];
+  //late List<PostCriseFormData> formData = [];
   bool isFormSubmitted = false;
 
   @override
@@ -120,6 +120,7 @@ class _CrisisDetailScreenState extends State<CrisisDetailScreen> {
                         MaterialPageRoute(
                           builder: (context) =>
                               SubmittedForm(id: widget.crisis.idCrise),
+                             
                         ),
                       );
                     } else {

@@ -43,7 +43,7 @@ class PostFormService {
       return null;
     }
   }
-
+/*
   Future<PostCriseFormData?> getFormData(String crisisId) async {
     final url = '$baseURL/seizures/$crisisId';
     // '/postCriseForm/getPostCriseFormDataByCriseId'; // L'URL pour récupérer les données du formulaire
@@ -62,11 +62,45 @@ class PostFormService {
         return PostCriseFormData.fromJson(jsonData);
       } else {
         print(
-            'Erreur lors de la récupération des données du formulaire : ${response.statusCode}');
+            'Erreur lors de la récupération des données du formulaire 4 : ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Erreur lors de la récupération des données du formulaire : $e');
+      print('Erreur lors de la récupération des données du formulaire 5 : $e');
+      return null;
+    }
+  }*/
+
+  Future<PostCriseFormData?> getFormData(String crisisId) async {
+    final url = '$baseURL/seizures/$crisisId';
+    final token = await getToken();
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        final formData = jsonData['formData'];
+
+        // Vérifiez si formData est null
+        if (formData != null) {
+          return PostCriseFormData.fromJson(formData);
+        } else {
+          // Si formData est null, retournez null
+          return null;
+        }
+      } else {
+        print(
+            'Erreur lors de la récupération des données du formulaire 5 : ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération des données du formulaire 6 : $e');
       return null;
     }
   }
