@@ -12,6 +12,7 @@ import '../../Utils/Constantes.dart';
 
 class PatientDetail extends StatefulWidget {
   final PatientsModel patient;
+
   const PatientDetail({Key? key, required this.patient});
 
   @override
@@ -21,7 +22,6 @@ class PatientDetail extends StatefulWidget {
 class _PatientDetailState extends State<PatientDetail> {
   List<SensorModel> patientsData = [];
   bool _darkMode = false;
-
 
   @override
   void initState() {
@@ -152,7 +152,10 @@ class _PatientDetailState extends State<PatientDetail> {
               const SizedBox(height: 20),
               Text(
                 getTranslated(context, "EMG Signals Chart"),
-                style: TextStyle(color: _darkMode ? Colors.white : Colors.black,fontSize: 22, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: _darkMode ? Colors.white : Colors.black,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 48, top: 16),
@@ -185,14 +188,14 @@ class _PatientDetailState extends State<PatientDetail> {
                               fontSize: 18.0,
                             ),
                           ),
-                            const SizedBox(height: 8),
-                            Text(
-                              widget.patient.phoneNumber.toString(),
-                              style: TextStyle(
-                                color: _darkMode ? Colors.white : Colors.black,
-                                fontSize: 18.0,
-                              ),
+                          const SizedBox(height: 8),
+                          Text(
+                            widget.patient.phoneNumber.toString(),
+                            style: TextStyle(
+                              color: _darkMode ? Colors.white : Colors.black,
+                              fontSize: 18.0,
                             ),
+                          ),
                         ],
                       ),
                     )

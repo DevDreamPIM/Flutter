@@ -1,6 +1,7 @@
 import 'package:epilepto_guard/Components/drawer.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../Models/sensorModel.dart';
 import '../../Services/doctorService.dart';
@@ -36,12 +37,16 @@ class _HealthDataState extends State<HealthData> {
     List<LineChartBarData> lineChartData = [];
 
     if (patientsData.isNotEmpty) {
+      List<double> heartBeatValues =
+          patientsData.expand((e) => e.bmp!).map((e) => e.toDouble()).toList();
+      print("++++++++++++++++++++++++++++++++++++++++++++");
+      print(patientsData[0].updatedAt);
+      int startIndex =
+          heartBeatValues.length > 14 ? heartBeatValues.length - 14 : 0;
+      List<double> lastSevenValues = heartBeatValues.sublist(startIndex);
+
       lineChartData.add(_buildLineChartBarData(
-          data: patientsData
-              .expand((e) => e.bmp!)
-              .map((e) => e.toDouble())
-              .toList(),
-          color: Color(0xFFEE83A3)));
+          data: lastSevenValues, color: Color(0xFFEE83A3)));
     }
     return lineChartData;
   }
@@ -152,31 +157,42 @@ class _HealthDataState extends State<HealthData> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                const SizedBox(height: 20),
+                const SizedBox(height: 40),
                 SizedBox(
                   height: MediaQuery.of(context).size.width * .35,
                   child: LineChart(
                     LineChartData(
                       gridData: const FlGridData(show: false),
                       lineBarsData: heartBeatData(),
-                      titlesData: const FlTitlesData(
+                      titlesData: FlTitlesData(
                         bottomTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
                             reservedSize: 30,
+                            interval: 1,
+                            getTitlesWidget: (value, titleMeta) {
+                              int index = value.toInt();
+                              if (index >= 0 && index < patientsData.length) {
+                                DateTime updatedAt =
+                                    patientsData[index].updatedAt!;
+                                return Text(
+                                    DateFormat('dd/MM').format(updatedAt));
+                              }
+                              return const SizedBox();
+                            },
                           ),
                         ),
-                        topTitles: AxisTitles(
+                        topTitles: const AxisTitles(
                           sideTitles: SideTitles(showTitles: false),
                         ),
-                        leftTitles: AxisTitles(
+                        leftTitles: const AxisTitles(
                           sideTitles:
                               SideTitles(showTitles: true, reservedSize: 30),
                         ),
-                        rightTitles: AxisTitles(
+                        rightTitles: const AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: false,
-                            reservedSize: 30,
+                            reservedSize: 60,
                           ),
                         ),
                       ),
@@ -185,7 +201,7 @@ class _HealthDataState extends State<HealthData> {
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  "Highest BPM recorded",
+                  "BPM (last 14 entries)",
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 60),
@@ -197,8 +213,8 @@ class _HealthDataState extends State<HealthData> {
                       lineBarsData: emgData(),
                       titlesData: const FlTitlesData(
                         bottomTitles: AxisTitles(
-                          sideTitles:
-                              SideTitles(showTitles: true, reservedSize: 30),
+                          sideTitles: SideTitles(
+                              showTitles: true, reservedSize: 30, interval: 8),
                         ),
                         topTitles: AxisTitles(
                           sideTitles: SideTitles(showTitles: false),
