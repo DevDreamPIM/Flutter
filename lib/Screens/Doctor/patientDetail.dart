@@ -158,39 +158,43 @@ class _PatientDetailState extends State<PatientDetail> {
                 padding: const EdgeInsets.only(left: 48, top: 16),
                 child: Row(
                   children: [
-                    CircleAvatar(
-                      radius: 60,
-                      backgroundImage: NetworkImage(
-                          '${Constantes.USER_IMAGE_URL}/${widget.patient.image}'),
+                    Flexible(
+                      child: CircleAvatar(
+                        radius: 60,
+                        backgroundImage: NetworkImage(
+                            '${Constantes.USER_IMAGE_URL}/${widget.patient.image}'),
+                      ),
                     ),
                     const SizedBox(width: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${widget.patient.firstName} ${widget.patient.lastName}',
-                          style: TextStyle(
-                            color: _darkMode ? Colors.white : Colors.black,
-                            fontSize: 20.0,
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${widget.patient.firstName} ${widget.patient.lastName}',
+                            style: TextStyle(
+                              color: _darkMode ? Colors.white : Colors.black,
+                              fontSize: 20.0,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          widget.patient.email ?? '',
-                          style: TextStyle(
-                            color: _darkMode ? Colors.white : Colors.black,
-                            fontSize: 18.0,
-                          ),
-                        ),
                           const SizedBox(height: 8),
                           Text(
-                            widget.patient.phoneNumber.toString(),
+                            widget.patient.email ?? '',
                             style: TextStyle(
                               color: _darkMode ? Colors.white : Colors.black,
                               fontSize: 18.0,
                             ),
                           ),
-                      ],
+                            const SizedBox(height: 8),
+                            Text(
+                              widget.patient.phoneNumber.toString(),
+                              style: TextStyle(
+                                color: _darkMode ? Colors.white : Colors.black,
+                                fontSize: 18.0,
+                              ),
+                            ),
+                        ],
+                      ),
                     )
                   ],
                 ),
