@@ -65,6 +65,7 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
   @override
   void initState() {
     super.initState();
+    print("in initState()");
     _id = widget.id;
     _emotionalStateRating = 0;
     _recoveryRating = 0;
@@ -74,10 +75,14 @@ class _PostCriseFormulaireState extends State<PostCriseFormulaire> {
     _signsresponseController = TextEditingController();
     _symptomsresponseController = TextEditingController();
     _addresponseController = TextEditingController();
+
+    print(widget.id);
+    print(widget.postFormService);
   }
 
   Future<void> _checkIfFormSubmitted() async {
     try {
+      print("in _checkIfFormSubmitted()");
       bool submitted =
           await widget.postFormService.checkIfFormSubmitted(widget.id);
 
