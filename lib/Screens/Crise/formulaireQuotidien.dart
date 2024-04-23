@@ -97,7 +97,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'What time did you go to bed last night?',
+                    'What time did you \ngo to bed last night?',
                     style:
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
@@ -141,7 +141,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'When did you wake up today ?',
+                    'When did you \nwake up today ?',
                     style:
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
