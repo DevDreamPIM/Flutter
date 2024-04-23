@@ -23,6 +23,7 @@ class DoctorProfile extends StatefulWidget {
 class _DoctorProfileState extends State<DoctorProfile> {
   late SharedPreferences _prefs;
   final FlutterSecureStorage _storage = FlutterSecureStorage();
+
   // final Connectivity _connectivity = Connectivity();
 
   String? firstName;
@@ -282,51 +283,44 @@ class _DoctorProfileState extends State<DoctorProfile> {
 
                   ListTile(
                     title: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Text(
-                              getTranslated(context, 'Preferred Language'),
-                              style: TextStyle(
-                                fontSize: _displayPreference == 'Compact'
-                                    ? 16.0
-                                    : 18.0,
-                                color: _darkMode ? Colors.white : Colors.black,
-                              ),
+                        Flexible(
+                          child: Text(
+                            getTranslated(context, 'Preferred Language'),
+                            style: TextStyle(
+                              fontSize: _displayPreference == 'Compact' ? 16.0 : 18.0,
+                              color: _darkMode ? Colors.white : Colors.black,
                             ),
-                          ],
+                          ),
                         ),
-                        SizedBox(
-                          width: 20,
-                        ),
+                        SizedBox(width: 20),
                         Icon(
                           Icons.g_translate,
                           color: _darkMode ? Colors.white : Colors.black,
                         ),
-                        DropdownButton<Language>(
-                          underline: SizedBox(),
-                          onChanged: (Language? language) {
-                            _changeLanguage(language!);
-                          },
-                          items: Language.languageList()
-                              .map<DropdownMenuItem<Language>>(
-                                (e) => DropdownMenuItem<Language>(
-                                  value: e,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: <Widget>[
-                                      Text(
-                                        e.flag,
-                                        style: TextStyle(fontSize: 30),
-                                      ),
-                                      Text(e.name)
-                                    ],
-                                  ),
+                        SizedBox(width: 10),
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton<Language>(
+                            onChanged: (Language? language) {
+                              _changeLanguage(language!);
+                            },
+                            items: Language.languageList().map<DropdownMenuItem<Language>>(
+                                  (e) => DropdownMenuItem<Language>(
+                                value: e,
+                                child: Row(
+                                  children: <Widget>[
+                                    Text(
+                                      e.flag,
+                                      style: TextStyle(fontSize: 30),
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(e.name),
+                                  ],
                                 ),
-                              )
-                              .toList(),
+                              ),
+                            ).toList(),
+                            dropdownColor: _darkMode ? Color(0xFF602F8D) : Colors.white,
+                          ),
                         ),
                       ],
                     ),
@@ -398,21 +392,41 @@ class _DoctorProfileState extends State<DoctorProfile> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text(getTranslated(context, 'Logout')),
-                            content: Text(getTranslated(
-                                context, 'Are you sure you want to logout?')),
+                            title: Text(
+                              getTranslated(context, 'Logout'),
+                              style: TextStyle(
+                                color: _darkMode ? Colors.white : Colors.black,
+                              ),
+                            ),
+                            backgroundColor: _darkMode ? Color(0xFF301148) : Colors.white,
+                            content: Text(
+                              getTranslated(context, 'Are you sure you want to logout?'),
+                              style: TextStyle(
+                                color: _darkMode ? Colors.white : Colors.black,
+                              ),
+                            ),
                             actions: [
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop(false);
                                 },
-                                child: Text(getTranslated(context, 'No')),
+                                child: Text(
+                                  getTranslated(context, 'No'),
+                                  style: TextStyle(
+                                    color: _darkMode ? Colors.white : Colors.black,
+                                  ),
+                                ),
                               ),
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop(true);
                                 },
-                                child: Text(getTranslated(context, 'Yes')),
+                                child: Text(
+                                  getTranslated(context, 'Yes'),
+                                  style: TextStyle(
+                                    color: _darkMode ? Colors.white : Colors.black,
+                                  ),
+                                ),
                               ),
                             ],
                           );
@@ -431,10 +445,13 @@ class _DoctorProfileState extends State<DoctorProfile> {
                         });
                       }
                     },
+                    style: ElevatedButton.styleFrom(
+                      primary: _darkMode ? Color(0xFF8A4FE9) : Colors.white,
+                    ),
                     child: Text(
                       getTranslated(context, 'Logout'),
                       style: TextStyle(
-                        color: Color(0xFF8A4FE9),
+                        color: _darkMode ? Colors.white : Color(0xFF8A4FE9),
                         fontWeight: FontWeight.bold,
                         fontSize: _displayPreference == 'Compact' ? 15.0 : 17.0,
                       ),
@@ -445,10 +462,13 @@ class _DoctorProfileState extends State<DoctorProfile> {
                     onPressed: () {
                       _showFeedbackDialog(context);
                     },
+                    style: ElevatedButton.styleFrom(
+                      primary: _darkMode ? Color(0xFF8A4FE9) : Colors.white,
+                    ),
                     child: Text(
                       getTranslated(context, 'Feedback and Suggestions'),
                       style: TextStyle(
-                        color: Color(0xFF8A4FE9),
+                        color: _darkMode ? Colors.white : Color(0xFF8A4FE9),
                         fontWeight: FontWeight.bold,
                         fontSize: _displayPreference == 'Compact' ? 15.0 : 17.0,
                       ),
@@ -506,30 +526,70 @@ class _DoctorProfileState extends State<DoctorProfile> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(getTranslated(context, 'Feedback and Suggestions')),
-          content: TextField(
-            controller: feedbackController,
-            decoration: InputDecoration(
-              hintText: getTranslated(context, 'Enter your feedback here'),
+          title: Text(
+            getTranslated(context, 'Feedback and Suggestions'),
+            style: TextStyle(
+              color: _darkMode ? Colors.white : Colors.black,
             ),
-            maxLines: 3,
+          ),
+          backgroundColor: _darkMode ? Color(0xFF301148) : Colors.white,
+          content: Container(
+            width: double.maxFinite,
+            child: TextField(
+              controller: feedbackController,
+              decoration: InputDecoration(
+                hintText: getTranslated(context, 'Enter your feedback here'),
+                hintStyle: TextStyle(
+                  color: _darkMode ? Colors.white54 : Colors.black54,
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: _darkMode ? Colors.white : Colors.black,
+                  ),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: _darkMode ? Colors.white : Colors.black,
+                  ),
+                ),
+              ),
+              maxLines: null,
+              style: TextStyle(
+                color: _darkMode ? Colors.white : Colors.black,
+              ),
+            ),
           ),
           actions: [
-            GestureDetector(
-              child: ElevatedButton(
-                onPressed: () async {
-                  await DoctorService()
-                      .addFeedback(id!, feedbackController.text, token!);
-                  Navigator.of(context).pop();
-                },
-                child: Text(getTranslated(context, 'Submit')),
+            ElevatedButton(
+              onPressed: () async {
+                await DoctorService()
+                    .addFeedback(id!, feedbackController.text, token!);
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                primary: _darkMode ? Color(0xFF8A4FE9) : Colors.white,
+              ),
+              child: Text(
+                getTranslated(context, 'Submit'),
+                style: TextStyle(
+                  color: _darkMode ? Colors.white : Colors.black,
+                ),
               ),
             ),
             ElevatedButton(
               onPressed: () {
+                feedbackController.clear();
                 Navigator.of(context).pop();
               },
-              child: Text(getTranslated(context, 'Cancel')),
+              style: ElevatedButton.styleFrom(
+                primary: _darkMode ? Color(0xFF8A4FE9) : Colors.white,
+              ),
+              child: Text(
+                getTranslated(context, 'Cancel'),
+                style: TextStyle(
+                  color: _darkMode ? Colors.white : Colors.black,
+                ),
+              ),
             ),
           ],
         );
