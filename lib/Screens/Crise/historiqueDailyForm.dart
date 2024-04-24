@@ -74,15 +74,16 @@ class _DailyFormHistoryScreenState extends State<DailyFormHistoryScreen> {
               margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: ListTile(
                 title: Text(
+                  'Was created on : ${dailyForms[index].formatCreatedAt()}',
                   // Utiliser les attributs du DailyForm pour afficher les détails
-                  'Bed Time: ${dailyForms[index].bedTime}',
-                  style: TextStyle(fontSize: 18.0),
+                  //'Bed Time: ${dailyForms[index].bedTime}',
+                  // style: TextStyle(fontSize: 18.0),
                 ),
-                subtitle: Text(
-                  // Utiliser les autres attributs du DailyForm pour afficher les détails
-                  'Stress: ${dailyForms[index].stress}, Mood Changes: ${dailyForms[index].moodchanges}',
-                  style: TextStyle(fontSize: 16.0),
-                ),
+                // subtitle: Text(
+                // Utiliser les autres attributs du DailyForm pour afficher les détails
+                // 'Stress: ${dailyForms[index].stress}, Mood Changes: ${dailyForms[index].moodchanges}',
+                // style: TextStyle(fontSize: 16.0),
+                // ),
                 onTap: () {
                   Navigator.push(
                     context,
