@@ -446,7 +446,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: _darkMode ? const Color(0xFF8A4FE9) : Colors.white,
+                      backgroundColor: _darkMode ? const Color(0xFF8A4FE9) : Colors.white,
                     ),
                     child: Text(
                       getTranslated(context, 'Logout'),
@@ -463,7 +463,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
                       _showFeedbackDialog(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: _darkMode ? const Color(0xFF8A4FE9) : Colors.white,
+                      backgroundColor: _darkMode ? const Color(0xFF8A4FE9) : Colors.white,
                     ),
                     child: Text(
                       getTranslated(context, 'Feedback and Suggestions'),
@@ -567,7 +567,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                primary: _darkMode ? const Color(0xFF8A4FE9) : Colors.white,
+                backgroundColor: _darkMode ? const Color(0xFF8A4FE9) : Colors.white,
               ),
               child: Text(
                 getTranslated(context, 'Submit'),
@@ -582,7 +582,7 @@ class _DoctorProfileState extends State<DoctorProfile> {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                primary: _darkMode ? const Color(0xFF8A4FE9) : Colors.white,
+                backgroundColor: _darkMode ? const Color(0xFF8A4FE9) : Colors.white,
               ),
               child: Text(
                 getTranslated(context, 'Cancel'),
