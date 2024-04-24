@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:epilepto_guard/Screens/Forum/ForumPage.dart';
 import 'package:epilepto_guard/Components/drawer.dart';
 import 'package:epilepto_guard/Screens/Bluetooth/MainPageBluetooth.dart';
 import 'package:epilepto_guard/Screens/Crise/formulaireQuotidien.dart';
@@ -239,10 +239,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildClickableCard(
                     context,
-                    Colors.transparent,
-                    'Widget 5',
+                    Colors.green,
+                    'Forum',
                     () {
-                      // Action à effectuer lorsque le widget est cliqué
+                      Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ForumPage(),
+                  ),
+                );
                     },
                   ),
                 ),

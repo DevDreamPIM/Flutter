@@ -185,7 +185,7 @@ class _UserListState extends State<UserList> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: !showPatients ? Colors.white : Colors.lightBlue,
+                    backgroundColor: !showPatients ? Colors.white : Colors.lightBlue,
                   ),
                   child: const Text(
                     'Patients',
@@ -200,7 +200,7 @@ class _UserListState extends State<UserList> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: showPatients ? Colors.white : Colors.lightBlue,
+                    backgroundColor: showPatients ? Colors.white : Colors.lightBlue,
                   ),
                   child: const Text(
                     'Doctors',
