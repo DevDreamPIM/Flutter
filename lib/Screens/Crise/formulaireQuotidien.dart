@@ -4,6 +4,7 @@ import 'package:epilepto_guard/Services/dailyFormService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 
 class FormulaireQuotidien extends StatefulWidget {
   //final String id;
@@ -981,13 +982,65 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
 // fonction pour gérer l'action lorsque le bouton "Save" est pressé
   void _saveForm() async {
     try {
+      // Vérifier si les heures de réveil et de coucher sont valides
+      if (_bedTime != null && _wakeUpTime != null) {
+        // Convertir TimeOfDay en DateTime pour la comparaison
+        DateTime bedDateTime = DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
+          _bedTime.hour,
+          _bedTime.minute,
+        );
+        DateTime wakeUpDateTime = DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
+          _wakeUpTime.hour,
+          _wakeUpTime.minute,
+        );
+        if (wakeUpDateTime.isBefore(bedDateTime)) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Wake Up time cannot be before Bedtime',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 3),
+            ),
+          );
+          return;
+        }
+      } else {
+        // Les heures ne sont pas sélectionnées
+        // Afficher une alerte ou un SnackBar pour informer l'utilisateur
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Please select Bedtime and Wake Up time',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+        return; // Arrêter l'exécution de la fonction
+      }
       // Récupérer les valeurs des champs texte de manière sécurisée
       String recentChanges = _recentChangesController?.text ?? '';
-      // Définir la valeur de submitted
+
       bool submitted = true;
       final storage = FlutterSecureStorage();
 
       String? loadedid = await storage.read(key: "id");
+
+      // Obtenir la date actuelle au format DateTime
+      DateTime now = DateTime.now();
+      // Formater la date au format "DD/MM/YYYY"
+      String formattedDate = DateFormat('dd/MM/yyyy').format(now);
 
       // Créer une instance de PostCriseFormData
       DailyForm formData = DailyForm(
@@ -1010,7 +1063,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
         mealSleepNoValue: _mealSleepNoValue,
         recentChanges: recentChanges,
 
-        //a chocher
+        //a choché
         visualAuraChecked: _visualAuraChecked,
         sensoryAuraChecked: _sensoryAuraChecked,
         auditoryAuraChecked: _auditoryAuraChecked,
@@ -1021,6 +1074,9 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
         sleepDisturbancesChecked: _sleepDisturbancesChecked,
         concentrationDifficultiesChecked: _concentrationDifficultiesChecked,
         increasedSensitivityChecked: _increasedSensitivityChecked,
+
+        // Ajouter la date de création
+        createdAt: now,
       );
       //  print("form Data :" + formData.toJson().toString());
       _dailyFormService.sendDataToBackend2(formData);
@@ -1031,7 +1087,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Your form is successfully saved, you can review it by clicking on the form button',
+            'Your form is successfully saved, you can review it by visiting the history in your profile',
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.white),
           ),
@@ -1056,9 +1112,23 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
       initialTime: _bedTime,
     );
     if (pickedTime != null && pickedTime != _bedTime) {
-      setState(() {
-        _bedTime = pickedTime;
-      });
+      // Convertir TimeOfDay en DateTime
+      DateTime newBedTime = DateTime(DateTime.now().year, DateTime.now().month,
+          DateTime.now().day, pickedTime.hour, pickedTime.minute);
+      // Vérifier si l'heure de réveil est inférieure à l'heure de coucher
+      if (_wakeUpTime != null &&
+          newBedTime.isAfter(DateTime(DateTime.now().year, DateTime.now().month,
+              DateTime.now().day, _wakeUpTime.hour, _wakeUpTime.minute))) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Bedtime cannot be after Wake Up time'),
+          ),
+        );
+      } else {
+        setState(() {
+          _bedTime = pickedTime;
+        });
+      }
     }
   }
 
@@ -1068,9 +1138,34 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
       initialTime: _wakeUpTime,
     );
     if (pickedTime != null && pickedTime != _wakeUpTime) {
-      setState(() {
-        _wakeUpTime = pickedTime;
-      });
+      // Convertir TimeOfDay en DateTime
+      DateTime newWakeUpTime = DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
+          pickedTime.hour,
+          pickedTime.minute);
+
+      // Vérifier si l'heure du coucher est supérieure à l'heure de réveil
+      if (_bedTime != null &&
+          newWakeUpTime.isBefore(DateTime(
+              DateTime.now().year,
+              DateTime.now().month,
+              DateTime.now().day,
+              _bedTime.hour,
+              _bedTime.minute))) {
+        // Afficher un message d'erreur ou effectuer une action
+        // Par exemple :
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Wake Up time cannot be before Bedtime'),
+          ),
+        );
+      } else {
+        setState(() {
+          _wakeUpTime = pickedTime;
+        });
+      }
     }
   }
 }

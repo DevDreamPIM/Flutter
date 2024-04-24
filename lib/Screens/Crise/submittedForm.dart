@@ -37,7 +37,7 @@ class SubmittedForm extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Submitted Form Data:',
+                      Text('Your Post Seizure Form : ',
                           style: TextStyle(
                               fontSize: 20.0, fontWeight: FontWeight.bold)),
                       SizedBox(height: 10.0),

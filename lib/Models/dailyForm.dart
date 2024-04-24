@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DailyForm {
   String userId;
@@ -23,6 +24,7 @@ class DailyForm {
   bool sleepDisturbancesChecked;
   bool concentrationDifficultiesChecked;
   bool increasedSensitivityChecked;
+  DateTime createdAt;
 
   DailyForm({
     required this.userId,
@@ -47,6 +49,7 @@ class DailyForm {
     required this.sleepDisturbancesChecked,
     required this.concentrationDifficultiesChecked,
     required this.increasedSensitivityChecked,
+    required this.createdAt,
   });
 
   // Méthode pour sérialiser les données du formulaire
@@ -77,6 +80,7 @@ class DailyForm {
       'sleepDisturbancesChecked': sleepDisturbancesChecked,
       'concentrationDifficultiesChecked': concentrationDifficultiesChecked,
       'increasedSensitivityChecked': increasedSensitivityChecked,
+      'createdAt': DateFormat('yyyy-MM-dd').format(createdAt),
     };
   }
 
@@ -112,6 +116,7 @@ class DailyForm {
       concentrationDifficultiesChecked:
           json['concentrationDifficultiesChecked'],
       increasedSensitivityChecked: json['increasedSensitivityChecked'],
+      createdAt: DateTime.parse(json['createdAt']),
     );
   }
 
@@ -119,5 +124,18 @@ class DailyForm {
   static TimeOfDay _parseTime(String timeString) {
     final parts = timeString.split(':');
     return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+  }
+
+// Méthode pour formater l'heure au format HH:mm
+  String formattedTime(Map<String, int> time) {
+    final timeOfDay = _parseTime('${time['hour']}:${time['minute']}');
+    final formatted = DateFormat.Hm()
+        .format(DateTime(2022, 1, 1, timeOfDay.hour, timeOfDay.minute));
+    return formatted;
+  }
+
+// Méthode pour formater la date en "DD/MM/YYYY"
+  String formatCreatedAt() {
+    return DateFormat('dd/MM/yyyy').format(createdAt);
   }
 }

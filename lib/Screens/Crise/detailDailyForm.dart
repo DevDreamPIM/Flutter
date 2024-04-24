@@ -26,7 +26,9 @@ class _DailyFormDetailScreenState extends State<DailyFormDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchFormData();
+    // _fetchFormData();
+    formData = widget.dailyForm;
+    isLoading = false;
   }
 
   Future<void> _fetchFormData() async {
@@ -50,7 +52,7 @@ class _DailyFormDetailScreenState extends State<DailyFormDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Daily Form Details',
+          'Your Daily Form Details',
           style: TextStyle(
             color: const Color(0xFF8A4FE9),
             fontSize: 24.0,
@@ -76,11 +78,11 @@ class _DailyFormDetailScreenState extends State<DailyFormDetailScreen> {
                   children: [
                     _buildDetailItem(
                       'Bed Time:',
-                      '${formData.bedTime.toString()}:${formData.bedTime.toString()}',
+                      '${formData.formattedTime(formData.bedTime)}',
                     ),
                     _buildDetailItem(
                       'Wake Up Time:',
-                      '${formData.wakeUpTime.toString()}:${formData.wakeUpTime.toString()}',
+                      '${formData.formattedTime(formData.wakeUpTime)}',
                     ),
                     _buildDetailItem(
                       'Stress Rating:',
