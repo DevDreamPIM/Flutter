@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:epilepto_guard/models/Forum.dart';
-import 'package:epilepto_guard/models/UserForum.dart';
 import 'package:epilepto_guard/widgets/ForumCard.dart';
+import 'package:epilepto_guard/services/ForumService.dart';
 
-class ForumPage extends StatelessWidget {
+class ForumPage extends StatefulWidget {
+  @override
+  _ForumPageState createState() => _ForumPageState();
+}
+
+class _ForumPageState extends State<ForumPage> {
+  final ForumService _forumService = ForumService();
+  TextEditingController _textEditingController = TextEditingController();
+  Forum _newForum = Forum(description: '');
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,63 +32,75 @@ class ForumPage extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                children: [
-                  ForumCard(
-                    forum: Forum(description: "Très bon forum pour les débutants", comments: []),
-                    user: UserForum(firstName: "Mohamed Maamoun", lastName: "Jrad"),
-                  ),
-                  SizedBox(height: 20),
-                  ForumCard(
-                    forum: Forum(description: "J'aime les discussions ici", comments: []),
-                    user: UserForum(firstName: "Malek", lastName: "Labidi"),
-                  ),
-                  SizedBox(height: 20),
-                  ForumCard(
-                    forum: Forum(description: "Toujours à jour avec les nouveautés", comments: []),
-                    user: UserForum(firstName: "Jouhayna", lastName: "Cheikh"),
-                  ),
-                  SizedBox(height: 20),
-                  ForumCard(
-                    forum: Forum(description: "Super expérience utilisateur", comments: []),
-                    user: UserForum(firstName: "Marwan", lastName: "Hammami"),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
+        child: FutureBuilder<List<Forum>>(
+          future: _forumService.getAllFeedbacks(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('Error: ${snapshot.error}'),
+              );
+            } else {
+              final forums = snapshot.data!;
+              return Column(
                 children: [
                   Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Write a Feedback...',
-                        border: OutlineInputBorder(),
-                      ),
+                    child: ListView.builder(
+                      itemCount: forums.length,
+                      itemBuilder: (context, index) {
+                        final forum = forums[index];
+                        // Supposons que chaque forum a un utilisateur associé
+                        return Column(
+                          children: [
+                            ForumCard(
+                              forum: forum,
+                            ),
+                            SizedBox(height: 20),
+                          ],
+                        );
+                      },
                     ),
                   ),
-                  SizedBox(width: 10),
-                  ElevatedButton(
-  onPressed: () {
-    // Action à effectuer lors de l'envoi du commentaire
-  },
-  child: Text(
-    'Send',
-    style: TextStyle(color: Colors.white),  // Définir la couleur du texte en blanc
-  ),
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Theme.of(context).primaryColor,  // Définir la couleur de fond du bouton
-  ),
-)
-
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _textEditingController,
+                            decoration: InputDecoration(
+                              hintText: 'Write a Feedback...',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _newForum = Forum(description: _textEditingController.text);
+                            });
+                            _forumService.addFeedback(_newForum);
+                            _textEditingController.clear(); // Effacer le texte après l'envoi
+                          },
+                          child: Text(
+                            'Send',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
-              ),
-            ),
-          ],
+              );
+            }
+          },
         ),
       ),
     );
