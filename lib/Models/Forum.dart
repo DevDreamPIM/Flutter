@@ -1,21 +1,23 @@
-import 'package:flutter/foundation.dart';
+import 'dart:convert'; // Importez cette bibliothèque pour utiliser jsonDecode.
 
 class Forum {
   final String? description;
-  final List<Comment>? comments;
-  final String? firstName;
-  final String? lastName;
 
   Forum({
     this.description,
-    this.comments,
-    this.firstName,
-    this.lastName,
   });
-}
 
-class Comment {
-  final String? text;
+  // Méthode de désérialisation JSON pour créer une instance de Forum à partir d'un Map JSON.
+  factory Forum.fromJson(Map<String, dynamic> json) {
+    return Forum(
+      description: json['description'] as String?,
+    );
+  }
 
-  Comment({this.text});
+  // Méthode de sérialisation JSON pour convertir une instance de Forum en un Map JSON.
+  Map<String, dynamic> toJson() {
+    return {
+      'description': description,
+    };
+  }
 }
