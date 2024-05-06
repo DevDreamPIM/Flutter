@@ -42,4 +42,22 @@ class ForumService {
   }
 }
 
+ Future<void> deleteFeedback(String description) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$baseURL/description/$description'),
+      );
+
+      if (response.statusCode == 204) {
+        // La suppression a réussi (204 signifie "No Content")
+      } else if (response.statusCode == 404) {
+        throw Exception('Forum non trouvé');
+      } else {
+        throw Exception('Échec de la suppression du forum');
+      }
+    } catch (e) {
+      throw Exception('Erreur lors de la suppression du forum: $e');
+    }
+  }
+
 }

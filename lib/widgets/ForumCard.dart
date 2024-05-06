@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:epilepto_guard/models/Forum.dart';
-import 'package:epilepto_guard/models/User.dart';
+import 'package:epilepto_guard/services/ForumService.dart';
 
 class ForumCard extends StatefulWidget {
   final Forum forum;
@@ -13,6 +13,14 @@ class ForumCard extends StatefulWidget {
 
 class _ForumCardState extends State<ForumCard> {
   bool _liked = false;
+
+  void deleteFeedback(String description) async {
+    try {
+      await ForumService().deleteFeedback(description);
+    } catch (e) {
+      // Ignorer les erreurs de suppression
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +52,7 @@ class _ForumCardState extends State<ForumCard> {
                     onTap: () {
                       // Action à effectuer lors de la sélection de l'option "Delete"
                       Navigator.of(context).pop();
+                      deleteFeedback(widget.forum.description ?? '');
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
