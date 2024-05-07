@@ -44,6 +44,8 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
   bool _concentrationDifficultiesChecked = false;
   bool _increasedSensitivityChecked = false;
 
+  bool isNewDay = false;
+
   //text field area
   TextEditingController? _recentChangesController;
 
@@ -87,6 +89,14 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
         //******************* 1 ***************************************************
         child: ListView(
           children: [
+            // Contrôle de saisie "New day"
+            CheckboxListTile(
+              title: Text(
+                  'Check this box if the bedtime and wake-up time are not on the same day.'),
+              value: isNewDay,
+              onChanged: _handleNewDay,
+              activeColor: Color(0xFF8A4FE9),
+            ),
             Container(
               padding: EdgeInsets.all(20.0),
               margin: EdgeInsets.symmetric(vertical: 10.0),
@@ -1063,7 +1073,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
         mealSleepNoValue: _mealSleepNoValue,
         recentChanges: recentChanges,
 
-        //a choché
+        //a chocher
         visualAuraChecked: _visualAuraChecked,
         sensoryAuraChecked: _sensoryAuraChecked,
         auditoryAuraChecked: _auditoryAuraChecked,
@@ -1115,19 +1125,49 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
       // Convertir TimeOfDay en DateTime
       DateTime newBedTime = DateTime(DateTime.now().year, DateTime.now().month,
           DateTime.now().day, pickedTime.hour, pickedTime.minute);
-      // Vérifier si l'heure de réveil est inférieure à l'heure de coucher
-      if (_wakeUpTime != null &&
-          newBedTime.isAfter(DateTime(DateTime.now().year, DateTime.now().month,
-              DateTime.now().day, _wakeUpTime.hour, _wakeUpTime.minute))) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Bedtime cannot be after Wake Up time'),
-          ),
-        );
-      } else {
+
+      // Vérifier si l'utilisateur spécifie un nouveau jour
+      if (isNewDay) {
+        // Si c'est un nouveau jour, on autorise l'heure du coucher à être après l'heure du réveil
         setState(() {
           _bedTime = pickedTime;
         });
+      } else {
+        // Sinon, on vérifie si l'heure de réveil est après l'heure du coucher
+        if (_wakeUpTime != null &&
+            newBedTime.isAfter(DateTime(
+              DateTime.now().year,
+              DateTime.now().month,
+              DateTime.now().day,
+              _wakeUpTime.hour,
+              _wakeUpTime.minute,
+            ))) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Bedtime cannot be after Wake Up time'),
+            ),
+          );
+        } else {
+          // Sinon, on vérifie si l'heure de réveil est après l'heure du coucher
+          if (_wakeUpTime != null &&
+              newBedTime.isAfter(DateTime(
+                DateTime.now().year,
+                DateTime.now().month,
+                DateTime.now().day,
+                _wakeUpTime.hour,
+                _wakeUpTime.minute,
+              ))) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Bedtime cannot be after Wake Up time'),
+              ),
+            );
+          } else {
+            setState(() {
+              _bedTime = pickedTime;
+            });
+          }
+        }
       }
     }
   }
@@ -1146,26 +1186,39 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
           pickedTime.hour,
           pickedTime.minute);
 
-      // Vérifier si l'heure du coucher est supérieure à l'heure de réveil
-      if (_bedTime != null &&
-          newWakeUpTime.isBefore(DateTime(
-              DateTime.now().year,
-              DateTime.now().month,
-              DateTime.now().day,
-              _bedTime.hour,
-              _bedTime.minute))) {
-        // Afficher un message d'erreur ou effectuer une action
-        // Par exemple :
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Wake Up time cannot be before Bedtime'),
-          ),
-        );
-      } else {
+      if (isNewDay) {
         setState(() {
           _wakeUpTime = pickedTime;
         });
+      } else {
+        // Vérifier si l'heure du coucher est supérieure à l'heure de réveil
+        if (_bedTime != null &&
+            newWakeUpTime.isBefore(DateTime(
+                DateTime.now().year,
+                DateTime.now().month,
+                DateTime.now().day,
+                _bedTime.hour,
+                _bedTime.minute))) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Wake Up time cannot be before Bedtime'),
+            ),
+          );
+        } else {
+          setState(() {
+            _wakeUpTime = pickedTime;
+          });
+        }
       }
+    }
+  }
+
+// Méthode pour gérer le changement de statut du contrôle de saisie "Nouveau jour"
+  void _handleNewDay(bool? value) {
+    if (value != null) {
+      setState(() {
+        isNewDay = value;
+      });
     }
   }
 }
