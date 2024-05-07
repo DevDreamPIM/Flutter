@@ -7,9 +7,16 @@ class ForumCard extends StatefulWidget {
   final String? firstName;
   final String? lastName;
   String? image; // Ajout de l'image
+  final String? idUser;
   final Forum forum;
 
-  ForumCard({required this.forum, this.firstName, this.lastName, this.image});
+  ForumCard({
+    required this.forum,
+    this.firstName,
+    this.lastName,
+    this.image,
+     this.idUser,
+  });
 
   @override
   _ForumCardState createState() => _ForumCardState();
@@ -21,6 +28,7 @@ class _ForumCardState extends State<ForumCard> {
   late String loadedFirstName;
   late String loadedLastName;
   late String loadedImage;
+  late String loadedidUser;
   TextEditingController _commentController = TextEditingController();
 
   @override
@@ -35,6 +43,7 @@ class _ForumCardState extends State<ForumCard> {
     loadedFirstName = await storage.read(key: "firstName") ?? '';
     loadedLastName = await storage.read(key: "lastName") ?? '';
     loadedImage = await storage.read(key: "image") ?? '';
+    loadedidUser = await storage.read(key: "idUser") ?? '';
 
     setState(() {}); // Mettre à jour l'état après le chargement des données
   }
@@ -136,7 +145,8 @@ class _ForumCardState extends State<ForumCard> {
                               ? NetworkImage(loadedImage)
                               : null, // Utiliser l'image du réseau si elle est disponible
                           child: loadedImage.isEmpty
-                              ? Text('${loadedFirstName[0]}${loadedLastName[0]}')
+                              ? Text(
+                                  '${loadedFirstName[0]}${loadedLastName[0]}')
                               : null, // Utiliser les initiales si l'image n'est pas disponible
                         ),
                         SizedBox(width: 16),
@@ -184,7 +194,8 @@ class _ForumCardState extends State<ForumCard> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end, // Aligner à droite
+                  crossAxisAlignment:
+                      CrossAxisAlignment.end, // Aligner à droite
                   children: [
                     SizedBox(height: 8),
                     GestureDetector(
