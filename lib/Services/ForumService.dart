@@ -60,4 +60,20 @@ class ForumService {
     }
   }
 
+  Future<void> updateFeedback(String description, Forum updatedDescription) async {
+    final response = await http.put(
+      Uri.parse('$baseURL/description/$description'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(updatedDescription.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      // La modification a réussi (200 signifie "OK")
+    } else {
+      throw Exception('Échec de la modification du desc');
+    }
+  }
+
 }
