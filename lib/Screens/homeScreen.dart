@@ -237,10 +237,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 Expanded(
-                  child: _buildClickableCard(
+                  child: _buildClickaaableCardWithBackgroundImage(
                     context,
-                    Colors.green,
-                    'Forum',
+                    'assets/images/background/forum.jpg',
+                    '',
                     () {
                       Navigator.push(
                   context,
