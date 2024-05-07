@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:epilepto_guard/models/Forum.dart';
 import 'package:epilepto_guard/services/ForumService.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ForumCard extends StatefulWidget {
+  final String? firstName;
+  final String? lastName;
   final Forum forum;
 
-  ForumCard({required this.forum});
+  ForumCard({required this.forum, this.firstName, this.lastName});
 
   @override
   _ForumCardState createState() => _ForumCardState();
@@ -13,6 +16,23 @@ class ForumCard extends StatefulWidget {
 
 class _ForumCardState extends State<ForumCard> {
   bool _liked = false;
+  late String loadedFirstName;
+  late String loadedLastName;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final storage = FlutterSecureStorage();
+
+    loadedFirstName = await storage.read(key: "firstName") ?? '';
+    loadedLastName = await storage.read(key: "lastName") ?? '';
+
+    setState(() {}); // Mettre à jour l'état après le chargement des données
+  }
 
   void deleteFeedback(String description) async {
     try {
@@ -20,6 +40,12 @@ class _ForumCardState extends State<ForumCard> {
     } catch (e) {
       // Ignorer les erreurs de suppression
     }
+  }
+
+  void toggleLike() {
+    setState(() {
+      _liked = !_liked;
+    });
   }
 
   @override
@@ -96,7 +122,7 @@ class _ForumCardState extends State<ForumCard> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          'User',
+                          '${loadedFirstName} ${loadedLastName}',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -121,15 +147,18 @@ class _ForumCardState extends State<ForumCard> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.favorite,
-                          color: _liked ? Colors.red : Colors.grey,
-                        ),
-                        SizedBox(width: 8),
-                        Text(_liked ? 'You Liked this Feedback' : 'Like'),
-                      ],
+                    GestureDetector(
+                      onTap: toggleLike,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.favorite,
+                            color: _liked ? Colors.red : Colors.grey,
+                          ),
+                          SizedBox(width: 8),
+                          Text(_liked ? 'You Liked this Feedback' : 'Like'),
+                        ],
+                      ),
                     ),
                     Row(
                       children: [
