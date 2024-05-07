@@ -6,9 +6,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class ForumCard extends StatefulWidget {
   final String? firstName;
   final String? lastName;
+  String? image; // Ajout de l'image
   final Forum forum;
 
-  ForumCard({required this.forum, this.firstName, this.lastName});
+  ForumCard({required this.forum, this.firstName, this.lastName, this.image});
 
   @override
   _ForumCardState createState() => _ForumCardState();
@@ -16,8 +17,11 @@ class ForumCard extends StatefulWidget {
 
 class _ForumCardState extends State<ForumCard> {
   bool _liked = false;
+  bool _commentExpanded = false;
   late String loadedFirstName;
   late String loadedLastName;
+  late String loadedImage;
+  TextEditingController _commentController = TextEditingController();
 
   @override
   void initState() {
@@ -30,6 +34,7 @@ class _ForumCardState extends State<ForumCard> {
 
     loadedFirstName = await storage.read(key: "firstName") ?? '';
     loadedLastName = await storage.read(key: "lastName") ?? '';
+    loadedImage = await storage.read(key: "image") ?? '';
 
     setState(() {}); // Mettre à jour l'état après le chargement des données
   }
@@ -45,6 +50,12 @@ class _ForumCardState extends State<ForumCard> {
   void toggleLike() {
     setState(() {
       _liked = !_liked;
+    });
+  }
+
+  void toggleCommentExpanded() {
+    setState(() {
+      _commentExpanded = !_commentExpanded;
     });
   }
 
@@ -117,24 +128,52 @@ class _ForumCardState extends State<ForumCard> {
                   ),
                   Padding(
                     padding: EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    child: Row(
                       children: [
-                        Text(
-                          '${loadedFirstName} ${loadedLastName}',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                        CircleAvatar(
+                          radius: 30, // Définir la taille du cercle
+                          backgroundImage: loadedImage.isNotEmpty
+                              ? NetworkImage(loadedImage)
+                              : null, // Utiliser l'image du réseau si elle est disponible
+                          child: loadedImage.isEmpty
+                              ? Text('${loadedFirstName[0]}${loadedLastName[0]}')
+                              : null, // Utiliser les initiales si l'image n'est pas disponible
+                        ),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '$loadedFirstName $loadedLastName',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                '${widget.forum.description}',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        SizedBox(height: 8),
-                        Text(
-                          '${widget.forum.description}',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14,
+                        GestureDetector(
+                          onTap: toggleLike,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.favorite,
+                                color: _liked ? Colors.red : Colors.grey,
+                              ),
+                              SizedBox(width: 8),
+                              Text(_liked ? 'You Liked this Feedback' : 'Like'),
+                            ],
                           ),
                         ),
                       ],
@@ -144,29 +183,53 @@ class _ForumCardState extends State<ForumCard> {
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end, // Aligner à droite
                   children: [
+                    SizedBox(height: 8),
                     GestureDetector(
-                      onTap: toggleLike,
+                      onTap: toggleCommentExpanded,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Icon(
-                            Icons.favorite,
-                            color: _liked ? Colors.red : Colors.grey,
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.comment,
+                                color: Colors.blue,
+                              ),
+                              SizedBox(width: 8),
+                              Text('Comment'),
+                            ],
                           ),
-                          SizedBox(width: 8),
-                          Text(_liked ? 'You Liked this Feedback' : 'Like'),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                          ),
                         ],
                       ),
                     ),
-                    Row(
-                      children: [
-                        Icon(Icons.comment, color: Colors.blue),
-                        SizedBox(width: 8),
-                        Text('Comment'),
-                      ],
-                    ),
+                    _commentExpanded
+                        ? Column(
+                            children: [
+                              SizedBox(height: 8),
+                              TextFormField(
+                                controller: _commentController,
+                                decoration: InputDecoration(
+                                  hintText: 'Write your comment...',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              ElevatedButton(
+                                onPressed: () {
+                                  // Add logic to handle sending comment
+                                },
+                                child: Text('Send'),
+                              ),
+                            ],
+                          )
+                        : SizedBox.shrink(),
                   ],
                 ),
               ),
