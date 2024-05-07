@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:epilepto_guard/models/Forum.dart';
 import 'package:epilepto_guard/services/ForumService.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:epilepto_guard/screens/Forum/ModifyForumDialog.dart';
 
 class ForumCard extends StatefulWidget {
   final String? firstName;
@@ -82,9 +83,17 @@ class _ForumCardState extends State<ForumCard> {
                 children: <Widget>[
                   InkWell(
                     onTap: () {
-                      // Action à effectuer lors de la sélection de l'option "Modify"
-                      Navigator.of(context).pop();
-                    },
+                        // Action à effectuer lors de la sélection de l'option "Modify"
+                         Navigator.of(context).pop(); // Ferme le dialogue actuel
+                         Navigator.push( // Navigue vers la page de modification
+                         context,
+                         MaterialPageRoute(
+                         builder: (context) => ModifyForumDialog(
+                         currentDescription: widget.forum.description ?? '', // Passez la description actuelle à la page de modification
+                        ),
+                        ),
+                        );
+                        },
                     child: Row(
                       children: [
                         Icon(Icons.edit, color: Colors.blue),
