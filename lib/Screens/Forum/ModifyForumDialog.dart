@@ -51,7 +51,7 @@ class _ModifyForumDialogState extends State<ModifyForumDialog> {
             if (newDescription.isNotEmpty) {
               try {
                 // Appel de la méthode updateFeedback de ForumService
-                await ForumService().updateFeedback(widget.currentDescription, Forum(description: newDescription));
+               // await ForumService().updateFeedback(widget.currentDescription, Forum(description: newDescription));
                 Navigator.pop(context, newDescription); // Ferme la boîte de dialogue et renvoie la nouvelle description
               } catch (e) {
                 // Gérer les erreurs
