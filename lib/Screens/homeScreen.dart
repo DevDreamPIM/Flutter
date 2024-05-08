@@ -211,7 +211,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => FormulaireQuotidien(),
+                    builder: (context) => FormulaireQuotidien(
+                      id: 'some_unique_id',
+                    ),
                   ),
                 );
               },
@@ -243,11 +245,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     '',
                     () {
                       Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ForumPage(),
-                  ),
-                );
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ForumPage(),
+                        ),
+                      );
                     },
                   ),
                 ),

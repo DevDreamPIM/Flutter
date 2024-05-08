@@ -7,9 +7,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 
 class FormulaireQuotidien extends StatefulWidget {
-  //final String id;
+  final String id;
   //final dailyFormService dailyFormService;
-  const FormulaireQuotidien({Key? key}) : super(key: key);
+  const FormulaireQuotidien({Key? key, required this.id}) : super(key: key);
   @override
   _FormulaireQuotidienState createState() => _FormulaireQuotidienState();
 }
@@ -43,7 +43,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
   bool _sleepDisturbancesChecked = false;
   bool _concentrationDifficultiesChecked = false;
   bool _increasedSensitivityChecked = false;
-
+  bool _isArchived = false;
   bool isNewDay = false;
 
   //text field area
@@ -55,6 +55,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
   @override
   void initState() {
     super.initState();
+    _id = widget.id;
     _stressRating = 0;
     _alcoholDrugRating = 0;
     _moodchangesRating = 0;
@@ -152,7 +153,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'When did you \nwake up today ?',
+                    'When did you \nwoke up today ?',
                     style:
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
@@ -1054,6 +1055,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
 
       // Créer une instance de PostCriseFormData
       DailyForm formData = DailyForm(
+        id: _id,
         userId: loadedid!,
         bedTime: {
           'hour': _bedTime.hour,
@@ -1084,6 +1086,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
         sleepDisturbancesChecked: _sleepDisturbancesChecked,
         concentrationDifficultiesChecked: _concentrationDifficultiesChecked,
         increasedSensitivityChecked: _increasedSensitivityChecked,
+        isArchived: _isArchived,
 
         // Ajouter la date de création
         createdAt: now,
