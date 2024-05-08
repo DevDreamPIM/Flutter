@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:epilepto_guard/Models/sensor.dart';
 import 'package:epilepto_guard/Services/sensorService.dart';
 import 'package:epilepto_guard/colors.dart';
@@ -54,9 +56,13 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
   late Seizure _newCrise;
   final storage = FlutterSecureStorage();
 
+// Déclaration d'une variable pour stocker la localisation
+  String currentLocation = '';
+
   @override
   void initState() {
     super.initState();
+    _getCurrentLocation();
 
     // Get current state
     FlutterBluetoothSerial.instance.state.then((state) {
@@ -201,6 +207,9 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
         isDisconnecting = false;
       });
 
+// Ajoutez le print ici pour récupérer la position actuelle
+      _getCurrentLocation();
+
       connection.input.listen(_onDataReceived).onDone(() {
         if (isDisconnecting) {
           print('Disconnecting locally!');
@@ -217,6 +226,26 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
     });
 
     // Call the external method to send a message
+  }
+
+  void _getCurrentLocation() async {
+    try {
+      // Obtenez la position actuelle du téléphone
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+
+      // Obtenez les détails d'emplacement à partir des coordonnées
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
+
+      // Obtenez l'adresse à partir des détails d'emplacement
+      String location = placemarks[0].name ?? "Unknown";
+
+      // Ajoutez un print pour afficher la localisation actuelle
+      print('Current Location: $location');
+    } catch (e) {
+      print('Failed to get current location: $e');
+    }
   }
 
   void _onDataReceived(Uint8List data) {
@@ -335,19 +364,35 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
   Future<void> _addCrise() async {
     try {
       String? userId = await storage.read(key: 'id');
+
+      // Obtenez la position actuelle du téléphone
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+
+// Obtenez les détails d'emplacement à partir des coordonnées
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
+
+// Obtenez l'adresse à partir des détails d'emplacement
+      String location = placemarks[0].name ?? "Unknown";
+
+      // Ajoutez un print pour afficher la localisation actuelle
+      print('Current Location: $location');
+
       _newCrise = Seizure(
         userId: userId ?? "",
         date: DateTime.now().toString(),
         startTime: DateTime.now().toString(),
         endTime: DateTime.now().toString(),
         duration: 30,
-        location: "Tunis",
+        location: location,
         type: "generalized",
         emergencyServicesCalled: true,
         medicalAssistance: true,
         severity: "moderate",
       );
       print(_newCrise.toJson().toString());
+      // print(location);
       await CriseService().createSeizure(_newCrise);
     } catch (e) {
       print('Failed to add Seizure: $e');

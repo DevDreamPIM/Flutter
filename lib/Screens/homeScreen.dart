@@ -168,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         decoration: const BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage(
-                              'assets/images/background/pairdevice.jpg',
+                              'assets/images/background/device.jpg',
                             ),
                             fit: BoxFit
                                 .cover, // Pour que l'image occupe tout le conteneur
@@ -181,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Icon(
                               Icons.phonelink_ring,
                               size: 40,
-                              color: Colors.blueGrey,
+                              color: Color.fromARGB(255, 127, 79, 135),
                             ),
                             SizedBox(height: 10),
                             Text(
@@ -189,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blueGrey,
+                                color: Color.fromARGB(255, 127, 79, 135),
                               ),
                             ),
                           ],
@@ -211,7 +211,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => FormulaireQuotidien(),
+                    builder: (context) => FormulaireQuotidien(
+                      id: 'some_unique_id',
+                    ),
                   ),
                 );
               },
@@ -224,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildClickaaableCardWithBackgroundImage(
                     context,
-                    'assets/images/background/Logo_Heartbeat_Technology.jpg',
+                    'assets/images/background/coeur2.jpg',
                     '',
                     () {
                       Navigator.push(
@@ -239,15 +241,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildClickaaableCardWithBackgroundImage(
                     context,
-                    'assets/images/background/forum.jpg',
+                    'assets/images/background/mmm.jpg',
                     '',
                     () {
                       Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ForumPage(),
-                  ),
-                );
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ForumPage(),
+                        ),
+                      );
                     },
                   ),
                 ),
