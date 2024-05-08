@@ -382,8 +382,8 @@ class _MainPageBluetooth extends State<MainPageBluetooth> {
       _newCrise = Seizure(
         userId: userId ?? "",
         date: DateTime.now().toString(),
-        startTime: DateTime.now().toString(),
-        endTime: DateTime.now().toString(),
+        startTime: "09:00",
+        endTime: "09:00",
         duration: 30,
         location: location,
         type: "generalized",

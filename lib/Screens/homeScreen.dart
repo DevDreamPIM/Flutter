@@ -436,7 +436,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      DateFormat("EEEE, MMMM dd").format(now),
+                      DateFormat("EEEE, MM-dd").format(now),
                       style: const TextStyle(fontSize: 16),
                     ),
                     Text(
