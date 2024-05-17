@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:epilepto_guard/Screens/Forum/ForumPage.dart';
 import 'package:epilepto_guard/Components/drawer.dart';
 import 'package:epilepto_guard/Screens/Bluetooth/MainPageBluetooth.dart';
 import 'package:epilepto_guard/Screens/Crise/formulaireQuotidien.dart';
@@ -114,8 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Stack(
-                        fit: StackFit
-                            .expand, 
+                        fit: StackFit.expand,
                         children: [
                           // Image de fond
                           _weather != null
@@ -166,29 +165,31 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage(
-                              'assets/images/background/pairdevice.jpg',
+                              'assets/images/background/device.jpg',
                             ),
                             fit: BoxFit
                                 .cover, // Pour que l'image occupe tout le conteneur
                           ),
                         ),
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SizedBox(
-                                height:
-                                    10), // Espacement entre l'image et le titre
+                            SizedBox(height: 10),
+                            Icon(
+                              Icons.phonelink_ring,
+                              size: 40,
+                              color: Color.fromARGB(255, 127, 79, 135),
+                            ),
+                            SizedBox(height: 10),
                             Text(
                               'Pair to Device',
                               style: TextStyle(
-                                fontSize:
-                                    20, // Ajustez la taille de la police selon vos besoins
-                                fontWeight: FontWeight
-                                    .bold, // Vous pouvez modifier le style du texte ici
-                                color: Colors.blueGrey, // Couleur du texte
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(255, 127, 79, 135),
                               ),
                             ),
                           ],
@@ -210,7 +211,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => FormulaireQuotidien(),
+                    builder: (context) => FormulaireQuotidien(
+                      id: 'some_unique_id',
+                    ),
                   ),
                 );
               },
@@ -223,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: _buildClickaaableCardWithBackgroundImage(
                     context,
-                    'assets/images/background/Logo_Heartbeat_Technology.jpg',
+                    'assets/images/background/coeur2.jpg',
                     '',
                     () {
                       Navigator.push(
@@ -236,12 +239,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 Expanded(
-                  child: _buildClickableCard(
+                  child: _buildClickaaableCardWithBackgroundImage(
                     context,
-                    Colors.transparent,
-                    'Widget 5',
+                    'assets/images/background/mmm.jpg',
+                    '',
                     () {
-                      // Action à effectuer lorsque le widget est cliqué
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ForumPage(),
+                        ),
+                      );
                     },
                   ),
                 ),
@@ -287,7 +295,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
 
   Widget _buildClickableCard(
       BuildContext context, Color color, String title, Function() onTap) {
@@ -357,39 +364,44 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-Widget _buildClickaaableCardWithBackgroundImage(BuildContext context, String imagePath, String cardText, VoidCallback onTap) {
-  return InkWell(
-    onTap: onTap,
-    child: Card(
-      clipBehavior: Clip.antiAlias, // Assurez-vous que l'image ne dépasse pas les bords arrondis
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0), // Bords arrondis pour la carte
-      ),
-      elevation: 5, // Ombre sous la carte pour un effet de profondeur
-      child: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(imagePath),
-            fit: BoxFit.cover, // Couvre tout l'espace disponible
-            colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.5), // Assombrir légèrement l'image pour améliorer la lisibilité du texte
-              BlendMode.dstATop,
+
+  Widget _buildClickaaableCardWithBackgroundImage(BuildContext context,
+      String imagePath, String cardText, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Card(
+        clipBehavior: Clip
+            .antiAlias, // Assurez-vous que l'image ne dépasse pas les bords arrondis
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(10.0), // Bords arrondis pour la carte
+        ),
+        elevation: 5, // Ombre sous la carte pour un effet de profondeur
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(imagePath),
+              fit: BoxFit.cover, // Couvre tout l'espace disponible
+              colorFilter: ColorFilter.mode(
+                Colors.black.withOpacity(
+                    0.5), // Assombrir légèrement l'image pour améliorer la lisibilité du texte
+                BlendMode.dstATop,
+              ),
+            ),
+          ),
+          alignment: Alignment.center, // Centrer le texte sur la carte
+          child: Text(
+            cardText,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
-        alignment: Alignment.center, // Centrer le texte sur la carte
-        child: Text(
-          cardText,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildWeatherUI() {
     if (_weather == null) {
@@ -424,7 +436,7 @@ Widget _buildClickaaableCardWithBackgroundImage(BuildContext context, String ima
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      DateFormat("EEEE, MMMM dd").format(now),
+                      DateFormat("EEEE, MM-dd").format(now),
                       style: const TextStyle(fontSize: 16),
                     ),
                     Text(

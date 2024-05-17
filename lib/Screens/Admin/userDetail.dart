@@ -112,130 +112,167 @@ class _UserDetailState extends State<UserDetail> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(
-                  radius: 60,
-                  backgroundImage: NetworkImage(
-                      '${Constantes.USER_IMAGE_URL}/${widget.user.image}'),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      'Name: ',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20.0,
-                      ),
-                    ),
-                    Text(
-                      '${widget.user.firstName} ${widget.user.lastName}',
-                      style: const TextStyle(
-                        fontSize: 20.0,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const Text(
-                      'Email: ',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20.0,
-                      ),
-                    ),
-                    Text(
-                      widget.user.email ?? '',
-                      style: const TextStyle(
-                        fontSize: 20.0,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    const Text(
-                      'Phone Number: ',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20.0,
-                      ),
-                    ),
-                    Text(
-                      widget.user.phoneNumber.toString(),
-                      style: const TextStyle(
-                        fontSize: 20.0,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                    onPressed: () async {
-                      String? selectedRole = await _showSelectionPopup(
-                          context, widget.user.role ?? 'patient');
-                      if (selectedRole != null) {
-                        // Handle the selected role here, e.g., make API call to update user role
-                        print('Selected role: $selectedRole');
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          const Color(0xFF9B6BEE), // Set background color here
-                    ),
-                    child: Text('Modify Role',style: TextStyle(color: Colors.white))),
-                if (widget.user.role == 'doctor') ...[
-                  const SizedBox(height: 20),
-                  Stack(children: [
-                    Row(
-                      children: [
-                        const Text(
-                          'Feedback and suggestions',
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundImage: NetworkImage(
+                        '${Constantes.USER_IMAGE_URL}/${widget.user.image}'),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      const Flexible(
+                        child: Text(
+                          'Name: ',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 18.0,
+                            fontSize: 20.0,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        Positioned(
-                          left: 0,
-                          top: 0,
-                          child: Image.asset(
-                            'assets/images/background/thinking_cloud.png',
-                            width: 90,
-                            height: 90,
+                      ),
+                      Flexible(
+                        child: Text(
+                          '${widget.user.firstName} ${widget.user.lastName}',
+                          style: const TextStyle(
+                            fontSize: 20.0,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      const Flexible(
+                        child: Text(
+                          'Email: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
                           ),
                         ),
-                      ],
-                    ),
-                  ]),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: feedbacksArray.length,
-                      itemBuilder: (context, index) {
-                        final feedback = feedbacksArray[index];
-                        return ListTile(
-                          title: Text(
-                            '${feedback.feedback}',
-                            style: const TextStyle(
-                              fontSize: 20.0,
+                      ),
+                      Flexible(
+                        child: Text(
+                          widget.user.email ?? '',
+                          style: const TextStyle(
+                            fontSize: 20.0,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          'Phone Number: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                          ),
+                        ),
+                      ),
+                      Flexible(
+                        child: Text(
+                          widget.user.phoneNumber.toString(),
+                          style: const TextStyle(
+                            fontSize: 20.0,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                      onPressed: () async {
+                        String? selectedRole = await _showSelectionPopup(
+                            context, widget.user.role ?? 'patient');
+                        if (selectedRole != null) {
+                          // Handle the selected role here, e.g., make API call to update user role
+                          print('Selected role: $selectedRole');
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            const Color(0xFF9B6BEE), // Set background color here
+                      ),
+                      child: Text('Modify Role',style: TextStyle(color: Colors.white))),
+                  if (widget.user.role == 'doctor') ...[
+                    const SizedBox(height: 20),
+                    Stack(children: [
+                      Row(
+                        children: [
+                          const Flexible(
+                            child: Text(
+                              'Feedback and suggestions',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18.0,
+                              ),
                             ),
                           ),
-                        );
-                      },
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Positioned(
+                              left: 0,
+                              top: 0,
+                              child: Image.asset(
+                                'assets/images/background/thinking_cloud.png',
+                                width: 90,
+                                height: 90,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ]),
+                    Container(
+                      height: 200,
+                      child: Expanded(
+                        child: ListView.builder(
+                          itemCount: feedbacksArray.length,
+                          itemBuilder: (context, index) {
+                            final feedback = feedbacksArray[index];
+                            return ListTile(
+                              title: Row(
+                                children: [
+                                  const Text(
+                                    '\u2022',
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    '${feedback.feedback}',
+                                    style: const TextStyle(
+                                      fontSize: 20.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                  ),
+
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ],
@@ -249,12 +286,12 @@ class _UserDetailState extends State<UserDetail> {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                title: Text('Select Role'),
+                title: const Text('Select Role'),
                 trailing: DropdownButton<String>(
                   value: selectedRole,
                   onChanged: (newValue) {

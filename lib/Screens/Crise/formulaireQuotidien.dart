@@ -3,11 +3,13 @@ import 'package:epilepto_guard/Models/postCriseForm.dart';
 import 'package:epilepto_guard/Services/dailyFormService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 
 class FormulaireQuotidien extends StatefulWidget {
-  //final String id;
+  final String id;
   //final dailyFormService dailyFormService;
-  const FormulaireQuotidien({Key? key}) : super(key: key);
+  const FormulaireQuotidien({Key? key, required this.id}) : super(key: key);
   @override
   _FormulaireQuotidienState createState() => _FormulaireQuotidienState();
 }
@@ -18,8 +20,8 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
 
   late String _id;
 
-  TimeOfDay _bedTime = TimeOfDay.now(); 
-  TimeOfDay _wakeUpTime = TimeOfDay.now(); 
+  TimeOfDay _bedTime = TimeOfDay.now();
+  TimeOfDay _wakeUpTime = TimeOfDay.now();
 
   // rate variable
   double _stressRating = 0;
@@ -41,6 +43,8 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
   bool _sleepDisturbancesChecked = false;
   bool _concentrationDifficultiesChecked = false;
   bool _increasedSensitivityChecked = false;
+  bool _isArchived = false;
+  bool isNewDay = false;
 
   //text field area
   TextEditingController? _recentChangesController;
@@ -51,6 +55,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
   @override
   void initState() {
     super.initState();
+    _id = widget.id;
     _stressRating = 0;
     _alcoholDrugRating = 0;
     _moodchangesRating = 0;
@@ -85,6 +90,14 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
         //******************* 1 ***************************************************
         child: ListView(
           children: [
+            // Contrôle de saisie "New day"
+            CheckboxListTile(
+              title: Text(
+                  'Check this box if the bedtime and wake-up time are not on the same day.'),
+              value: isNewDay,
+              onChanged: _handleNewDay,
+              activeColor: Color(0xFF8A4FE9),
+            ),
             Container(
               padding: EdgeInsets.all(20.0),
               margin: EdgeInsets.symmetric(vertical: 10.0),
@@ -96,7 +109,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'What time did you go to bed last night?',
+                    'What time did you \ngo to bed last night?',
                     style:
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
@@ -140,7 +153,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'When did you wake up today ?',
+                    'When did you \nwoke up today ?',
                     style:
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
@@ -189,7 +202,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
                   RatingBar.builder(
-                    initialRating: 0,
+                    initialRating: _stressRating,
                     minRating: 0,
                     direction: Axis.horizontal,
                     allowHalfRating: true,
@@ -225,7 +238,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
                   RatingBar.builder(
-                    initialRating: 0,
+                    initialRating: _alcoholDrugRating,
                     minRating: 0,
                     direction: Axis.horizontal,
                     allowHalfRating: true,
@@ -313,7 +326,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
                   RatingBar.builder(
-                    initialRating: 0,
+                    initialRating: _moodchangesRating,
                     minRating: 0,
                     direction: Axis.horizontal,
                     allowHalfRating: true,
@@ -349,7 +362,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
                   RatingBar.builder(
-                    initialRating: 0,
+                    initialRating: _sleepingRating,
                     minRating: 0,
                     direction: Axis.horizontal,
                     allowHalfRating: true,
@@ -385,7 +398,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
                   RatingBar.builder(
-                    initialRating: 0,
+                    initialRating: _flashingLightsRating,
                     minRating: 0,
                     direction: Axis.horizontal,
                     allowHalfRating: true,
@@ -421,7 +434,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
                         TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
                   RatingBar.builder(
-                    initialRating: 0,
+                    initialRating: _exerciseRating,
                     minRating: 0,
                     direction: Axis.horizontal,
                     allowHalfRating: true,
@@ -978,17 +991,80 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
   }
 
 // fonction pour gérer l'action lorsque le bouton "Save" est pressé
-  void _saveForm() {
+  void _saveForm() async {
     try {
+      // Vérifier si les heures de réveil et de coucher sont valides
+      if (_bedTime != null && _wakeUpTime != null) {
+        // Convertir TimeOfDay en DateTime pour la comparaison
+        DateTime bedDateTime = DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
+          _bedTime.hour,
+          _bedTime.minute,
+        );
+        DateTime wakeUpDateTime = DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
+          _wakeUpTime.hour,
+          _wakeUpTime.minute,
+        );
+        if (wakeUpDateTime.isBefore(bedDateTime)) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Wake Up time cannot be before Bedtime',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 3),
+            ),
+          );
+          return;
+        }
+      } else {
+        // Les heures ne sont pas sélectionnées
+        // Afficher une alerte ou un SnackBar pour informer l'utilisateur
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Please select Bedtime and Wake Up time',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+        return; // Arrêter l'exécution de la fonction
+      }
       // Récupérer les valeurs des champs texte de manière sécurisée
       String recentChanges = _recentChangesController?.text ?? '';
-      // Définir la valeur de submitted
+
       bool submitted = true;
+      final storage = FlutterSecureStorage();
+
+      String? loadedid = await storage.read(key: "id");
+
+      // Obtenir la date actuelle au format DateTime
+      DateTime now = DateTime.now();
+      // Formater la date au format "DD/MM/YYYY"
+      String formattedDate = DateFormat('dd/MM/yyyy').format(now);
 
       // Créer une instance de PostCriseFormData
       DailyForm formData = DailyForm(
-        bedTime: _bedTime,
-        wakeUpTime: _wakeUpTime,
+        id: _id,
+        userId: loadedid!,
+        bedTime: {
+          'hour': _bedTime.hour,
+          'minute': _bedTime.minute,
+        },
+        wakeUpTime: {
+          'hour': _wakeUpTime.hour,
+          'minute': _wakeUpTime.minute,
+        },
         stress: _stressRating,
         alcoholDrug: _alcoholDrugRating,
         medication: _takenMedicationsAsPrescribed,
@@ -1010,6 +1086,10 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
         sleepDisturbancesChecked: _sleepDisturbancesChecked,
         concentrationDifficultiesChecked: _concentrationDifficultiesChecked,
         increasedSensitivityChecked: _increasedSensitivityChecked,
+        isArchived: _isArchived,
+
+        // Ajouter la date de création
+        createdAt: now,
       );
       //  print("form Data :" + formData.toJson().toString());
       _dailyFormService.sendDataToBackend2(formData);
@@ -1020,7 +1100,7 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Your form is successfully saved, you can review it by clicking on the form button',
+            'Your form is successfully saved, you can review it by visiting the history in your profile',
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.white),
           ),
@@ -1045,9 +1125,53 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
       initialTime: _bedTime,
     );
     if (pickedTime != null && pickedTime != _bedTime) {
-      setState(() {
-        _bedTime = pickedTime;
-      });
+      // Convertir TimeOfDay en DateTime
+      DateTime newBedTime = DateTime(DateTime.now().year, DateTime.now().month,
+          DateTime.now().day, pickedTime.hour, pickedTime.minute);
+
+      // Vérifier si l'utilisateur spécifie un nouveau jour
+      if (isNewDay) {
+        // Si c'est un nouveau jour, on autorise l'heure du coucher à être après l'heure du réveil
+        setState(() {
+          _bedTime = pickedTime;
+        });
+      } else {
+        // Sinon, on vérifie si l'heure de réveil est après l'heure du coucher
+        if (_wakeUpTime != null &&
+            newBedTime.isAfter(DateTime(
+              DateTime.now().year,
+              DateTime.now().month,
+              DateTime.now().day,
+              _wakeUpTime.hour,
+              _wakeUpTime.minute,
+            ))) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Bedtime cannot be after Wake Up time'),
+            ),
+          );
+        } else {
+          // Sinon, on vérifie si l'heure de réveil est après l'heure du coucher
+          if (_wakeUpTime != null &&
+              newBedTime.isAfter(DateTime(
+                DateTime.now().year,
+                DateTime.now().month,
+                DateTime.now().day,
+                _wakeUpTime.hour,
+                _wakeUpTime.minute,
+              ))) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Bedtime cannot be after Wake Up time'),
+              ),
+            );
+          } else {
+            setState(() {
+              _bedTime = pickedTime;
+            });
+          }
+        }
+      }
     }
   }
 
@@ -1057,8 +1181,46 @@ class _FormulaireQuotidienState extends State<FormulaireQuotidien> {
       initialTime: _wakeUpTime,
     );
     if (pickedTime != null && pickedTime != _wakeUpTime) {
+      // Convertir TimeOfDay en DateTime
+      DateTime newWakeUpTime = DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
+          pickedTime.hour,
+          pickedTime.minute);
+
+      if (isNewDay) {
+        setState(() {
+          _wakeUpTime = pickedTime;
+        });
+      } else {
+        // Vérifier si l'heure du coucher est supérieure à l'heure de réveil
+        if (_bedTime != null &&
+            newWakeUpTime.isBefore(DateTime(
+                DateTime.now().year,
+                DateTime.now().month,
+                DateTime.now().day,
+                _bedTime.hour,
+                _bedTime.minute))) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Wake Up time cannot be before Bedtime'),
+            ),
+          );
+        } else {
+          setState(() {
+            _wakeUpTime = pickedTime;
+          });
+        }
+      }
+    }
+  }
+
+// Méthode pour gérer le changement de statut du contrôle de saisie "Nouveau jour"
+  void _handleNewDay(bool? value) {
+    if (value != null) {
       setState(() {
-        _wakeUpTime = pickedTime;
+        isNewDay = value;
       });
     }
   }

@@ -8,8 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:epilepto_guard/Utils/Constantes.dart';
 
 class DailyFormDetailScreen extends StatefulWidget {
- // final String formDataId;
- final DailyForm dailyForm;
+  // final String formDataId;
+  final DailyForm dailyForm;
   final dailyFormService _dailyFormService = dailyFormService();
 
   //DailyFormDetailScreen({required this.formDataId});
@@ -26,13 +26,15 @@ class _DailyFormDetailScreenState extends State<DailyFormDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchFormData();
+    // _fetchFormData();
+    formData = widget.dailyForm;
+    isLoading = false;
   }
 
   Future<void> _fetchFormData() async {
     try {
-      final fetchedFormData =
-          await widget._dailyFormService.fetchFormData(widget.dailyForm as String);
+      final fetchedFormData = await widget._dailyFormService
+          .fetchFormData(widget.dailyForm as String);
       setState(() {
         formData = fetchedFormData!;
         isLoading = false;
@@ -50,7 +52,7 @@ class _DailyFormDetailScreenState extends State<DailyFormDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Daily Form Details',
+          'Your Daily Form Details',
           style: TextStyle(
             color: const Color(0xFF8A4FE9),
             fontSize: 24.0,
@@ -76,11 +78,11 @@ class _DailyFormDetailScreenState extends State<DailyFormDetailScreen> {
                   children: [
                     _buildDetailItem(
                       'Bed Time:',
-                      '${formData.bedTime.hour}:${formData.bedTime.minute}',
+                      '${formData.formattedTime(formData.bedTime)}',
                     ),
                     _buildDetailItem(
                       'Wake Up Time:',
-                      '${formData.wakeUpTime.hour}:${formData.wakeUpTime.minute}',
+                      '${formData.formattedTime(formData.wakeUpTime)}',
                     ),
                     _buildDetailItem(
                       'Stress Rating:',
