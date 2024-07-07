@@ -162,37 +162,47 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                       // Action à effectuer lorsque l'image est cliquée
                     },
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(
-                              'assets/images/background/device.jpg',
+                    child: Card(
+                      clipBehavior: Clip.antiAlias,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                        BorderRadius.circular(10),
+                      ),
+                      elevation: 3,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(
+                                'assets/images/3DPics/settings2.png',
+                              ),
+                              fit: BoxFit
+                                  .cover,
+
                             ),
-                            fit: BoxFit
-                                .cover, // Pour que l'image occupe tout le conteneur
                           ),
-                        ),
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(height: 10),
-                            Icon(
-                              Icons.phonelink_ring,
-                              size: 40,
-                              color: Color.fromARGB(255, 127, 79, 135),
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              'Pair to Device',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(height: 10),
+                              Icon(
+                                Icons.phonelink_ring,
+                                size: 40,
                                 color: Color.fromARGB(255, 127, 79, 135),
                               ),
-                            ),
-                          ],
+                              SizedBox(height: 10),
+                              Text(
+                                'Pair to Device',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 127, 79, 135),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -224,11 +234,8 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
-                  child: _buildClickaaableCardWithBackgroundImage(
-                    context,
-                    'assets/images/background/coeur2.jpg',
-                    '',
-                    () {
+                  child: InkWell(
+                    onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -236,14 +243,31 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     },
+                    child: Card(
+                      clipBehavior: Clip.antiAlias,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                        BorderRadius.circular(10),
+                      ),
+                      elevation: 10,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(
+                                'assets/images/3DPics/heartbeat.png',
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 Expanded(
-                  child: _buildClickaaableCardWithBackgroundImage(
-                    context,
-                    'assets/images/background/mmm.jpg',
-                    '',
-                    () {
+                  child: InkWell(
+                    onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -251,8 +275,43 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     },
+                    child: Card(
+                      clipBehavior: Clip.antiAlias,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                        BorderRadius.circular(10),
+                      ),
+                      elevation: 2,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(
+                                'assets/images/3DPics/forum.png',
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
+                // Expanded(
+                //   child: _buildClickaaableCardWithBackgroundImage(
+                //     context,
+                //     'assets/images/background/mmm.jpg',
+                //     '',
+                //     () {
+                //       Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //           builder: (context) => ForumPage(),
+                //         ),
+                //       );
+                //     },
+                //   ),
+                // ),
               ],
             ),
           ),

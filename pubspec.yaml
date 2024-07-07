@@ -99,6 +99,7 @@ flutter:
     - assets/
     - assets/images/
     - assets/images/background/
+    - assets/images/3DPics/
     - assets/images/background/weather/
     - assets/images/logo/
     - assets/images/icons/
