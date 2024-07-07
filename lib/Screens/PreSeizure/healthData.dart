@@ -39,10 +39,9 @@ class _HealthDataState extends State<HealthData> {
     if (patientsData.isNotEmpty) {
       List<double> heartBeatValues =
           patientsData.expand((e) => e.bmp!).map((e) => e.toDouble()).toList();
-      print("++++++++++++++++++++++++++++++++++++++++++++");
       print(patientsData[0].updatedAt);
       int startIndex =
-          heartBeatValues.length > 14 ? heartBeatValues.length - 14 : 0;
+          heartBeatValues.length > 7 ? heartBeatValues.length - 7 : 0;
       List<double> lastSevenValues = heartBeatValues.sublist(startIndex);
 
       lineChartData.add(_buildLineChartBarData(
@@ -55,12 +54,23 @@ class _HealthDataState extends State<HealthData> {
     List<LineChartBarData> lineChartData = [];
 
     if (patientsData.isNotEmpty) {
+      List<double> emgValues =
+      patientsData.expand((e) => e.emg!).map((e) => e.toDouble()).toList();
+
+      print(patientsData[0].updatedAt);
+      int startIndex =
+      emgValues.length > 40 ? emgValues.length - 40 : 0;
+      List<double> lastSevenValues = emgValues.sublist(startIndex);
+
       lineChartData.add(_buildLineChartBarData(
-          data: patientsData
-              .expand((e) => e.emg!)
-              .map((e) => e.toDouble())
-              .toList(),
-          color: Color(0xFFC987E1)));
+          data: lastSevenValues, color: Color(0xFFC987E1)));
+
+      // lineChartData.add(_buildLineChartBarData(
+      //     data: patientsData
+      //         .expand((e) => e.emg!)
+      //         .map((e) => e.toDouble())
+      //         .toList(),
+      //     color: Color(0xFFC987E1)));
     }
     return lineChartData;
   }
@@ -201,7 +211,7 @@ class _HealthDataState extends State<HealthData> {
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  "BPM (last 14 entries)",
+                  "BPM (last 7 entries)",
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 60),
